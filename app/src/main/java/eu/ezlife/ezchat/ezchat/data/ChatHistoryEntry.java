@@ -4,12 +4,12 @@ package eu.ezlife.ezchat.ezchat.data;
  * Created by ajo on 05.02.2017.
  */
 
-public class ChatHistory {
+public class ChatHistoryEntry {
 
     private String from;
     private String body;
 
-    public ChatHistory(String from, String body){
+    public ChatHistoryEntry(String from, String body){
         this.from = from;
         this.body = body;
     }
