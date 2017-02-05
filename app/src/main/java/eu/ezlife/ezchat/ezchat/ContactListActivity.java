@@ -15,6 +15,7 @@ import org.jivesoftware.smack.roster.RosterListener;
 
 import java.util.Collection;
 
+import eu.ezlife.ezchat.ezchat.components.myApplicationHandler;
 import eu.ezlife.ezchat.ezchat.components.myXMPPConnection;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
@@ -30,7 +31,7 @@ public class ContactListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_contact_list);
 
         // Retrieve the contactList from Server
-        myXMPPConnection.updateContactList();
+        myApplicationHandler.updateContactList();
         // create contact List on View
         createContactList();
         // Add listener for contact status
@@ -44,7 +45,7 @@ public class ContactListActivity extends AppCompatActivity {
             // Ignored events public void entriesAdded(Collection<String> addresses) {}
             public void presenceChanged(Presence presence) {
                 Log.d("ContactListActivity",presence.getFrom());
-                myXMPPConnection.updateContactList();
+                myApplicationHandler.updateContactList();
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -57,7 +58,7 @@ public class ContactListActivity extends AppCompatActivity {
     }
 
     private void createContactList() {
-        contactsAdapter = new ArrayAdapter<ContactListEntry>(getApplicationContext(),android.R.layout.simple_list_item_1,myXMPPConnection.getContactList());
+        contactsAdapter = new ArrayAdapter<ContactListEntry>(getApplicationContext(),android.R.layout.simple_list_item_1,myApplicationHandler.getContactList());
         myList = (ListView) findViewById(R.id.contact_list);
         myList.setAdapter(contactsAdapter);
         // Add onClickListener to all Items
@@ -65,7 +66,7 @@ public class ContactListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Load chatActivity
                 Intent chatActivity = new Intent(getApplicationContext(), eu.ezlife.ezchat.ezchat.ChatActivity.class);
-                chatActivity.putExtra("EXTRA_USERNAME",myXMPPConnection.getContactList().get(position).getUsername());
+                chatActivity.putExtra("EXTRA_USERNAME",myApplicationHandler.getContactList().get(position).getUsername());
                 getApplicationContext().startActivity(chatActivity);
             }
         });

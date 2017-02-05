@@ -1,7 +1,5 @@
 package eu.ezlife.ezchat.ezchat.data;
 
-import java.util.Date;
-
 /**
  * Created by ajo on 05.02.2017.
  */

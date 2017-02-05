@@ -51,9 +51,7 @@ public class LoginActivity extends AppCompatActivity {
                 final String password = passwordText.getText().toString();
 
                 // create connection
-                myXMPPConnection con = new myXMPPConnection(username, password);
-                con.execute("");
-
+                new myXMPPConnection(username, password).execute("");
                 new android.os.Handler().postDelayed(
                         new Runnable() {
                             public void run() {
@@ -74,17 +72,14 @@ public class LoginActivity extends AppCompatActivity {
         // if user has valid login
         if (SaveLoginPreference.getUserName(getApplicationContext()).length() != 0 || SaveLoginPreference.getPassword(getApplicationContext()).length() != 0) {
             progressDialog.show();
-            myXMPPConnection con = new myXMPPConnection(SaveLoginPreference.getUserName(getApplicationContext()), SaveLoginPreference.getPassword(getApplicationContext()));
-            con.execute("");
 
+            new myXMPPConnection(SaveLoginPreference.getUserName(getApplicationContext()), SaveLoginPreference.getPassword(getApplicationContext())).execute("");
             new android.os.Handler().postDelayed(
                     new Runnable() {
                         public void run() {
                             if (myXMPPConnection.getConnection().isAuthenticated()) {
-                                Log.d("LoginActivity","success");
                                 onLoginSuccess();
                             } else {
-                                Log.d("LoginActivity","failed");
                                 onLoginFailed();
                             }
                         }
