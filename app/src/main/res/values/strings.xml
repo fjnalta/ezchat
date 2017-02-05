@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">ezChat Android ALPHA v.0.1</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="input_username">Username</string>
+    <string name="input_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="btn_login">Sign in</string>
+    <string name="link_signup">No Account yet? Create one</string>
+</resources>
