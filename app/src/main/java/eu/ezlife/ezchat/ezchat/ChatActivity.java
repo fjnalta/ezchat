@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eu.ezlife.ezchat.ezchat.components.myXMPPConnection;
-import eu.ezlife.ezchat.ezchat.data.ChatHistory;
+import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 
 public class ChatActivity extends AppCompatActivity implements ChatManagerListener {
 
@@ -29,8 +29,8 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
     private EditText chatEdit;
     private Chat myChat;
     private ListView chatHistoryView;
-    private ArrayAdapter<ChatHistory> chatHistoryAdapter;
-    private List<ChatHistory> chatHistory;
+    private ArrayAdapter<ChatHistoryEntry> chatHistoryAdapter;
+    private List<ChatHistoryEntry> chatHistoryEntry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +43,8 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
         myChat = chatManager.createChat(getIntent().getStringExtra("EXTRA_USERNAME"));
         chatCreated(myChat,true);
 
-        chatHistory = new ArrayList<ChatHistory>();
-        chatHistoryAdapter = new ArrayAdapter<ChatHistory>(getApplicationContext(),android.R.layout.simple_list_item_1,chatHistory);
+        chatHistoryEntry = new ArrayList<ChatHistoryEntry>();
+        chatHistoryAdapter = new ArrayAdapter<ChatHistoryEntry>(getApplicationContext(),android.R.layout.simple_list_item_1, chatHistoryEntry);
         chatHistoryView = (ListView) findViewById(R.id.chat_list_view);
 
         chatHistoryView.setAdapter(chatHistoryAdapter);
@@ -58,7 +58,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                 Message newMessage = new Message();
                 newMessage.setFrom(myXMPPConnection.getUsername());
                 newMessage.setBody(chatEdit.getText().toString());
-                chatHistory.add(new ChatHistory(newMessage.getFrom(),newMessage.getBody()));
+                chatHistoryEntry.add(new ChatHistoryEntry(newMessage.getFrom(),newMessage.getBody()));
 
                 sendMessage(getIntent().getStringExtra("EXTRA_USERNAME"),newMessage);
                 chatEdit.setText("");
@@ -98,7 +98,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                     Message newMessage = new Message();
                     newMessage.setBody(message.getBody());
                     newMessage.setFrom(message.getFrom());
-                    chatHistory.add(new ChatHistory(newMessage.getFrom(),newMessage.getBody()));
+                    chatHistoryEntry.add(new ChatHistoryEntry(newMessage.getFrom(),newMessage.getBody()));
 
                     runOnUiThread(new Runnable() {
                         @Override
