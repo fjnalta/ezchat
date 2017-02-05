@@ -39,6 +39,6 @@ public class ContactListEntry {
 
     @Override
     public String toString() {
-        return getName() + " - " + getStatus();
+        return getName() + " - " + getStatus() + "\n" + getName();
     }
 }
