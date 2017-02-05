@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import eu.ezlife.ezchat.ezchat.ContactListActivity;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
 /**
