@@ -1,6 +1,6 @@
 package eu.ezlife.ezchat.ezchat;
 
-import android.os.Handler;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,11 +8,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
-import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterListener;
 
 import java.util.ArrayList;
@@ -70,7 +68,9 @@ public class ContactListActivity extends AppCompatActivity {
         // Add onClickListener to all Items
         myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), contactList.get(position).getUsername(), Toast.LENGTH_SHORT).show();
+                Intent chatActivity = new Intent(getApplicationContext(), eu.ezlife.ezchat.ezchat.ChatActivity.class);
+                chatActivity.putExtra("EXTRA_USERNAME",contactList.get(position).getUsername());
+                getApplicationContext().startActivity(chatActivity);
             }
         });
     }
