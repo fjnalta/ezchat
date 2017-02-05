@@ -1,5 +1,6 @@
 package eu.ezlife.ezchat.ezchat;
 
+import android.icu.text.SimpleDateFormat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +18,7 @@ import org.jivesoftware.smack.chat.ChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import eu.ezlife.ezchat.ezchat.components.myXMPPConnection;
@@ -58,7 +60,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                 Message newMessage = new Message();
                 newMessage.setFrom(myXMPPConnection.getUsername());
                 newMessage.setBody(chatEdit.getText().toString());
-                chatHistoryEntry.add(new ChatHistoryEntry(newMessage.getFrom(),newMessage.getBody()));
+                chatHistoryEntry.add(new ChatHistoryEntry(newMessage.getFrom(),newMessage.getTo(),newMessage.getBody(),SimpleDateFormat.getDateTimeInstance().format(new Date())));
 
                 sendMessage(getIntent().getStringExtra("EXTRA_USERNAME"),newMessage);
                 chatEdit.setText("");
@@ -98,7 +100,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                     Message newMessage = new Message();
                     newMessage.setBody(message.getBody());
                     newMessage.setFrom(message.getFrom());
-                    chatHistoryEntry.add(new ChatHistoryEntry(newMessage.getFrom(),newMessage.getBody()));
+                    chatHistoryEntry.add(new ChatHistoryEntry(newMessage.getFrom(),newMessage.getTo(),newMessage.getBody(),SimpleDateFormat.getDateTimeInstance().format(new Date())));
 
                     runOnUiThread(new Runnable() {
                         @Override
