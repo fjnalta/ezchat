@@ -17,10 +17,10 @@ import org.jivesoftware.smack.chat.ChatManagerListener;
 import org.jivesoftware.smack.chat.ChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import eu.ezlife.ezchat.ezchat.components.myDBDataSource;
 import eu.ezlife.ezchat.ezchat.components.myXMPPConnection;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 
@@ -34,48 +34,60 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
     private ArrayAdapter<ChatHistoryEntry> chatHistoryAdapter;
     private List<ChatHistoryEntry> chatHistoryEntry;
 
+    private myDBDataSource dbhandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
- //       Toast.makeText(getApplicationContext(), getIntent().getStringExtra("EXTRA_USERNAME"), Toast.LENGTH_SHORT).show();
+        dbhandler = new myDBDataSource(this);
         chatManager = ChatManager.getInstanceFor(myXMPPConnection.getConnection());
 
         myChat = chatManager.createChat(getIntent().getStringExtra("EXTRA_USERNAME"));
         chatCreated(myChat,true);
 
-        chatHistoryEntry = new ArrayList<ChatHistoryEntry>();
+        dbhandler.open();
+        dbhandler.createNewMessageTable(cutRessourceFromUsername("message_" + getIntent().getStringExtra("EXTRA_USERNAME")));
+        chatHistoryEntry = dbhandler.getAllMessages(cutRessourceFromUsername("message_" + getIntent().getStringExtra("EXTRA_USERNAME")));
+        dbhandler.close();
         chatHistoryAdapter = new ArrayAdapter<ChatHistoryEntry>(getApplicationContext(),android.R.layout.simple_list_item_1, chatHistoryEntry);
         chatHistoryView = (ListView) findViewById(R.id.chat_list_view);
+
 
         chatHistoryView.setAdapter(chatHistoryAdapter);
 
         chatEdit = (EditText) findViewById(R.id.chat_edit_text1);
         sendButton = (ImageView) findViewById(R.id.enter_chat1);
 
+
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Message newMessage = new Message();
                 newMessage.setFrom(myXMPPConnection.getUsername());
+                newMessage.setTo(cutRessourceFromUsername(getIntent().getStringExtra("EXTRA_USERNAME")));
                 newMessage.setBody(chatEdit.getText().toString());
-                chatHistoryEntry.add(new ChatHistoryEntry(newMessage.getFrom(),newMessage.getTo(),newMessage.getBody(),SimpleDateFormat.getDateTimeInstance().format(new Date())));
 
+
+                // Create Custom Time Format for DB Sorting
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                sdf.getDateTimeInstance().format(new Date());
+                // Open DB and save Message
+                dbhandler.open();
+                sdf = new SimpleDateFormat("HH:MM");
+                // create DB-Entry and add Item to chatHistoryList
+                chatHistoryEntry.add(dbhandler.createMessage(newMessage.getFrom(),newMessage.getTo(),newMessage.getBody(),sdf.getDateTimeInstance().format(new Date())));
+                // Close DB
+                dbhandler.close();
+                // Send message through XMPP
                 sendMessage(getIntent().getStringExtra("EXTRA_USERNAME"),newMessage);
+                // Reset TextBox
                 chatEdit.setText("");
-
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        chatHistoryAdapter.notifyDataSetChanged();
-                    }
-                });
             }
         });
-
     }
+
     public void sendMessage(String username, Message newMessage) {
         if(chatManager!=null) {
             try {
@@ -98,9 +110,20 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
             public void processMessage(Chat chat, Message message) {
                 if(message.getBody() != null){
                     Message newMessage = new Message();
+                    newMessage.setFrom(cutRessourceFromUsername(message.getFrom()));
+                    newMessage.setTo(myXMPPConnection.getUsername());
                     newMessage.setBody(message.getBody());
-                    newMessage.setFrom(message.getFrom());
-                    chatHistoryEntry.add(new ChatHistoryEntry(newMessage.getFrom(),newMessage.getTo(),newMessage.getBody(),SimpleDateFormat.getDateTimeInstance().format(new Date())));
+
+                    // Create Custom Time Format for DB Sorting
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    sdf.getDateTimeInstance().format(new Date());
+                    // Open DB and save Message
+                    dbhandler.open();
+                    sdf = new SimpleDateFormat("HH:MM");
+                    // create DB-Entry and add Item to chatHistoryList
+                    chatHistoryEntry.add(dbhandler.createMessage(newMessage.getFrom(),newMessage.getTo(),newMessage.getBody(),sdf.getDateTimeInstance().format(new Date())));
+                    // Close DB
+                    dbhandler.close();
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -111,5 +134,12 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                 }
             }
         });
+    }
+
+    public String cutRessourceFromUsername(String username) {
+        String str = username;
+        int dotIndex = str.indexOf("@");
+        str = str.substring(0, dotIndex);
+        return str;
     }
 }

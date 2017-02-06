@@ -6,12 +6,22 @@ package eu.ezlife.ezchat.ezchat.data;
 
 public class ChatHistoryEntry {
 
-    private String date;
+    private long id;
     private String from;
     private String to;
+    private String date;
     private String body;
 
-    public ChatHistoryEntry(String from, String to, String body, String date){
+
+    public ChatHistoryEntry(long id, String from, String to, String date, String body){
+        this.from = from;
+        this.to = to;
+        this.body = body;
+        this.date = date;
+        this.id = id;
+    }
+
+    public ChatHistoryEntry(String from, String to, String date, String body){
         this.from = from;
         this.to = to;
         this.body = body;
@@ -32,6 +42,14 @@ public class ChatHistoryEntry {
 
     public String getDate(){
         return date;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
