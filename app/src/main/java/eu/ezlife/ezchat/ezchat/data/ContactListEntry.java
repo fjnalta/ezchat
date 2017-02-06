@@ -6,23 +6,29 @@ package eu.ezlife.ezchat.ezchat.data;
 
 public class ContactListEntry {
 
-    private String name;
-    private String status;
+    private String contactName;
     private String username;
+    private String lastMessage;
+    private String status;
+    private boolean isTyping;
+    private int iconID;
 
-    public ContactListEntry(String name, String status, String username){
-        this.name = name;
-        this.status = status;
+    public ContactListEntry(String username, String status, String contactName){
         this.username = username;
+        this.lastMessage = " - ";
+        this.status = status;
+        this.isTyping = false;
+        this.iconID = 0;
+        this.contactName = contactName;
     }
 
     // Setter + Getter
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getStatus() {
@@ -33,12 +39,40 @@ public class ContactListEntry {
         this.status = status;
     }
 
-    public String getUsername() {
-        return username;
+    public boolean isTyping() {
+        return isTyping;
+    }
+
+    public void setTyping(boolean typing) {
+        isTyping = typing;
+    }
+
+    public int getIconID() {
+        return iconID;
+    }
+
+    public void setIconID(int iconID) {
+        this.iconID = iconID;
+    }
+
+    public String getLastMessage() {
+        return lastMessage;
+    }
+
+    public void setLastMessage(String lastMessage) {
+        this.lastMessage = lastMessage;
+    }
+
+    public String getContactName() {
+        return contactName;
+    }
+
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
     }
 
     @Override
     public String toString() {
-        return getName() + " - " + getStatus() + "\n" + getName();
+        return getUsername() + "\n" + getStatus() ;
     }
 }

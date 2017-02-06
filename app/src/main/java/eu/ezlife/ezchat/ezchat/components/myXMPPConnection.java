@@ -92,7 +92,7 @@ public class myXMPPConnection extends AsyncTask<String, String, String> {
             contactList.clear();
             for (RosterEntry entry : rosterEntries) {
                 presence = roster.getPresence(entry.getUser());
-                contactList.add(new ContactListEntry(entry.getName(),presence.getType().name(),entry.getUser()));
+                contactList.add(new ContactListEntry(entry.getUser(),presence.getType().name(),entry.getName()));
             }
         } catch (Exception e) {
             Log.w("app", e.toString());

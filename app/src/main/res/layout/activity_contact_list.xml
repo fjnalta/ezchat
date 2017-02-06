@@ -11,7 +11,7 @@
     tools:context="eu.ezlife.ezchat.ezchat.ContactListActivity">
 
     <ListView
-        android:id="@+id/contact_list"
+        android:id="@+id/contact_listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"></ListView>
 </RelativeLayout>

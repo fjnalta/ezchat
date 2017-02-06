@@ -1,5 +1,6 @@
 package eu.ezlife.ezchat.ezchat;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import org.jivesoftware.smack.roster.RosterListener;
 
 import java.util.Collection;
 
+import eu.ezlife.ezchat.ezchat.components.myContactListAdapter;
 import eu.ezlife.ezchat.ezchat.components.myXMPPConnection;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
@@ -43,9 +45,7 @@ public class ContactListActivity extends AppCompatActivity {
             public void entriesDeleted(Collection<String> addresses) {}
             // Ignored events public void entriesAdded(Collection<String> addresses) {}
             public void presenceChanged(Presence presence) {
-                Log.d("ContactListActivity",presence.getFrom());
                 myXMPPConnection.updateContactList();
-
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -57,8 +57,9 @@ public class ContactListActivity extends AppCompatActivity {
     }
 
     private void createContactList() {
-        contactsAdapter = new ArrayAdapter<ContactListEntry>(getApplicationContext(),android.R.layout.simple_list_item_1,myXMPPConnection.getContactList());
-        myList = (ListView) findViewById(R.id.contact_list);
+//        contactsAdapter = new ArrayAdapter<ContactListEntry>(getApplicationContext(),,);
+        contactsAdapter = new myContactListAdapter(this, myXMPPConnection.getContactList());
+        myList = (ListView) findViewById(R.id.contact_listView);
         myList.setAdapter(contactsAdapter);
         // Add onClickListener to all Items
         myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
