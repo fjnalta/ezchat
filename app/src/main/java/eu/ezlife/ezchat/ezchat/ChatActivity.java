@@ -98,9 +98,6 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                 e.printStackTrace();
             }
         }
-        else {
-            Log.d("ChatActivity","chatmanager is null");
-        }
     }
 
     @Override
