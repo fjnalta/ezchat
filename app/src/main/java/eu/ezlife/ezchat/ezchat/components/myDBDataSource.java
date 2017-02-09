@@ -3,6 +3,7 @@ package eu.ezlife.ezchat.ezchat.components;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -17,8 +18,8 @@ import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 
 public class myDBDataSource {
 
-    private SQLiteDatabase database;
     private myDBHandler dbHandler;
+    private SQLiteDatabase database;
 
     private String[] columns_contacts = {
             myDBHandler.COLUMN_ID,
@@ -26,7 +27,6 @@ public class myDBDataSource {
             myDBHandler.COLUMN_NAME,
             myDBHandler.COLUMN_AVATAR,
             myDBHandler.COLUMN_RESOURCE,
-            myDBHandler.COLUMN_CONTACTS_ID
     };
 
     private String[] columns_messages = {
@@ -90,20 +90,26 @@ public class myDBDataSource {
     public List<ChatHistoryEntry> getAllMessages(String username) {
         List<ChatHistoryEntry> chatHistoryList = new ArrayList<>();
 
-        Cursor cursor = database.query(myDBHandler.TABLE_MESSAGES,
-                columns_messages, myDBHandler.COLUMN_USERNAME + "=\"" + username + "\"",
-                null, null, null, null);
+        if (ConversationExists(username)) {
 
-        cursor.moveToFirst();
-        ChatHistoryEntry entry;
+            Cursor cursor = database.query(myDBHandler.TABLE_MESSAGES,
+                    columns_messages, myDBHandler.COLUMN_USERNAME + "=\"" + username + "\"",
+                    null, null, null, null);
 
-        while(!cursor.isAfterLast()) {
-            entry = cursorToChatHistoryEntry(cursor);
-            chatHistoryList.add(entry);
-            cursor.moveToNext();
+            cursor.moveToFirst();
+            ChatHistoryEntry entry;
+
+            while (!cursor.isAfterLast()) {
+                entry = cursorToChatHistoryEntry(cursor);
+                chatHistoryList.add(entry);
+                cursor.moveToNext();
+            }
+            cursor.close();
+
         }
-        cursor.close();
+
         return chatHistoryList;
+
     }
 
     // TODO - delete chat History Entry
@@ -120,6 +126,11 @@ public class myDBDataSource {
         cursor.close();
 
         return myHistoryEntry;
+    }
+
+    public boolean ConversationExists(String username) {
+        return DatabaseUtils.longForQuery(database, "SELECT COUNT(*) FROM " + myDBHandler.TABLE_MESSAGES +
+                " WHERE " + myDBHandler.COLUMN_CONTACTS_ID + "=" + getUser(username).getContactsId() + " limit 1", new String[] {"1"}) > 0;
     }
 
     // Use Cursor to return Items from DB

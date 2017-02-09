@@ -27,8 +27,6 @@ public class myContactListAdapter extends ArrayAdapter<ContactListEntry> {
         super(context, R.layout.contact_list_view, objects);
         this.contactList = objects;
         this.context = context;
-
-        dbHandler = new myDBDataSource(context);
     }
 
     @Override
@@ -51,7 +49,7 @@ public class myContactListAdapter extends ArrayAdapter<ContactListEntry> {
         if (currentEntry.getIsTyping() == 1) {
             lastMessageText.setText("is typing ...");
         } else {
-            lastMessageText.setText(dbHandler.getLastMessage(currentEntry.getContactName()));
+            lastMessageText.setText(" - ");
         }
 
  //       Log.d("ContactListAdapter", currentEntry.getIconID() + "");

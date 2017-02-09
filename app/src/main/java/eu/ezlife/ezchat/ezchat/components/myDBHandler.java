@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.io.File;
+
 /**
  * Created by ajo on 05.02.2017.
  */
@@ -15,8 +17,7 @@ public class myDBHandler extends SQLiteOpenHelper {
     public static final String TAG = "MyDBHelper";
     // DB-Settings
     public static final String DB_NAME = "ezChat.db";
-    public static final int DB_VERSION = 2;
-    public static final String DB_DELETE = "DROP DATABASE IF EXISTS " + DB_NAME;
+    public static final int DB_VERSION = 11;
     // Tables
     public static final String TABLE_CONTACTS = "contacts";
     public static final String TABLE_SETTINGS = "settings";
@@ -53,6 +54,7 @@ public class myDBHandler extends SQLiteOpenHelper {
                     "(" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_MESSAGES + " INTEGER NOT NULL, " +
                     COLUMN_PUSH + " INTEGER NOT NULL, " +
+                    COLUMN_CONTACTS_ID + " INTEGER NOT NULL, " +
                     "FOREIGN KEY(" + COLUMN_CONTACTS_ID + ") REFERENCES " +
                     TABLE_CONTACTS + "(" + COLUMN_ID + "));";
 
@@ -63,7 +65,8 @@ public class myDBHandler extends SQLiteOpenHelper {
                     COLUMN_SNDR + " TEXT, " +
                     COLUMN_RCPT + " TEXT, " +
                     COLUMN_DATE  + " TEXT, " +
-                    COLUMN_CONTENT + " TEXT" +
+                    COLUMN_CONTENT + " TEXT, " +
+                    COLUMN_CONTACTS_ID + " INTEGER NOT NULL, " +
                     "FOREIGN KEY(" + COLUMN_CONTACTS_ID + ") REFERENCES " +
                     TABLE_CONTACTS + "(" + COLUMN_ID + "));";
 
@@ -77,9 +80,7 @@ public class myDBHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         try {
             Log.d(TAG, "Die Tabelle wird mit SQL-Befehl: " + SQL_CREATE_SETTINGS_TABLE + " angelegt.");
-            db.execSQL(SQL_CREATE_CONTACTS_TABLE);
-            db.execSQL(SQL_CREATE_SETTINGS_TABLE);
-            db.execSQL(SQL_CREATE_MESSAGES_TABLE);
+            db.execSQL(SQL_CREATE_CONTACTS_TABLE + SQL_CREATE_SETTINGS_TABLE + SQL_CREATE_MESSAGES_TABLE);
         } catch (Exception ex) {
             Log.e(TAG, "Fehler beim Anlegen der Tabelle: " + ex.getMessage());
         }
@@ -88,8 +89,8 @@ public class myDBHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         try {
-            Log.d(TAG, "Die Datenbank wird mit dem SQL-Befehl: " + DB_DELETE + " gelöscht.");
-            db.execSQL(DB_DELETE);
+            Log.d(TAG, "Die Datenbank wird gelöscht.");
+            db.deleteDatabase(new File(db.getPath()));
             onCreate(db);
         } catch (Exception ex) {
             Log.e(TAG, "Fehler beim Löschen der Datenbank" + ex.getMessage());

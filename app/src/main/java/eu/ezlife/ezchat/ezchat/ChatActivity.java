@@ -31,7 +31,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
     private Chat myChat;
     private ListView chatHistoryView;
     private ArrayAdapter<ChatHistoryEntry> chatHistoryAdapter;
-    private List<ChatHistoryEntry> chatHistoryEntry;
+    private List<ChatHistoryEntry> chatHistory;
 
     private myDBDataSource dbHandler;
 
@@ -41,12 +41,18 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
         setContentView(R.layout.activity_chat);
 
         dbHandler = new myDBDataSource(this);
+
         chatManager = ChatManager.getInstanceFor(myXMPPConnection.getConnection());
+
+        dbHandler.open();
+
+        chatHistory = dbHandler.getAllMessages(cutResourceFromUsername(getIntent().getStringExtra("EXTRA_USERNAME")));
+        dbHandler.close();
 
         myChat = chatManager.createChat(getIntent().getStringExtra("EXTRA_USERNAME"));
         chatCreated(myChat,true);
 
-        chatHistoryAdapter = new ArrayAdapter<ChatHistoryEntry>(getApplicationContext(),android.R.layout.simple_list_item_1, chatHistoryEntry);
+        chatHistoryAdapter = new ArrayAdapter<ChatHistoryEntry>(getApplicationContext(),android.R.layout.simple_list_item_1, chatHistory);
         chatHistoryView = (ListView) findViewById(R.id.chat_list_view);
 
         chatHistoryView.setAdapter(chatHistoryAdapter);
@@ -71,7 +77,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                 dbHandler.open();
                 sdf = new SimpleDateFormat("HH:MM");
                 // create DB-Entry and add Item to chatHistoryList
-                chatHistoryEntry.add(dbHandler.createMessage(newMessage.getFrom(),
+                chatHistory.add(dbHandler.createMessage(newMessage.getFrom(),
                         newMessage.getTo(),
                         newMessage.getBody(),
                         sdf.getDateTimeInstance().format(new Date()),
@@ -115,7 +121,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                     dbHandler.open();
                     sdf = new SimpleDateFormat("HH:MM");
                     // create DB-Entry and add Item to chatHistoryList
-                    chatHistoryEntry.add(dbHandler.createMessage(newMessage.getFrom(),
+                    chatHistory.add(dbHandler.createMessage(newMessage.getFrom(),
                             newMessage.getTo(),
                             newMessage.getBody(),
                             sdf.getDateTimeInstance().format(new Date()),

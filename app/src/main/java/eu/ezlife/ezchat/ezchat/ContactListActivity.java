@@ -64,6 +64,7 @@ public class ContactListActivity extends AppCompatActivity {
                 // Load chatActivity
                 Intent chatActivity = new Intent(getApplicationContext(), eu.ezlife.ezchat.ezchat.ChatActivity.class);
                 chatActivity.putExtra("EXTRA_USERNAME",myXMPPConnection.getContactList().get(position).getUsername());
+
                 getApplicationContext().startActivity(chatActivity);
             }
         });
