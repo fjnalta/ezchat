@@ -11,21 +11,15 @@ public class ChatHistoryEntry {
     private String to;
     private String date;
     private String body;
+    private int contactsId;
 
-
-    public ChatHistoryEntry(long id, String from, String to, String date, String body){
+    public ChatHistoryEntry(long id, String from, String to, String date, String body, int contactsId){
         this.from = from;
         this.to = to;
         this.body = body;
         this.date = date;
         this.id = id;
-    }
-
-    public ChatHistoryEntry(String from, String to, String date, String body){
-        this.from = from;
-        this.to = to;
-        this.body = body;
-        this.date = date;
+        this.contactsId = contactsId;
     }
 
     public String getFrom() {
@@ -50,6 +44,14 @@ public class ChatHistoryEntry {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getContactsId() {
+        return contactsId;
+    }
+
+    public void setContactsId(int contactsId) {
+        this.contactsId = contactsId;
     }
 
     @Override

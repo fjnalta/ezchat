@@ -1,10 +1,8 @@
 package eu.ezlife.ezchat.ezchat;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -57,7 +55,6 @@ public class ContactListActivity extends AppCompatActivity {
     }
 
     private void createContactList() {
-//        contactsAdapter = new ArrayAdapter<ContactListEntry>(getApplicationContext(),,);
         contactsAdapter = new myContactListAdapter(this, myXMPPConnection.getContactList());
         myList = (ListView) findViewById(R.id.contact_listView);
         myList.setAdapter(contactsAdapter);

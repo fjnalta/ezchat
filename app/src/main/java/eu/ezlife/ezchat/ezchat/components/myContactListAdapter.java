@@ -1,18 +1,11 @@
 package eu.ezlife.ezchat.ezchat.components;
 
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.jivesoftware.smack.AbstractXMPPConnection;
 
 import java.util.List;
 
@@ -28,13 +21,16 @@ public class myContactListAdapter extends ArrayAdapter<ContactListEntry> {
     private final List<ContactListEntry> contactList;
     private final Activity context;
 
+    private myDBDataSource dbHandler;
+
     public myContactListAdapter(Activity context, List<ContactListEntry> objects) {
         super(context, R.layout.contact_list_view, objects);
         this.contactList = objects;
         this.context = context;
+
+        dbHandler = new myDBDataSource(context);
     }
 
-    @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -52,10 +48,10 @@ public class myContactListAdapter extends ArrayAdapter<ContactListEntry> {
         contactNameText.setText(currentEntry.getContactName());
 
         TextView lastMessageText = (TextView) itemView.findViewById(R.id.item_text_lastMessage);
-        if (currentEntry.isTyping()) {
+        if (currentEntry.getIsTyping() == 1) {
             lastMessageText.setText("is typing ...");
         } else {
-            lastMessageText.setText(currentEntry.getLastMessage());
+            lastMessageText.setText(dbHandler.getLastMessage(currentEntry.getContactName()));
         }
 
  //       Log.d("ContactListAdapter", currentEntry.getIconID() + "");
