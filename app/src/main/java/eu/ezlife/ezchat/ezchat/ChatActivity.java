@@ -46,7 +46,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
 
         dbHandler.open();
 
-        chatHistory = dbHandler.getAllMessages(cutResourceFromUsername(getIntent().getStringExtra("EXTRA_USERNAME")));
+        chatHistory = dbHandler.getChatHistory(cutResourceFromUsername(getIntent().getStringExtra("EXTRA_USERNAME")));
         dbHandler.close();
 
         myChat = chatManager.createChat(getIntent().getStringExtra("EXTRA_USERNAME"));

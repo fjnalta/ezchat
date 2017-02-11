@@ -32,7 +32,7 @@ public class myDBHandler extends SQLiteOpenHelper {
     public static final String COLUMN_USERNAME = "username";
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_AVATAR = "avatar";
-    public static final String COLUMN_RESOURCE = "resource";
+    public static final String COLUMN_CONTACT_NAME = "contact_name";
     // Message Table Rows
     public static final String COLUMN_SNDR = "sndr";
     public static final String COLUMN_RCPT = "rcpt";
@@ -46,7 +46,7 @@ public class myDBHandler extends SQLiteOpenHelper {
                     COLUMN_USERNAME + " TEXT, " +
                     COLUMN_NAME + " TEXT, " +
                     COLUMN_AVATAR + " INTEGER, " +
-                    COLUMN_RESOURCE + " TEXT);";
+                    COLUMN_CONTACT_NAME + " TEXT);";
 
     // Settings Table SQL String
     public static final String SQL_CREATE_SETTINGS_TABLE =

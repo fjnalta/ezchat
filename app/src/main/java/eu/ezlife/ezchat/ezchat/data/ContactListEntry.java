@@ -6,104 +6,53 @@ package eu.ezlife.ezchat.ezchat.data;
 
 public class ContactListEntry {
 
-    private String username;
-    private String name;
-    private String contactName;
-    private String status;
-    private String resource;
-    private int isOnline;
-    private int isTyping;
-    private int avatar;
+    private int status;
+    private boolean isOnline;
+    private boolean isTyping;
+    private long contactId;
 
-    public ContactListEntry(String username, String status, String name){
-        this.username = username;
-        this.name = name;
-        this.contactName = name;
+    public ContactListEntry(int status, boolean isOnline, boolean isTyping, long contactId){
         this.status = status;
-        this.resource = "-";
-        this.isTyping = 0;
-        this.avatar = 0;
-        this.isOnline = 0;
-    }
-
-    public ContactListEntry(String username, String name, String status, int isOnline, int avatar, int isTyping, String resource) {
-        this.username = username;
-        this.name = name;
-        this.contactName = name;
-        this.status = status;
-        this.isOnline = isOnline;
-        this.avatar = avatar;
-        this.isTyping = isTyping;
-        this.resource = resource;
+        this.isTyping = false;
+        this.isOnline = false;
+        this.contactId = contactId;
     }
 
     // Setter + Getter
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 
-    public String getContactName() {
-        return contactName;
-    }
-
-    public void setContactName(String contactName) {
-        this.contactName = contactName;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getResource() {
-        return resource;
-    }
-
-    public void setResource(String resource) {
-        this.resource = resource;
-    }
-
-    public int getIsOnline() {
+    public boolean isOnline() {
         return isOnline;
     }
 
-    public void setIsOnline(int isOnline) {
-        this.isOnline = isOnline;
+    public void setOnline(boolean online) {
+        isOnline = online;
     }
 
-    public int getIsTyping() {
+    public boolean isTyping() {
         return isTyping;
     }
 
-    public void setIsTyping(int isTyping) {
-        this.isTyping = isTyping;
+    public void setTyping(boolean typing) {
+        isTyping = typing;
     }
 
-    public int getAvatar() {
-        return avatar;
+    public long getContactId() {
+        return contactId;
     }
 
-    public void setAvatar(int avatar) {
-        this.avatar = avatar;
+    public void setContactId(long contactId) {
+        this.contactId = contactId;
     }
 
     @Override
     public String toString() {
-        return getUsername() + "\n" + getStatus() ;
+        return getStatus() + "";
     }
 }
