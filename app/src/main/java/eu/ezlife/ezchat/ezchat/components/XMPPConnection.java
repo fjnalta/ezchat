@@ -1,38 +1,31 @@
 package eu.ezlife.ezchat.ezchat.components;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.roster.Roster;
-import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
 /**
  * Created by ajo on 04.02.2017.
  */
 
-public class myXMPPConnection extends AsyncTask<String, String, String> {
+public class XMPPConnection extends AsyncTask<String, String, String> {
 
     private static AbstractXMPPConnection connection;
     private static String username;
     private static String password;
 
-    private static Collection<RosterEntry> rosterEntries;
-    private static List<ContactListEntry> contactList = new ArrayList<ContactListEntry>();
+    private Context context;
 
-    public myXMPPConnection(String username, String password) {
+    public XMPPConnection(String username, String password, Context context) {
         setUsername(username);
         setPassword(password);
+        this.context = context;
     }
 
     // connect in Background mode
@@ -58,7 +51,11 @@ public class myXMPPConnection extends AsyncTask<String, String, String> {
             }
             connection.login();
             if (connection.isAuthenticated()) {
-                updateContactList();
+                Intent contactListActivity = new Intent(context, eu.ezlife.ezchat.ezchat.ContactListActivity.class);
+                contactListActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(contactListActivity);
+            } else {
+                Log.d("TAG","failed dude");
             }
         } catch (Exception e) {
             Log.w("app", e.toString());
@@ -71,40 +68,12 @@ public class myXMPPConnection extends AsyncTask<String, String, String> {
 
     }
 
-    // Setter + Getter
-    // ---------------
-    public static void setRosterEntries(Collection<RosterEntry> rosterEntries) {
-        myXMPPConnection.rosterEntries = rosterEntries;
-    }
-
-    public static List<ContactListEntry> getContactList(){
-        return contactList;
-    }
-
-    public static void updateContactList(){
-        try {
-            Roster roster = Roster.getInstanceFor(connection);
-            if (!roster.isLoaded())
-                roster.reloadAndWait();
-            setRosterEntries(roster.getEntries());
-
-            Presence presence;
-            contactList.clear();
-            for (RosterEntry entry : rosterEntries) {
-                presence = roster.getPresence(entry.getUser());
-                contactList.add(new ContactListEntry(entry.getUser(),presence.getType().name(),entry.getName()));
-            }
-        } catch (Exception e) {
-            Log.w("app", e.toString());
-        }
-    }
-
     public static String getUsername() {
         return username;
     }
 
     public static void setUsername(String username) {
-        myXMPPConnection.username = username;
+        XMPPConnection.username = username;
     }
 
     public static String getPassword() {
@@ -112,7 +81,7 @@ public class myXMPPConnection extends AsyncTask<String, String, String> {
     }
 
     public static void setPassword(String password) {
-        myXMPPConnection.password = password;
+        XMPPConnection.password = password;
     }
 
     public static AbstractXMPPConnection getConnection() {

@@ -3,6 +3,7 @@ package eu.ezlife.ezchat.ezchat;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -10,30 +11,45 @@ import android.widget.ListView;
 
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterListener;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
-import eu.ezlife.ezchat.ezchat.components.myContactListAdapter;
-import eu.ezlife.ezchat.ezchat.components.myXMPPConnection;
+import eu.ezlife.ezchat.ezchat.components.adapter.ContactListAdapter;
+import eu.ezlife.ezchat.ezchat.components.DBDataSource;
+import eu.ezlife.ezchat.ezchat.components.XMPPConnection;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
 public class ContactListActivity extends AppCompatActivity {
 
     private ListView myList;
-    private ArrayAdapter<ContactListEntry> contactsAdapter;
-    private Roster roster = Roster.getInstanceFor(myXMPPConnection.getConnection());
+
+    private Roster roster = Roster.getInstanceFor(XMPPConnection.getConnection());
+
+    private List<ContactListEntry> contactList = new ArrayList<ContactListEntry>();
+    private ArrayAdapter<ContactListEntry> contactListAdapter;
+
+    private DBDataSource dbHandler;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_list);
 
-        // Retrieve the contactList from Server
-        myXMPPConnection.updateContactList();
+        // set DB-Handler
+        dbHandler = new DBDataSource(this);
+        // retrieve contact List from Server and update DB
+        checkForDbUpdates();
         // create contact List on View
         createContactList();
-        // Add listener for contact status
+        // Add listener to contact List
+        setContactListAdapter();
+
+        // Add listener for live updates
         roster.addRosterListener(new RosterListener() {
             @Override
             public void entriesAdded(Collection<String> addresses) {}
@@ -43,30 +59,87 @@ public class ContactListActivity extends AppCompatActivity {
             public void entriesDeleted(Collection<String> addresses) {}
             // Ignored events public void entriesAdded(Collection<String> addresses) {}
             public void presenceChanged(Presence presence) {
-                myXMPPConnection.updateContactList();
+                Log.d("AJO", "CALLED!");
+                createContactList();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        contactsAdapter.notifyDataSetChanged();
+                        contactListAdapter.notifyDataSetChanged();
                     }
                 });
             }
         });
     }
 
+    private void checkForDbUpdates() {
+        dbHandler.open();
+        // check for new users
+        if(dbHandler.getContacts().size() != roster.getEntryCount()) {
+            for(RosterEntry entry : roster.getEntries()) {
+                if(dbHandler.getContact(entry.getUser()) == null) {
+                    dbHandler.createContact(entry.getUser(), entry.getName(), R.mipmap.ic_launcher, entry.getName());
+                }
+            }
+        }
+        // check for avatar changes
+
+        dbHandler.close();
+    }
+
     private void createContactList() {
-        contactsAdapter = new myContactListAdapter(this, myXMPPConnection.getContactList());
+        try {
+            if (!roster.isLoaded())
+                roster.reloadAndWait();
+
+            dbHandler.open();
+
+            Collection<RosterEntry> rosterEntries = roster.getEntries();
+            Presence presence;
+            contactList.clear();
+
+            for (RosterEntry entry : rosterEntries) {
+                presence = roster.getPresence(entry.getUser());
+                contactList.add(new ContactListEntry(dbHandler.getContact(entry.getUser()),evaluateContactStatus(presence),presence.isAvailable(),false));
+            }
+
+            dbHandler.close();
+        } catch (Exception e) {
+            Log.w("app", e.toString());
+        }
+    }
+
+    private void setContactListAdapter() {
+        contactListAdapter = new ContactListAdapter(this, contactList);
         myList = (ListView) findViewById(R.id.contact_listView);
-        myList.setAdapter(contactsAdapter);
+        myList.setAdapter(contactListAdapter);
+
         // Add onClickListener to all Items
         myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Load chatActivity
                 Intent chatActivity = new Intent(getApplicationContext(), eu.ezlife.ezchat.ezchat.ChatActivity.class);
-                chatActivity.putExtra("EXTRA_USERNAME",myXMPPConnection.getContactList().get(position).getUsername());
-
+                chatActivity.putExtra("EXTRA_USERNAME",contactList.get(position).getUsername());
+                chatActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getApplicationContext().startActivity(chatActivity);
             }
         });
+    }
+
+    private int evaluateContactStatus(Presence presence){
+        int stat = R.drawable.icon_offline;
+        if(presence.isAvailable()) {
+            if(presence.getMode().name().equals("available")) {
+                stat = R.drawable.icon_online;
+            }
+            if(presence.getMode().name().equals("away")) {
+                stat = R.drawable.icon_away;
+            }
+            if(presence.getMode().name().equals("dnd")) {
+                stat = R.drawable.icon_dnd;
+            }
+        } else {
+            stat = R.drawable.icon_offline;
+        }
+        return stat;
     }
 }

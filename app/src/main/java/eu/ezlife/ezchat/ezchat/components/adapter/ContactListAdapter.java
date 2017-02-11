@@ -1,10 +1,11 @@
-package eu.ezlife.ezchat.ezchat.components;
+package eu.ezlife.ezchat.ezchat.components.adapter;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -16,14 +17,12 @@ import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
  * Created by ajo on 06.02.2017.
  */
 
-public class myContactListAdapter extends ArrayAdapter<ContactListEntry> {
+public class ContactListAdapter extends ArrayAdapter<ContactListEntry> {
 
-    private final List<ContactListEntry> contactList;
-    private final Activity context;
+    private List<ContactListEntry> contactList;
+    private Activity context;
 
-    private myDBDataSource dbHandler;
-
-    public myContactListAdapter(Activity context, List<ContactListEntry> objects) {
+    public ContactListAdapter(Activity context, List<ContactListEntry> objects) {
         super(context, R.layout.contact_list_view, objects);
         this.contactList = objects;
         this.context = context;
@@ -40,22 +39,21 @@ public class myContactListAdapter extends ArrayAdapter<ContactListEntry> {
 
         // Fill the View
 //        ImageView imageView = (ImageView) itemView.findViewById(R.id.item_icon_contactlist);
-//        imageView.setImageResource(currentEntry.getIconID());
+//        imageView.setImageResource(currentEntry.getAvatar());
 
         TextView contactNameText = (TextView) itemView.findViewById(R.id.item_text_contactName);
         contactNameText.setText(currentEntry.getContactName());
 
         TextView lastMessageText = (TextView) itemView.findViewById(R.id.item_text_lastMessage);
-        if (currentEntry.getIsTyping() == 1) {
+        if (currentEntry.isTyping()) {
             lastMessageText.setText("is typing ...");
         } else {
-            lastMessageText.setText(" - ");
+            lastMessageText.setText("Last Message");
         }
 
- //       Log.d("ContactListAdapter", currentEntry.getIconID() + "");
 
- //       imageView = (ImageView) imageView.findViewById(R.id.item_icon_status);
- //       imageView.setImageResource(currentEntry.getIconID());
+        ImageView statusImage = (ImageView) itemView.findViewById(R.id.item_icon_status);
+        statusImage.setImageResource(currentEntry.getStatus());
 
         return itemView;
     }

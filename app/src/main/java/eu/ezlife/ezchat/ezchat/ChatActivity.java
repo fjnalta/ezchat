@@ -1,8 +1,8 @@
 package eu.ezlife.ezchat.ezchat;
 
-import android.icu.text.SimpleDateFormat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -16,11 +16,12 @@ import org.jivesoftware.smack.chat.ChatManagerListener;
 import org.jivesoftware.smack.chat.ChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
 
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
-import eu.ezlife.ezchat.ezchat.components.myDBDataSource;
-import eu.ezlife.ezchat.ezchat.components.myXMPPConnection;
+import eu.ezlife.ezchat.ezchat.components.DBDataSource;
+import eu.ezlife.ezchat.ezchat.components.XMPPConnection;
+import eu.ezlife.ezchat.ezchat.components.adapter.ChatAdapter;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 
 public class ChatActivity extends AppCompatActivity implements ChatManagerListener {
@@ -33,26 +34,26 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
     private ArrayAdapter<ChatHistoryEntry> chatHistoryAdapter;
     private List<ChatHistoryEntry> chatHistory;
 
-    private myDBDataSource dbHandler;
+    private DBDataSource dbHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        dbHandler = new myDBDataSource(this);
+        dbHandler = new DBDataSource(this);
 
-        chatManager = ChatManager.getInstanceFor(myXMPPConnection.getConnection());
+        chatManager = ChatManager.getInstanceFor(XMPPConnection.getConnection());
 
         dbHandler.open();
-
-        chatHistory = dbHandler.getChatHistory(cutResourceFromUsername(getIntent().getStringExtra("EXTRA_USERNAME")));
+        chatHistory = dbHandler.getChatHistory(dbHandler.getContact(getIntent().getStringExtra("EXTRA_USERNAME")).getId());
         dbHandler.close();
 
         myChat = chatManager.createChat(getIntent().getStringExtra("EXTRA_USERNAME"));
         chatCreated(myChat,true);
 
-        chatHistoryAdapter = new ArrayAdapter<ChatHistoryEntry>(getApplicationContext(),android.R.layout.simple_list_item_1, chatHistory);
+//        chatHistoryAdapter = new ArrayAdapter<ChatHistoryEntry>(getApplicationContext(),android.R.layout.simple_list_item_1, chatHistory);
+        chatHistoryAdapter = new ChatAdapter(this, chatHistory);
         chatHistoryView = (ListView) findViewById(R.id.chat_list_view);
 
         chatHistoryView.setAdapter(chatHistoryAdapter);
@@ -65,23 +66,22 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
             @Override
             public void onClick(View view) {
                 Message newMessage = new Message();
-                newMessage.setFrom(myXMPPConnection.getUsername());
+                newMessage.setFrom(XMPPConnection.getUsername());
                 newMessage.setTo(cutResourceFromUsername(getIntent().getStringExtra("EXTRA_USERNAME")));
                 newMessage.setBody(chatEdit.getText().toString());
 
 
                 // Create Custom Time Format for DB Sorting
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                sdf.getDateTimeInstance().format(new Date());
+                Calendar c = Calendar.getInstance();
+                Log.d("TAG",c.getTime().toString());
                 // Open DB and save Message
                 dbHandler.open();
-                sdf = new SimpleDateFormat("HH:MM");
                 // create DB-Entry and add Item to chatHistoryList
                 chatHistory.add(dbHandler.createMessage(newMessage.getFrom(),
                         newMessage.getTo(),
                         newMessage.getBody(),
-                        sdf.getDateTimeInstance().format(new Date()),
-                        dbHandler.getUser(getIntent().getStringExtra("EXTRA_USERNAME")).getContactsId()));
+                        c.getTime().toString(),
+                        dbHandler.getContact(getIntent().getStringExtra("EXTRA_USERNAME")).getId()));
                 // Close DB
                 dbHandler.close();
                 // Send message through XMPP
@@ -95,7 +95,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
     public void sendMessage(String username, Message newMessage) {
         if(chatManager!=null) {
             try {
-                if (myXMPPConnection.getConnection().isConnected() && myXMPPConnection.getConnection().isAuthenticated()) {
+                if (XMPPConnection.getConnection().isConnected() && XMPPConnection.getConnection().isAuthenticated()) {
                     myChat.sendMessage(newMessage);
                 }
             } catch (SmackException.NotConnectedException e) {
@@ -112,20 +112,18 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                 if(message.getBody() != null){
                     Message newMessage = new Message();
                     newMessage.setFrom(cutResourceFromUsername(message.getFrom()));
-                    newMessage.setTo(myXMPPConnection.getUsername());
+                    newMessage.setTo(XMPPConnection.getUsername());
                     newMessage.setBody(message.getBody());
                     // Create Custom Time Format for DB Sorting
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    sdf.getDateTimeInstance().format(new Date());
+                    Calendar c = Calendar.getInstance();
                     // Open DB and save Message
                     dbHandler.open();
-                    sdf = new SimpleDateFormat("HH:MM");
                     // create DB-Entry and add Item to chatHistoryList
                     chatHistory.add(dbHandler.createMessage(newMessage.getFrom(),
                             newMessage.getTo(),
                             newMessage.getBody(),
-                            sdf.getDateTimeInstance().format(new Date()),
-                            dbHandler.getUser(getIntent().getStringExtra("EXTRA_USERNAME")).getContactsId()));
+                            c.getTime().toString(),
+                            dbHandler.getContact(getIntent().getStringExtra("EXTRA_USERNAME")).getId()));
                     // Close DB
                     dbHandler.close();
 

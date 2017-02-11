@@ -1,21 +1,32 @@
 package eu.ezlife.ezchat.ezchat.data;
 
+import eu.ezlife.ezchat.ezchat.R;
+
 /**
  * Created by ajo on 04.02.2017.
  */
 
-public class ContactListEntry {
+public class ContactListEntry extends ContactEntry {
 
     private int status;
     private boolean isOnline;
     private boolean isTyping;
-    private long contactId;
+    private String lastMessage;
 
-    public ContactListEntry(int status, boolean isOnline, boolean isTyping, long contactId){
-        this.status = status;
+    public ContactListEntry(ContactEntry entry){
+        super(entry.getId(),entry.getUsername(),entry.getName(),entry.getAvatar(),entry.getContactName());
+        this.status = R.drawable.icon_offline;
         this.isTyping = false;
         this.isOnline = false;
-        this.contactId = contactId;
+        this.lastMessage = "";
+    }
+
+    public ContactListEntry(ContactEntry entry, int status, boolean isOnline, boolean isTyping){
+        super(entry.getId(),entry.getUsername(),entry.getName(),entry.getAvatar(),entry.getContactName());
+        this.status = status;
+        this.isTyping = isTyping;
+        this.isOnline = isOnline;
+        this.lastMessage = "";
     }
 
     // Setter + Getter
@@ -41,18 +52,5 @@ public class ContactListEntry {
 
     public void setTyping(boolean typing) {
         isTyping = typing;
-    }
-
-    public long getContactId() {
-        return contactId;
-    }
-
-    public void setContactId(long contactId) {
-        this.contactId = contactId;
-    }
-
-    @Override
-    public String toString() {
-        return getStatus() + "";
     }
 }

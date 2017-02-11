@@ -1,17 +1,14 @@
 package eu.ezlife.ezchat.ezchat;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import eu.ezlife.ezchat.ezchat.components.SaveLoginPreference;
-import eu.ezlife.ezchat.ezchat.components.myXMPPConnection;
+import eu.ezlife.ezchat.ezchat.components.XMPPConnection;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -19,85 +16,39 @@ public class LoginActivity extends AppCompatActivity {
     EditText passwordText;
     Button loginButton;
 
+    ProgressDialog progressDialog;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this, R.style.AppTheme);
-
         usernameText = (EditText) findViewById(R.id.input_username);
         passwordText = (EditText) findViewById(R.id.input_password);
         loginButton = (Button) findViewById(R.id.btn_login);
 
+        progressDialog = new ProgressDialog(LoginActivity.this, R.style.AppTheme);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // stop if login validation fails
+                progressDialog.show();
+                // stop if local validation fails
                 if (!localValidation()) {
                     onLoginFailed();
                     return;
                 }
 
-                loginButton.setEnabled(false);
-
-                // show process screen
-                progressDialog.show();
-
                 final String username = usernameText.getText().toString();
                 final String password = passwordText.getText().toString();
 
-                // create connection
-                new myXMPPConnection(username, password).execute("");
-                new android.os.Handler().postDelayed(
-                        new Runnable() {
-                            public void run() {
-                                if (myXMPPConnection.getConnection().isAuthenticated()) {
-                                    Log.d("LoginActivity","success");
-                                    SaveLoginPreference.setCredentials(getApplicationContext(),username,password);
-                                    onLoginSuccess();
-                                } else {
-                                    Log.d("LoginActivity","failed");
-                                    onLoginFailed();
-                                }
-                                progressDialog.dismiss();
-                            }
-                        }, 3000);
+                new XMPPConnection(username,password,getApplicationContext()).execute("");
+
+
             }
         });
-
-        // if user has valid login
-        if (SaveLoginPreference.getUserName(getApplicationContext()).length() != 0 || SaveLoginPreference.getPassword(getApplicationContext()).length() != 0) {
-            progressDialog.show();
-
-            new myXMPPConnection(SaveLoginPreference.getUserName(getApplicationContext()), SaveLoginPreference.getPassword(getApplicationContext())).execute("");
-            new android.os.Handler().postDelayed(
-                    new Runnable() {
-                        public void run() {
-                            if (myXMPPConnection.getConnection().isAuthenticated()) {
-                                onLoginSuccess();
-                            } else {
-                                onLoginFailed();
-                            }
-                        }
-                    }, 3000);
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        // disable going back to the MainActivity
-        moveTaskToBack(true);
-    }
-
-    public void onLoginSuccess() {
-        loginButton.setEnabled(true);
-
-        Intent contactListActivity = new Intent(getApplicationContext(), eu.ezlife.ezchat.ezchat.ContactListActivity.class);
-        getApplicationContext().startActivity(contactListActivity);
     }
 
     public void onLoginFailed() {

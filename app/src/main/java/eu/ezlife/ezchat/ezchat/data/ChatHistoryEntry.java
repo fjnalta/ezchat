@@ -4,6 +4,9 @@ package eu.ezlife.ezchat.ezchat.data;
  * Created by ajo on 05.02.2017.
  */
 
+/*
+* Repesents POJO from DB-Message
+* */
 public class ChatHistoryEntry {
 
     private long id;
@@ -48,7 +51,7 @@ public class ChatHistoryEntry {
 
     @Override
     public String toString() {
-        return getDate() + " - " + getFrom() + ": " + getBody();
+        return getDate() + "\n" + getFrom() + ": " + getBody();
     }
 
 }

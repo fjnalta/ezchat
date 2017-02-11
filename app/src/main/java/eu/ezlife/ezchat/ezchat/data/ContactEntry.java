@@ -4,6 +4,9 @@ package eu.ezlife.ezchat.ezchat.data;
  * Created by ajo on 09.02.2017.
  */
 
+/*
+* Represents POJO from DB-Contact
+* */
 public class ContactEntry {
 
     private long id;
@@ -12,12 +15,19 @@ public class ContactEntry {
     private String contactName;
     private int avatar;
 
+    public ContactEntry(long id, String username, String name, int avatar) {
+        this.id = id;
+        this.username = username;
+        this.name = name;
+        this.avatar = avatar;
+    }
+
     public ContactEntry(long id, String username, String name, int avatar, String contactName) {
         this.id = id;
         this.username = username;
         this.name = name;
-        this.contactName = name;
         this.avatar = avatar;
+        this.contactName = contactName;
     }
 
     public long getId() {
