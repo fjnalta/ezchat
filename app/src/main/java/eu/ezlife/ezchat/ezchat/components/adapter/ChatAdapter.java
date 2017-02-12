@@ -19,8 +19,8 @@ import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 
 public class ChatAdapter extends ArrayAdapter<ChatHistoryEntry> {
 
-    List<ChatHistoryEntry> chatHistory;
-    Activity context;
+    private List<ChatHistoryEntry> chatHistory;
+    private Activity context;
 
     public ChatAdapter(Activity context, List<ChatHistoryEntry> objects) {
         super(context, R.layout.chat_view_left, objects);
