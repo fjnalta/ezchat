@@ -19,8 +19,8 @@ import java.util.Collection;
 import java.util.List;
 
 import eu.ezlife.ezchat.ezchat.components.adapter.ContactListAdapter;
-import eu.ezlife.ezchat.ezchat.components.DBDataSource;
 import eu.ezlife.ezchat.ezchat.components.XMPPConnection;
+import eu.ezlife.ezchat.ezchat.components.database.DBDataSource;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
 public class ContactListActivity extends AppCompatActivity {
@@ -69,7 +69,7 @@ public class ContactListActivity extends AppCompatActivity {
             }
         });
     }
-
+    
     private void checkForDbUpdates() {
         dbHandler.open();
         // check for new users
@@ -98,7 +98,9 @@ public class ContactListActivity extends AppCompatActivity {
 
             for (RosterEntry entry : rosterEntries) {
                 presence = roster.getPresence(entry.getUser());
-                contactList.add(new ContactListEntry(dbHandler.getContact(entry.getUser()),evaluateContactStatus(presence),presence.isAvailable(),false));
+                ContactListEntry currentEntry = new ContactListEntry(dbHandler.getContact(entry.getUser()),evaluateContactStatus(presence),presence.isAvailable(),false);
+                currentEntry.setLastMessage(dbHandler.getLastMessage(entry.getUser()));
+                contactList.add(currentEntry);
             }
 
             dbHandler.close();

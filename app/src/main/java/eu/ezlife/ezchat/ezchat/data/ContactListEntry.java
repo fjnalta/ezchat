@@ -14,7 +14,6 @@ public class ContactListEntry extends ContactEntry {
     private boolean isOnline;
     private boolean isTyping;
     private String lastMessage;
-    private Chat chat;
 
     public ContactListEntry(ContactEntry entry){
         super(entry.getId(),entry.getUsername(),entry.getName(),entry.getAvatar(),entry.getContactName());
@@ -22,7 +21,6 @@ public class ContactListEntry extends ContactEntry {
         this.isTyping = false;
         this.isOnline = false;
         this.lastMessage = "";
-        this.chat = null;
     }
 
     public ContactListEntry(ContactEntry entry, int status, boolean isOnline, boolean isTyping){
@@ -31,7 +29,6 @@ public class ContactListEntry extends ContactEntry {
         this.isTyping = isTyping;
         this.isOnline = isOnline;
         this.lastMessage = "";
-        this.chat = null;
     }
 
     // Setter + Getter
@@ -65,13 +62,5 @@ public class ContactListEntry extends ContactEntry {
 
     public void setLastMessage(String lastMessage) {
         this.lastMessage = lastMessage;
-    }
-
-    public Chat getChat() {
-        return chat;
-    }
-
-    public void setChat(Chat chat) {
-        this.chat = chat;
     }
 }
