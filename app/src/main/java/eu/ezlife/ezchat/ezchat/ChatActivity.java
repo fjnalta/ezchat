@@ -2,7 +2,6 @@ package eu.ezlife.ezchat.ezchat;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -68,11 +67,10 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                 newMessage.setFrom(XMPPConnection.getUsername());
                 newMessage.setTo(cutResourceFromUsername(getIntent().getStringExtra("EXTRA_USERNAME")));
                 newMessage.setBody(chatEdit.getText().toString());
-
-
                 // Create Custom Time Format for DB Sorting
                 Calendar c = Calendar.getInstance();
-                Log.d("TAG",c.getTime().toString());
+                // Send message through XMPP
+                sendMessage(newMessage);
                 // Open DB and save Message
                 dbHandler.open();
                 // create DB-Entry and add Item to chatHistoryList
@@ -83,17 +81,21 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                         dbHandler.getContact(getIntent().getStringExtra("EXTRA_USERNAME")).getId()));
                 // Close DB
                 dbHandler.close();
-                // Send message through XMPP
-                sendMessage(getIntent().getStringExtra("EXTRA_USERNAME"),newMessage);
-
                 // Reset TextBox
                 chatEdit.setText("");
+                // notify about the changes
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        chatHistoryAdapter.notifyDataSetChanged();
+                    }
+                });
             }
         });
     }
 
-    public void sendMessage(String username, Message newMessage) {
-        if(chatManager!=null) {
+    public void sendMessage(Message newMessage) {
+        if(chatManager != null) {
             try {
                 if (XMPPConnection.getConnection().isConnected() && XMPPConnection.getConnection().isAuthenticated()) {
                     myChat.sendMessage(newMessage);
@@ -126,7 +128,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                             dbHandler.getContact(getIntent().getStringExtra("EXTRA_USERNAME")).getId()));
                     // Close DB
                     dbHandler.close();
-
+                    // notify about the changes
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
