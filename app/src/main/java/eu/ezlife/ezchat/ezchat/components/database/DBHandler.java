@@ -1,4 +1,4 @@
-package eu.ezlife.ezchat.ezchat.components;
+package eu.ezlife.ezchat.ezchat.components.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,7 +15,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public static final String TAG = "MyDBHelper";
     // DB-Settings
     public static final String DB_NAME = "ezChat.db";
-    public static final int DB_VERSION = 20;
+    public static final int DB_VERSION = 21;
     // Tables
     public static final String TABLE_CONTACTS = "contacts";
     public static final String TABLE_SETTINGS = "settings";

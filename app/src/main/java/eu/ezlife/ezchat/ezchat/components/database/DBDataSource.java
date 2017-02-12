@@ -1,4 +1,4 @@
-package eu.ezlife.ezchat.ezchat.components;
+package eu.ezlife.ezchat.ezchat.components.database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,6 +9,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.ezlife.ezchat.ezchat.components.XMPPConnection;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 import eu.ezlife.ezchat.ezchat.data.ContactEntry;
 
@@ -122,7 +123,28 @@ public class DBDataSource {
     // -- Contact List Handling --
 
     public String getLastMessage(String username) {
-        return "";
+        ChatHistoryEntry currentEntry = null;
+        Cursor cursor = database.query(DBHandler.TABLE_MESSAGES,
+                columns_messages, DBHandler.COLUMN_CONTACTS_ID + "=" + getContact(username).getId(),
+                null, null, null, DBHandler.COLUMN_ID + " DESC");
+        if(cursor.getCount() != 0) {
+            cursor.moveToFirst();
+            currentEntry = cursorToChatHistoryEntry(cursor);
+            cursor.close();
+
+            if(currentEntry != null) {
+                if(isMyMessage(currentEntry)) {
+
+                    return "-> - " + currentEntry.getBody();
+                } else {
+                    return "<- - " + currentEntry.getBody();
+                }
+            } else {
+                return " - ";
+            }
+        } else {
+            return " - ";
+        }
     }
 
     // -- Chat History Handling --
@@ -199,4 +221,21 @@ public class DBDataSource {
 
         return myHistoryEntry;
     }
+
+    private boolean isMyMessage(ChatHistoryEntry msg){
+        if(msg.getTo().equals(cutResourceFromUsername(XMPPConnection.getConnection().getUser()))) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private String cutResourceFromUsername(String username) {
+        String str = username;
+        int dotIndex = str.indexOf("@");
+        str = str.substring(0, dotIndex);
+        return str;
+    }
 }
+
+
