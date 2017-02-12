@@ -84,7 +84,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
             Log.d(TAG, "Contact Table wird angelegt.");
             db.execSQL(SQL_CREATE_CONTACTS_TABLE);
-            Log.d(TAG, "SettingsTable wird angelegt.");
+            Log.d(TAG, "Settings Table wird angelegt.");
             db.execSQL(SQL_CREATE_SETTINGS_TABLE);
             Log.d(TAG, "Messages Table wird angelegt.");
             db.execSQL(SQL_CREATE_MESSAGES_TABLE);
