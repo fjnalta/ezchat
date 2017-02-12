@@ -7,8 +7,13 @@ import android.util.Log;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+
+import java.util.List;
+
+import eu.ezlife.ezchat.ezchat.data.ContactEntry;
 
 /**
  * Created by ajo on 04.02.2017.
