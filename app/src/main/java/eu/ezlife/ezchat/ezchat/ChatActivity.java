@@ -52,7 +52,6 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
         myChat = chatManager.createChat(getIntent().getStringExtra("EXTRA_USERNAME"));
         chatCreated(myChat,true);
 
-//        chatHistoryAdapter = new ArrayAdapter<ChatHistoryEntry>(getApplicationContext(),android.R.layout.simple_list_item_1, chatHistory);
         chatHistoryAdapter = new ChatAdapter(this, chatHistory);
         chatHistoryView = (ListView) findViewById(R.id.chat_list_view);
 
@@ -86,6 +85,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                 dbHandler.close();
                 // Send message through XMPP
                 sendMessage(getIntent().getStringExtra("EXTRA_USERNAME"),newMessage);
+
                 // Reset TextBox
                 chatEdit.setText("");
             }
