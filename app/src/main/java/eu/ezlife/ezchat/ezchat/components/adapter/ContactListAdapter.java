@@ -48,7 +48,7 @@ public class ContactListAdapter extends ArrayAdapter<ContactListEntry> {
         if (currentEntry.isTyping()) {
             lastMessageText.setText("is typing ...");
         } else {
-            lastMessageText.setText("Last Message");
+            lastMessageText.setText(currentEntry.getLastMessage());
         }
 
 
