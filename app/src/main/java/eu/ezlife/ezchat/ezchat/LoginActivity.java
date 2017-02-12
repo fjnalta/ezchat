@@ -12,11 +12,11 @@ import eu.ezlife.ezchat.ezchat.components.XMPPConnection;
 
 public class LoginActivity extends AppCompatActivity {
 
-    EditText usernameText;
-    EditText passwordText;
-    Button loginButton;
+    private EditText usernameText;
+    private EditText passwordText;
+    private Button loginButton;
 
-    ProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,23 +37,15 @@ public class LoginActivity extends AppCompatActivity {
                 progressDialog.show();
                 // stop if local validation fails
                 if (!localValidation()) {
-                    onLoginFailed();
+                    Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
                     return;
                 }
-
-                final String username = usernameText.getText().toString();
-                final String password = passwordText.getText().toString();
-
+                String username = usernameText.getText().toString();
+                String password = passwordText.getText().toString();
+                // Create Connection
                 new XMPPConnection(username,password,getApplicationContext()).execute("");
-
-
             }
         });
-    }
-
-    public void onLoginFailed() {
-        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
-        loginButton.setEnabled(true);
     }
 
     public boolean localValidation() {
@@ -68,8 +60,8 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             usernameText.setError(null);
         }
-        if (password.isEmpty() || password.length() < 4) {
-            passwordText.setError("wrong password");
+        if (password.isEmpty() || password.length() < 5) {
+            passwordText.setError("password too short");
             valid = false;
         } else {
             passwordText.setError(null);

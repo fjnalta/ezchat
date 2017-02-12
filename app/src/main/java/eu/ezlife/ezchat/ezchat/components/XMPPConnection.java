@@ -19,7 +19,6 @@ public class XMPPConnection extends AsyncTask<String, String, String> {
     private static AbstractXMPPConnection connection;
     private static String username;
     private static String password;
-
     private Context context;
 
     public XMPPConnection(String username, String password, Context context) {
@@ -54,8 +53,6 @@ public class XMPPConnection extends AsyncTask<String, String, String> {
                 Intent contactListActivity = new Intent(context, eu.ezlife.ezchat.ezchat.ContactListActivity.class);
                 contactListActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(contactListActivity);
-            } else {
-                Log.d("TAG","failed dude");
             }
         } catch (Exception e) {
             Log.w("app", e.toString());

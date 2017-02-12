@@ -77,7 +77,7 @@ public class DBHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         try {
-            Log.d(TAG, "GAYDELETE");
+            Log.d(TAG, "Delete Tables");
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGES);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_SETTINGS);

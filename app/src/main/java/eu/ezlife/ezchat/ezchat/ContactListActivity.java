@@ -59,7 +59,6 @@ public class ContactListActivity extends AppCompatActivity {
             public void entriesDeleted(Collection<String> addresses) {}
             // Ignored events public void entriesAdded(Collection<String> addresses) {}
             public void presenceChanged(Presence presence) {
-                Log.d("AJO", "CALLED!");
                 createContactList();
                 runOnUiThread(new Runnable() {
                     @Override
