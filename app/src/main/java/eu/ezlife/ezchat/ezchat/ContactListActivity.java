@@ -31,7 +31,6 @@ public class ContactListActivity extends AppCompatActivity {
 
     private List<ContactListEntry> contactList = new ArrayList<ContactListEntry>();
     private ArrayAdapter<ContactListEntry> contactListAdapter;
-
     private DBDataSource dbHandler;
 
 
