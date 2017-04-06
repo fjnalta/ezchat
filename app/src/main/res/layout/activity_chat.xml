@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="eu.ezlife.ezchat.ezchat.ChatActivity">
+    tools:context="eu.ezlife.ezchat.ezchat.activities.ChatActivity">
 
     <ListView
         android:id="@+id/chat_list_view"
