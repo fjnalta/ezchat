@@ -9,12 +9,7 @@ import com.google.firebase.iid.FirebaseInstanceIdService;
  * Created by ajo on 06.04.17.
  */
 
-public class CloudMessaging extends FirebaseInstanceIdService {
-
-    public CloudMessaging() {
-        super();
-        onTokenRefresh();
-    }
+public class MyIdService extends FirebaseInstanceIdService {
 
     @Override
     public void onTokenRefresh() {
@@ -22,9 +17,10 @@ public class CloudMessaging extends FirebaseInstanceIdService {
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         Log.d("FirebaseCloudMessaging", "Refreshed token: " + refreshedToken);
 
-        // If you want to send messages to this application instance or
-        // manage this apps subscriptions on the server side, send the
-        // Instance ID token to your app server.
-//        sendRegistrationToServer(refreshedToken);
+        sendRegistrationToServer(refreshedToken);
+    }
+
+    private void sendRegistrationToServer(String token) {
+
     }
 }
