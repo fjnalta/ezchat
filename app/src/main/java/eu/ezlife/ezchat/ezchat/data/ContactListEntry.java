@@ -2,18 +2,21 @@ package eu.ezlife.ezchat.ezchat.data;
 
 import org.jivesoftware.smack.chat.Chat;
 
+import java.io.Serializable;
+
 import eu.ezlife.ezchat.ezchat.R;
 
 /**
  * Created by ajo on 04.02.2017.
  */
 
-public class ContactListEntry extends ContactEntry {
+public class ContactListEntry extends ContactEntry implements Serializable {
 
     private int status;
     private boolean isOnline;
     private boolean isTyping;
     private String lastMessage;
+    private Chat chat;
 
     public ContactListEntry(ContactEntry entry){
         super(entry.getId(),entry.getUsername(),entry.getName(),entry.getAvatar(),entry.getContactName());

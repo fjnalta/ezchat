@@ -1,4 +1,4 @@
-package eu.ezlife.ezchat.ezchat;
+package eu.ezlife.ezchat.ezchat.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,8 +18,9 @@ import org.jivesoftware.smack.packet.Message;
 import java.util.Calendar;
 import java.util.List;
 
+import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.components.database.DBDataSource;
-import eu.ezlife.ezchat.ezchat.components.XMPPConnection;
+import eu.ezlife.ezchat.ezchat.components.server.XMPPConnection;
 import eu.ezlife.ezchat.ezchat.components.adapter.ChatAdapter;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 

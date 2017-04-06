@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import eu.ezlife.ezchat.ezchat.R;
-import eu.ezlife.ezchat.ezchat.components.XMPPConnection;
+import eu.ezlife.ezchat.ezchat.components.server.XMPPConnection;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 
 /**

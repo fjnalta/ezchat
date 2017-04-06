@@ -1,4 +1,4 @@
-package eu.ezlife.ezchat.ezchat.components;
+package eu.ezlife.ezchat.ezchat.components.server;
 
 import android.os.AsyncTask;
 

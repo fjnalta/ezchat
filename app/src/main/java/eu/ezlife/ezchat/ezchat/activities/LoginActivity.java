@@ -1,4 +1,4 @@
-package eu.ezlife.ezchat.ezchat;
+package eu.ezlife.ezchat.ezchat.activities;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -8,10 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiActivity;
-
-import eu.ezlife.ezchat.ezchat.components.XMPPConnection;
+import eu.ezlife.ezchat.ezchat.R;
+import eu.ezlife.ezchat.ezchat.components.server.XMPPConnection;
 
 public class LoginActivity extends AppCompatActivity {
 

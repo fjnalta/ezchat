@@ -1,4 +1,4 @@
-package eu.ezlife.ezchat.ezchat;
+package eu.ezlife.ezchat.ezchat.activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -19,10 +19,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import eu.ezlife.ezchat.ezchat.R;
+import eu.ezlife.ezchat.ezchat.activities.ChatActivity;
 import eu.ezlife.ezchat.ezchat.components.adapter.ContactListAdapter;
-import eu.ezlife.ezchat.ezchat.components.XMPPConnection;
+import eu.ezlife.ezchat.ezchat.components.server.XMPPConnection;
 import eu.ezlife.ezchat.ezchat.components.database.DBDataSource;
-import eu.ezlife.ezchat.ezchat.components.firebase.MyIdService;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
 public class ContactListActivity extends AppCompatActivity {
@@ -122,7 +123,7 @@ public class ContactListActivity extends AppCompatActivity {
         myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Load chatActivity
-                Intent chatActivity = new Intent(getApplicationContext(), eu.ezlife.ezchat.ezchat.ChatActivity.class);
+                Intent chatActivity = new Intent(getApplicationContext(), ChatActivity.class);
 
                 chatActivity.putExtra("EXTRA_USERNAME",contactList.get(position).getUsername());
 
