@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApiActivity;
+
 import eu.ezlife.ezchat.ezchat.components.XMPPConnection;
 
 public class LoginActivity extends AppCompatActivity {

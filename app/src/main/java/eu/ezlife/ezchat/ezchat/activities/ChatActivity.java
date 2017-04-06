@@ -2,39 +2,22 @@ package eu.ezlife.ezchat.ezchat;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.chat.ChatManagerListener;
 import org.jivesoftware.smack.chat.ChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.Authenticator;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
-import java.net.URL;
 import java.util.Calendar;
 import java.util.List;
 
-import eu.ezlife.ezchat.ezchat.components.PushMessageConnection;
 import eu.ezlife.ezchat.ezchat.components.database.DBDataSource;
 import eu.ezlife.ezchat.ezchat.components.XMPPConnection;
 import eu.ezlife.ezchat.ezchat.components.adapter.ChatAdapter;
@@ -99,7 +82,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                 sendMessage(newMessage);
 
                 // Create Push Message in Asynchronous Task
-                new PushMessageConnection(newMessage.getFrom(),newMessage.getTo(),"tokenajo").execute("");
+//                new PushMessageConnection(newMessage.getFrom(),newMessage.getTo(),"tokenajo").execute("");
 
                 // Reset TextBox
                 chatEdit.setText("");

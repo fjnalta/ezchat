@@ -9,10 +9,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
-import org.jivesoftware.smack.roster.RosterListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +22,7 @@ import java.util.List;
 import eu.ezlife.ezchat.ezchat.components.adapter.ContactListAdapter;
 import eu.ezlife.ezchat.ezchat.components.XMPPConnection;
 import eu.ezlife.ezchat.ezchat.components.database.DBDataSource;
+import eu.ezlife.ezchat.ezchat.components.firebase.MyIdService;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
 public class ContactListActivity extends AppCompatActivity {
@@ -39,17 +41,20 @@ public class ContactListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_list);
 
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        Log.d("TOKEN",refreshedToken);
+
         // set DB-Handler
         dbHandler = new DBDataSource(this);
         // retrieve contact List from Server and update DB
-        checkForDbUpdates();
+//        checkForDbUpdates();
         // create contact List on View
-        createContactList();
+//        createContactList();
         // Add listener to contact List
-        setContactListAdapter();
+//        setContactListAdapter();
 
         // Add listener for live updates
-        roster.addRosterListener(new RosterListener() {
+/*        roster.addRosterListener(new RosterListener() {
             @Override
             public void entriesAdded(Collection<String> addresses) {}
             @Override
@@ -66,7 +71,7 @@ public class ContactListActivity extends AppCompatActivity {
                     }
                 });
             }
-        });
+        });*/
     }
     
     private void checkForDbUpdates() {
@@ -118,7 +123,10 @@ public class ContactListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Load chatActivity
                 Intent chatActivity = new Intent(getApplicationContext(), eu.ezlife.ezchat.ezchat.ChatActivity.class);
+
                 chatActivity.putExtra("EXTRA_USERNAME",contactList.get(position).getUsername());
+
+//                chatActivity.putExtra("ContactListEntry",contactList.get(position));
                 chatActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getApplicationContext().startActivity(chatActivity);
             }

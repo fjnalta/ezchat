@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "302995850495",
+    "firebase_url": "https://ezchat-3f955.firebaseio.com",
+    "project_id": "ezchat-3f955",
+    "storage_bucket": "ezchat-3f955.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:302995850495:android:5ee8127425145189",
+        "android_client_info": {
+          "package_name": "eu.ezlife.ezchat.ezchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "302995850495-gnecjso8a0o3p8avbb7ijb9uu38lsgrv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZ66xM8ZeKD9wQds92exAZv6TuBYi9MKI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
