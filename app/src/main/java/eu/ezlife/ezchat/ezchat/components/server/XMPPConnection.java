@@ -1,4 +1,4 @@
-package eu.ezlife.ezchat.ezchat.components;
+package eu.ezlife.ezchat.ezchat.components.server;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,13 +7,10 @@ import android.util.Log;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 
-import java.util.List;
-
-import eu.ezlife.ezchat.ezchat.data.ContactEntry;
+import eu.ezlife.ezchat.ezchat.activities.ContactListActivity;
 
 /**
  * Created by ajo on 04.02.2017.
@@ -55,7 +52,7 @@ public class XMPPConnection extends AsyncTask<String, String, String> {
             }
             connection.login();
             if (connection.isAuthenticated()) {
-                Intent contactListActivity = new Intent(context, eu.ezlife.ezchat.ezchat.ContactListActivity.class);
+                Intent contactListActivity = new Intent(context, ContactListActivity.class);
                 contactListActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(contactListActivity);
             }
