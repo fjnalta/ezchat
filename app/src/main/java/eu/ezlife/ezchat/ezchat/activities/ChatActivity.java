@@ -23,17 +23,26 @@ import eu.ezlife.ezchat.ezchat.components.database.DBDataSource;
 import eu.ezlife.ezchat.ezchat.components.server.XMPPConnection;
 import eu.ezlife.ezchat.ezchat.components.adapter.ChatAdapter;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
+import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
 public class ChatActivity extends AppCompatActivity implements ChatManagerListener {
 
-    private ChatManager chatManager;
+    // Serializable input
+    private ContactListEntry contact;
+
+    // UI Stuff
     private ImageView sendButton;
     private EditText chatEdit;
-    private Chat myChat;
     private ListView chatHistoryView;
+
+    // Chat related stuff
+    private ChatManager chatManager;
+    private Chat myChat;
+    // Chat history
     private ArrayAdapter<ChatHistoryEntry> chatHistoryAdapter;
     private List<ChatHistoryEntry> chatHistory;
 
+    // Database
     private DBDataSource dbHandler;
 
     @Override
@@ -41,20 +50,24 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        dbHandler = new DBDataSource(this);
+        // Get Contact Information from Intent
+        if(getIntent().getSerializableExtra("ContactListEntry") != null) {
+            this.contact = (ContactListEntry) getIntent().getSerializableExtra("ContactListEntry");
+        }
 
         chatManager = ChatManager.getInstanceFor(XMPPConnection.getConnection());
+        myChat = chatManager.createChat(contact.getUsername());
 
+        dbHandler = new DBDataSource(this);
         dbHandler.open();
-        chatHistory = dbHandler.getChatHistory(dbHandler.getContact(getIntent().getStringExtra("EXTRA_USERNAME")).getId());
+        chatHistory = dbHandler.getChatHistory(dbHandler.getContact(contact.getUsername()).getId());
         dbHandler.close();
 
-        myChat = chatManager.createChat(getIntent().getStringExtra("EXTRA_USERNAME"));
-        chatCreated(myChat,true);
+        chatCreated(myChat, true);
 
         chatHistoryAdapter = new ChatAdapter(this, chatHistory);
-        chatHistoryView = (ListView) findViewById(R.id.chat_list_view);
 
+        chatHistoryView = (ListView) findViewById(R.id.chat_list_view);
         chatHistoryView.setAdapter(chatHistoryAdapter);
 
         chatEdit = (EditText) findViewById(R.id.chat_edit_text1);
@@ -65,7 +78,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
             public void onClick(View view) {
                 Message newMessage = new Message();
                 newMessage.setFrom(XMPPConnection.getUsername());
-                newMessage.setTo(cutResourceFromUsername(getIntent().getStringExtra("EXTRA_USERNAME")));
+                newMessage.setTo(contact.getName());
                 newMessage.setBody(chatEdit.getText().toString());
                 // Create Custom Time Format for DB Sorting
                 Calendar c = Calendar.getInstance();
@@ -76,11 +89,19 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                         newMessage.getTo(),
                         newMessage.getBody(),
                         c.getTime().toString(),
-                        dbHandler.getContact(getIntent().getStringExtra("EXTRA_USERNAME")).getId()));
+                        dbHandler.getContact(contact.getUsername()).getId()));
                 // Close DB
                 dbHandler.close();
                 // Send message through XMPP
-                sendMessage(newMessage);
+                if(myChat != null) {
+                    try {
+                        if (XMPPConnection.getConnection().isConnected() && XMPPConnection.getConnection().isAuthenticated()) {
+                            myChat.sendMessage(newMessage);
+                        }
+                    } catch (SmackException.NotConnectedException e) {
+                        e.printStackTrace();
+                    }
+                }
 
                 // Create Push Message in Asynchronous Task
 //                new PushMessageConnection(newMessage.getFrom(),newMessage.getTo(),"tokenajo").execute("");
@@ -98,26 +119,16 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
         });
     }
 
-    public void sendMessage(Message newMessage) {
-        if(chatManager != null) {
-            try {
-                if (XMPPConnection.getConnection().isConnected() && XMPPConnection.getConnection().isAuthenticated()) {
-                    myChat.sendMessage(newMessage);
-                }
-            } catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     @Override
     public void chatCreated(Chat chat, boolean createdLocally) {
+
         myChat.addMessageListener(new ChatMessageListener() {
             @Override
             public void processMessage(Chat chat, Message message) {
-                if(message.getBody() != null){
+                if (message.getBody() != null) {
+
                     Message newMessage = new Message();
-                    newMessage.setFrom(cutResourceFromUsername(message.getFrom()));
+                    newMessage.setFrom(message.getFrom());
                     newMessage.setTo(XMPPConnection.getUsername());
                     newMessage.setBody(message.getBody());
                     // Create Custom Time Format for DB Sorting
@@ -125,29 +136,15 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                     // Open DB and save Message
                     dbHandler.open();
                     // create DB-Entry and add Item to chatHistoryList
-                    chatHistory.add(dbHandler.createMessage(newMessage.getFrom(),
+                    dbHandler.createMessage(newMessage.getFrom(),
                             newMessage.getTo(),
                             newMessage.getBody(),
                             c.getTime().toString(),
-                            dbHandler.getContact(getIntent().getStringExtra("EXTRA_USERNAME")).getId()));
+                            dbHandler.getContact(contact.getUsername()).getId());
                     // Close DB
                     dbHandler.close();
-                    // notify about the changes
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            chatHistoryAdapter.notifyDataSetChanged();
-                        }
-                    });
                 }
             }
         });
-    }
-
-    public String cutResourceFromUsername(String username) {
-        String str = username;
-        int dotIndex = str.indexOf("@");
-        str = str.substring(0, dotIndex);
-        return str;
     }
 }

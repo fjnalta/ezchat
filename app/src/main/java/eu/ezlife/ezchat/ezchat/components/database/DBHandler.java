@@ -20,6 +20,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public static final String TABLE_CONTACTS = "contacts";
     public static final String TABLE_SETTINGS = "settings";
     public static final String TABLE_MESSAGES = "messages";
+    public static final String TABLE_GLOBAL_SETTINGS = "global_settings";
     // General Table Rows
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_CONTACTS_ID = "contacts_id";
@@ -28,7 +29,6 @@ public class DBHandler extends SQLiteOpenHelper {
     public static final String COLUMN_PUSH = "push";
     // Contacts Table Rows
     public static final String COLUMN_USERNAME = "username";
-    public static final String COLUMN_NAME = "name";
     public static final String COLUMN_AVATAR = "avatar";
     public static final String COLUMN_CONTACT_NAME = "contact_name";
     // Message Table Rows
@@ -42,9 +42,15 @@ public class DBHandler extends SQLiteOpenHelper {
             "CREATE TABLE IF NOT EXISTS " + TABLE_CONTACTS +
                     "(" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_USERNAME + " TEXT, " +
-                    COLUMN_NAME + " TEXT, " +
                     COLUMN_AVATAR + " INTEGER, " +
                     COLUMN_CONTACT_NAME + " TEXT);";
+
+    // Contacts Table SQL String
+    public static final String SQL_CREATE_GLOBAL_SETTINGS_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + TABLE_GLOBAL_SETTINGS +
+                    "(" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COLUMN_MESSAGES + " TEXT, " +
+                    COLUMN_PUSH + " INTEGER);";
 
     // Settings Table SQL String
     public static final String SQL_CREATE_SETTINGS_TABLE =
@@ -81,6 +87,7 @@ public class DBHandler extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGES);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_SETTINGS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_GLOBAL_SETTINGS);
 
             Log.d(TAG, "Contact Table wird angelegt.");
             db.execSQL(SQL_CREATE_CONTACTS_TABLE);
@@ -88,6 +95,8 @@ public class DBHandler extends SQLiteOpenHelper {
             db.execSQL(SQL_CREATE_SETTINGS_TABLE);
             Log.d(TAG, "Messages Table wird angelegt.");
             db.execSQL(SQL_CREATE_MESSAGES_TABLE);
+            Log.d(TAG, "Global Settings Table wird angelegt.");
+            db.execSQL(SQL_CREATE_GLOBAL_SETTINGS_TABLE);
         } catch (Exception ex) {
             Log.e(TAG, "Fehler beim Anlegen der Tabelle: " + ex.getMessage());
         }

@@ -14,13 +14,13 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.roster.RosterListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import eu.ezlife.ezchat.ezchat.R;
-import eu.ezlife.ezchat.ezchat.activities.ChatActivity;
 import eu.ezlife.ezchat.ezchat.components.adapter.ContactListAdapter;
 import eu.ezlife.ezchat.ezchat.components.server.XMPPConnection;
 import eu.ezlife.ezchat.ezchat.components.database.DBDataSource;
@@ -48,20 +48,44 @@ public class ContactListActivity extends AppCompatActivity {
         // set DB-Handler
         dbHandler = new DBDataSource(this);
         // retrieve contact List from Server and update DB
-//        checkForDbUpdates();
+        checkForDbUpdates();
         // create contact List on View
-//        createContactList();
+        createContactList();
         // Add listener to contact List
-//        setContactListAdapter();
+        setContactListAdapter();
 
         // Add listener for live updates
-/*        roster.addRosterListener(new RosterListener() {
+        roster.addRosterListener(new RosterListener() {
             @Override
-            public void entriesAdded(Collection<String> addresses) {}
+            public void entriesAdded(Collection<String> addresses) {
+                checkForDbUpdates();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        contactListAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
             @Override
-            public void entriesUpdated(Collection<String> addresses) {}
+            public void entriesUpdated(Collection<String> addresses) {
+                checkForDbUpdates();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        contactListAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
             @Override
-            public void entriesDeleted(Collection<String> addresses) {}
+            public void entriesDeleted(Collection<String> addresses) {
+                checkForDbUpdates();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        contactListAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
             // Ignored events public void entriesAdded(Collection<String> addresses) {}
             public void presenceChanged(Presence presence) {
                 createContactList();
@@ -72,7 +96,7 @@ public class ContactListActivity extends AppCompatActivity {
                     }
                 });
             }
-        });*/
+        });
     }
     
     private void checkForDbUpdates() {
@@ -81,10 +105,11 @@ public class ContactListActivity extends AppCompatActivity {
         if(dbHandler.getContacts().size() != roster.getEntryCount()) {
             for(RosterEntry entry : roster.getEntries()) {
                 if(dbHandler.getContact(entry.getUser()) == null) {
-                    dbHandler.createContact(entry.getUser(), entry.getName(), R.mipmap.ic_launcher, entry.getName());
+                    dbHandler.createContact(entry.getUser(), R.mipmap.ic_launcher, entry.getName());
                 }
             }
         }
+
         // check for avatar changes
 
         dbHandler.close();
@@ -125,9 +150,9 @@ public class ContactListActivity extends AppCompatActivity {
                 // Load chatActivity
                 Intent chatActivity = new Intent(getApplicationContext(), ChatActivity.class);
 
-                chatActivity.putExtra("EXTRA_USERNAME",contactList.get(position).getUsername());
+//                chatActivity.putExtra("EXTRA_USERNAME",contactList.get(position).getUsername());
 
-//                chatActivity.putExtra("ContactListEntry",contactList.get(position));
+                chatActivity.putExtra("ContactListEntry",contactList.get(position));
                 chatActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getApplicationContext().startActivity(chatActivity);
             }

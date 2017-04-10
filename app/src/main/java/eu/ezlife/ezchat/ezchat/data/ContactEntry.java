@@ -1,5 +1,7 @@
 package eu.ezlife.ezchat.ezchat.data;
 
+import java.io.Serializable;
+
 /**
  * Created by ajo on 09.02.2017.
  */
@@ -7,7 +9,8 @@ package eu.ezlife.ezchat.ezchat.data;
 /*
 * Represents POJO from DB-Contact
 * */
-public class ContactEntry {
+
+public class ContactEntry implements Serializable {
 
     private long id;
     private String username;
@@ -15,20 +18,22 @@ public class ContactEntry {
     private String contactName;
     private int avatar;
 
-    public ContactEntry(long id, String username, String name, int avatar) {
+    public ContactEntry(long id, String username, int avatar, String contactName) {
         this.id = id;
         this.username = username;
-        this.name = name;
-        this.avatar = avatar;
-    }
-
-    public ContactEntry(long id, String username, String name, int avatar, String contactName) {
-        this.id = id;
-        this.username = username;
-        this.name = name;
         this.avatar = avatar;
         this.contactName = contactName;
+
+        this.name = cutResourceFromUsername(username);
     }
+
+    private static String cutResourceFromUsername(String username) {
+        String str = username;
+        int dotIndex = str.indexOf("@");
+        str = str.substring(0, dotIndex);
+        return str;
+    }
+
 
     public long getId() {
         return id;

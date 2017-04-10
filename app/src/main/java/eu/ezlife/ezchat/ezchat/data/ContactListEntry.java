@@ -1,33 +1,22 @@
 package eu.ezlife.ezchat.ezchat.data;
 
-import org.jivesoftware.smack.chat.Chat;
-
 import java.io.Serializable;
-
-import eu.ezlife.ezchat.ezchat.R;
 
 /**
  * Created by ajo on 04.02.2017.
+ * Represents a complex ContactListEntry which extends the Contact DB-Entry
  */
 
 public class ContactListEntry extends ContactEntry implements Serializable {
 
+    // Basic Attributes
     private int status;
     private boolean isOnline;
     private boolean isTyping;
     private String lastMessage;
-    private Chat chat;
-
-    public ContactListEntry(ContactEntry entry){
-        super(entry.getId(),entry.getUsername(),entry.getName(),entry.getAvatar(),entry.getContactName());
-        this.status = R.drawable.icon_offline;
-        this.isTyping = false;
-        this.isOnline = false;
-        this.lastMessage = "";
-    }
 
     public ContactListEntry(ContactEntry entry, int status, boolean isOnline, boolean isTyping){
-        super(entry.getId(),entry.getUsername(),entry.getName(),entry.getAvatar(),entry.getContactName());
+        super(entry.getId(),entry.getUsername(),entry.getAvatar(),entry.getContactName());
         this.status = status;
         this.isTyping = isTyping;
         this.isOnline = isOnline;
@@ -66,4 +55,5 @@ public class ContactListEntry extends ContactEntry implements Serializable {
     public void setLastMessage(String lastMessage) {
         this.lastMessage = lastMessage;
     }
+
 }

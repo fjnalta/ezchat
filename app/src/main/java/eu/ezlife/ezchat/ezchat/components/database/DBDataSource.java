@@ -25,7 +25,6 @@ public class DBDataSource {
     private String[] columns_contacts = {
             DBHandler.COLUMN_ID,
             DBHandler.COLUMN_USERNAME,
-            DBHandler.COLUMN_NAME,
             DBHandler.COLUMN_AVATAR,
             DBHandler.COLUMN_CONTACT_NAME,
     };
@@ -59,10 +58,9 @@ public class DBDataSource {
 
     // -- ContactEntry Handling
 
-    public ContactEntry createContact(String username, String name, int avatar, String contactName) {
+    public ContactEntry createContact(String username, int avatar, String contactName) {
         ContentValues values = new ContentValues();
         values.put(DBHandler.COLUMN_USERNAME, username);
-        values.put(DBHandler.COLUMN_NAME, name);
         values.put(DBHandler.COLUMN_AVATAR, avatar);
         values.put(DBHandler.COLUMN_CONTACT_NAME, contactName);
 
@@ -200,11 +198,10 @@ public class DBDataSource {
     private ContactEntry cursorToContact(Cursor cursor) {
         long id = cursor.getLong(cursor.getColumnIndex(DBHandler.COLUMN_ID));
         String user = cursor.getString(cursor.getColumnIndex(DBHandler.COLUMN_USERNAME));
-        String name = cursor.getString(cursor.getColumnIndex(DBHandler.COLUMN_NAME));
         int avatar = cursor.getInt(cursor.getColumnIndex(DBHandler.COLUMN_AVATAR));
         String contactName = cursor.getString(cursor.getColumnIndex(DBHandler.COLUMN_CONTACT_NAME));
 
-        ContactEntry myContact = new ContactEntry(id, user, name, avatar, contactName);
+        ContactEntry myContact = new ContactEntry(id, user, avatar, contactName);
 
         return myContact;
     }
@@ -230,6 +227,7 @@ public class DBDataSource {
         }
     }
 
+    // TODO - remove this shit do it once in contact entry
     private String cutResourceFromUsername(String username) {
         String str = username;
         int dotIndex = str.indexOf("@");
