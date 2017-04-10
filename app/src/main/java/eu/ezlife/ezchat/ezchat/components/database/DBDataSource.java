@@ -220,7 +220,7 @@ public class DBDataSource {
     }
 
     private boolean isMyMessage(ChatHistoryEntry msg){
-        if(msg.getTo().equals(cutResourceFromUsername(XMPPConnection.getConnection().getUser()))) {
+        if(msg.getTo().equals(cutResourceFromUsername(XMPPConnection.getConnection().getUser().toString()))) {
             return false;
         } else {
             return true;

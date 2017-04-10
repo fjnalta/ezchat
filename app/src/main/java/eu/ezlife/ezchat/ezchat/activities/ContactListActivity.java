@@ -15,6 +15,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterListener;
+import org.jxmpp.jid.Jid;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,7 +58,7 @@ public class ContactListActivity extends AppCompatActivity {
         // Add listener for live updates
         roster.addRosterListener(new RosterListener() {
             @Override
-            public void entriesAdded(Collection<String> addresses) {
+            public void entriesAdded(Collection<Jid> addresses) {
                 checkForDbUpdates();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -66,8 +67,9 @@ public class ContactListActivity extends AppCompatActivity {
                     }
                 });
             }
+
             @Override
-            public void entriesUpdated(Collection<String> addresses) {
+            public void entriesUpdated(Collection<Jid> addresses) {
                 checkForDbUpdates();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -76,8 +78,9 @@ public class ContactListActivity extends AppCompatActivity {
                     }
                 });
             }
+
             @Override
-            public void entriesDeleted(Collection<String> addresses) {
+            public void entriesDeleted(Collection<Jid> addresses) {
                 checkForDbUpdates();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -86,6 +89,7 @@ public class ContactListActivity extends AppCompatActivity {
                     }
                 });
             }
+
             // Ignored events public void entriesAdded(Collection<String> addresses) {}
             public void presenceChanged(Presence presence) {
                 createContactList();
@@ -127,7 +131,7 @@ public class ContactListActivity extends AppCompatActivity {
             contactList.clear();
 
             for (RosterEntry entry : rosterEntries) {
-                presence = roster.getPresence(entry.getUser());
+                presence = roster.getPresence(entry.getJid());
                 ContactListEntry currentEntry = new ContactListEntry(dbHandler.getContact(entry.getUser()),evaluateContactStatus(presence),presence.isAvailable(),false);
                 currentEntry.setLastMessage(dbHandler.getLastMessage(entry.getUser()));
                 contactList.add(currentEntry);

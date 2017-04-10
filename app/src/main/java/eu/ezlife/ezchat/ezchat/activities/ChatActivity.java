@@ -9,23 +9,25 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.chat.Chat;
-import org.jivesoftware.smack.chat.ChatManager;
-import org.jivesoftware.smack.chat.ChatManagerListener;
-import org.jivesoftware.smack.chat.ChatMessageListener;
+import org.jivesoftware.smack.chat2.Chat;
+import org.jivesoftware.smack.chat2.ChatManager;
+import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 import java.util.Calendar;
 import java.util.List;
 
 import eu.ezlife.ezchat.ezchat.R;
+import eu.ezlife.ezchat.ezchat.components.adapter.ChatAdapter;
 import eu.ezlife.ezchat.ezchat.components.database.DBDataSource;
 import eu.ezlife.ezchat.ezchat.components.server.XMPPConnection;
-import eu.ezlife.ezchat.ezchat.components.adapter.ChatAdapter;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
-public class ChatActivity extends AppCompatActivity implements ChatManagerListener {
+public class ChatActivity extends AppCompatActivity {
 
     // Serializable input
     private ContactListEntry contact;
@@ -36,8 +38,8 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
     private ListView chatHistoryView;
 
     // Chat related stuff
-    private ChatManager chatManager;
     private Chat myChat;
+    private EntityBareJid jid = null;
     // Chat history
     private ArrayAdapter<ChatHistoryEntry> chatHistoryAdapter;
     private List<ChatHistoryEntry> chatHistory;
@@ -54,22 +56,18 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
         if(getIntent().getSerializableExtra("ContactListEntry") != null) {
             this.contact = (ContactListEntry) getIntent().getSerializableExtra("ContactListEntry");
         }
-
-        chatManager = ChatManager.getInstanceFor(XMPPConnection.getConnection());
-        myChat = chatManager.createChat(contact.getUsername());
-
+        // Load Chat History
         dbHandler = new DBDataSource(this);
         dbHandler.open();
         chatHistory = dbHandler.getChatHistory(dbHandler.getContact(contact.getUsername()).getId());
         dbHandler.close();
 
-        chatCreated(myChat, true);
 
+        // UI Stuff
         chatHistoryAdapter = new ChatAdapter(this, chatHistory);
 
         chatHistoryView = (ListView) findViewById(R.id.chat_list_view);
         chatHistoryView.setAdapter(chatHistoryAdapter);
-
         chatEdit = (EditText) findViewById(R.id.chat_edit_text1);
         sendButton = (ImageView) findViewById(R.id.enter_chat1);
 
@@ -85,8 +83,8 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                 // Open DB and save Message
                 dbHandler.open();
                 // create DB-Entry and add Item to chatHistoryList
-                chatHistory.add(dbHandler.createMessage(newMessage.getFrom(),
-                        newMessage.getTo(),
+                chatHistory.add(dbHandler.createMessage(newMessage.getFrom().toString(),
+                        newMessage.getTo().toString(),
                         newMessage.getBody(),
                         c.getTime().toString(),
                         dbHandler.getContact(contact.getUsername()).getId()));
@@ -96,9 +94,11 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                 if(myChat != null) {
                     try {
                         if (XMPPConnection.getConnection().isConnected() && XMPPConnection.getConnection().isAuthenticated()) {
-                            myChat.sendMessage(newMessage);
+                            myChat.send(newMessage);
                         }
                     } catch (SmackException.NotConnectedException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
@@ -117,14 +117,16 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                 });
             }
         });
-    }
 
-    @Override
-    public void chatCreated(Chat chat, boolean createdLocally) {
 
-        myChat.addMessageListener(new ChatMessageListener() {
+
+
+
+
+        ChatManager chatManager = ChatManager.getInstanceFor(XMPPConnection.getConnection());
+        chatManager.addIncomingListener(new IncomingChatMessageListener() {
             @Override
-            public void processMessage(Chat chat, Message message) {
+            public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
                 if (message.getBody() != null) {
 
                     Message newMessage = new Message();
@@ -136,8 +138,8 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                     // Open DB and save Message
                     dbHandler.open();
                     // create DB-Entry and add Item to chatHistoryList
-                    dbHandler.createMessage(newMessage.getFrom(),
-                            newMessage.getTo(),
+                    dbHandler.createMessage(newMessage.getFrom().toString(),
+                            newMessage.getTo().toString(),
                             newMessage.getBody(),
                             c.getTime().toString(),
                             dbHandler.getContact(contact.getUsername()).getId());
@@ -146,5 +148,14 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerListen
                 }
             }
         });
+
+
+        try {
+            jid = JidCreate.entityBareFrom(contact.getUsername());
+        } catch (XmppStringprepException e) {
+            e.printStackTrace();
+        }
+
+        myChat = chatManager.chatWith(jid);
     }
 }

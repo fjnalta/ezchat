@@ -9,6 +9,7 @@ import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 import eu.ezlife.ezchat.ezchat.activities.ContactListActivity;
 
@@ -32,19 +33,17 @@ public class XMPPConnection extends AsyncTask<String, String, String> {
     // connect in Background mode
     @Override
     protected String doInBackground(String... params) {
-        XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
-                .setServiceName("ezlife.eu")
-                .setHost("ezlife.eu")
-                .setPort(5222)
-                .setUsernameAndPassword(getUsername(), getPassword())
-                .setCompressionEnabled(false)
-                .setResource("ezChat Android ALPHA v.0.1")
-                .setDebuggerEnabled(true)
-                .setSecurityMode(ConnectionConfiguration.SecurityMode.required)
-                .build();
-
-        connection = new XMPPTCPConnection(config);
+        // Create the configuration for this new connection
+        XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder();
         try {
+            configBuilder.setUsernameAndPassword((CharSequence) getUsername(), getPassword());
+            configBuilder.setResource("ezChat Android v.0.1");
+            configBuilder.setXmppDomain("ezlife.eu");
+            configBuilder.setSecurityMode(ConnectionConfiguration.SecurityMode.required);
+            configBuilder.setKeystoreType(null);
+
+            connection = new XMPPTCPConnection(configBuilder.build());
+
             connection.connect();
 
             if (connection.isConnected()) {
@@ -56,6 +55,9 @@ public class XMPPConnection extends AsyncTask<String, String, String> {
                 contactListActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(contactListActivity);
             }
+
+        } catch (XmppStringprepException e) {
+            e.printStackTrace();
         } catch (Exception e) {
             Log.w("app", e.toString());
         }
