@@ -1,7 +1,6 @@
 package eu.ezlife.ezchat.ezchat.components.adapter;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,6 @@ import android.widget.TextView;
 import java.util.List;
 
 import eu.ezlife.ezchat.ezchat.R;
-import eu.ezlife.ezchat.ezchat.components.database.DBDataSource;
 import eu.ezlife.ezchat.ezchat.components.server.XMPPConnection;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 
@@ -19,12 +17,12 @@ import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
  * Created by ajo on 11.02.2017.
  */
 
-public class ChatAdapter extends ArrayAdapter<ChatHistoryEntry> {
+public class ChatHistoryAdapter extends ArrayAdapter<ChatHistoryEntry> {
 
     private List<ChatHistoryEntry> chatHistory;
     private Activity context;
 
-    public ChatAdapter(Activity context, List<ChatHistoryEntry> objects) {
+    public ChatHistoryAdapter(Activity context, List<ChatHistoryEntry> objects) {
         super(context, R.layout.chat_view_left, objects);
         this.chatHistory = objects;
         this.context = context;
@@ -38,18 +36,16 @@ public class ChatAdapter extends ArrayAdapter<ChatHistoryEntry> {
         // Find the Entry
         ChatHistoryEntry currentEntry = chatHistory.get(position);
 
-        // If chat Msg From is me or whatever
+        // check if message is outgoing or incoming
         if(isMyMessage(currentEntry)) {
             itemView = inflater.inflate(R.layout.chat_view_left, null);
-        }
-        else {
+        } else {
             itemView = inflater.inflate(R.layout.chat_view_right, null);
         }
 
         // Fill the View
         TextView timeStamp = (TextView) itemView.findViewById(R.id.item_text_timestamp);
         timeStamp.setText(currentEntry.getDate());
-
         TextView msg = (TextView) itemView.findViewById(R.id.item_text_message);
         msg.setBackgroundColor(1);
         msg.setText(currentEntry.getFrom() + ": " + currentEntry.getBody());
@@ -58,17 +54,10 @@ public class ChatAdapter extends ArrayAdapter<ChatHistoryEntry> {
     }
 
     private boolean isMyMessage(ChatHistoryEntry msg){
-        if(msg.getTo().equals(cutResourceFromUsername(XMPPConnection.getConnection().getUser().toString()))) {
-            return false;
-        } else {
+        if(msg.getTo().equals(XMPPConnection.getConnection().getUser())) {
             return true;
+        } else {
+            return false;
         }
-    }
-
-    private String cutResourceFromUsername(String username) {
-        String str = username;
-        int dotIndex = str.indexOf("@");
-        str = str.substring(0, dotIndex);
-        return str;
     }
 }
