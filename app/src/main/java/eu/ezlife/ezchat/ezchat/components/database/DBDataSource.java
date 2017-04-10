@@ -6,6 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -208,8 +212,15 @@ public class DBDataSource {
 
     private ChatHistoryEntry cursorToChatHistoryEntry(Cursor cursor) {
         long id = cursor.getLong(cursor.getColumnIndex(DBHandler.COLUMN_ID));
-        String from = cursor.getString(cursor.getColumnIndex(DBHandler.COLUMN_SNDR));
-        String to = cursor.getString(cursor.getColumnIndex(DBHandler.COLUMN_RCPT));
+        Jid from = null;
+        Jid to = null;
+        try {
+            from = JidCreate.from(cursor.getString(cursor.getColumnIndex(DBHandler.COLUMN_SNDR)));
+            to = JidCreate.from(cursor.getString(cursor.getColumnIndex(DBHandler.COLUMN_RCPT)));
+        } catch (XmppStringprepException e) {
+            e.printStackTrace();
+        }
+
         String date = cursor.getString(cursor.getColumnIndex(DBHandler.COLUMN_DATE));
         String text = cursor.getString(cursor.getColumnIndex(DBHandler.COLUMN_CONTENT));
         int contactsId = cursor.getInt(cursor.getColumnIndex(DBHandler.COLUMN_CONTACTS_ID));
@@ -220,19 +231,11 @@ public class DBDataSource {
     }
 
     private boolean isMyMessage(ChatHistoryEntry msg){
-        if(msg.getTo().equals(cutResourceFromUsername(XMPPConnection.getConnection().getUser().toString()))) {
-            return false;
-        } else {
+        if(msg.getTo().equals(XMPPConnection.getConnection().getUser())) {
             return true;
+        } else {
+            return false;
         }
-    }
-
-    // TODO - remove this shit do it once in contact entry
-    private String cutResourceFromUsername(String username) {
-        String str = username;
-        int dotIndex = str.indexOf("@");
-        str = str.substring(0, dotIndex);
-        return str;
     }
 }
 

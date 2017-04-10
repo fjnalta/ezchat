@@ -1,22 +1,22 @@
 package eu.ezlife.ezchat.ezchat.data;
 
+import org.jxmpp.jid.Jid;
+
 /**
  * Created by ajo on 05.02.2017.
+ * Repesents POJO from DB-Message
  */
 
-/*
-* Repesents POJO from DB-Message
-* */
 public class ChatHistoryEntry {
 
     private long id;
-    private String from;
-    private String to;
+    private Jid from;
+    private Jid to;
     private String date;
     private String body;
     private long contactId;
 
-    public ChatHistoryEntry(long id, String from, String to, String date, String body, long contactId){
+    public ChatHistoryEntry(long id, Jid from, Jid to, String date, String body, long contactId){
         this.id = id;
         this.from = from;
         this.to = to;
@@ -25,11 +25,11 @@ public class ChatHistoryEntry {
         this.contactId = contactId;
     }
 
-    public String getFrom() {
+    public Jid getFrom() {
         return from;
     }
 
-    public String getTo() {
+    public Jid getTo() {
         return to;
     }
 

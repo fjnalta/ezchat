@@ -7,6 +7,7 @@ import android.util.Log;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jxmpp.stringprep.XmppStringprepException;
@@ -25,8 +26,8 @@ public class XMPPConnection extends AsyncTask<String, String, String> {
     private Context context;
 
     public XMPPConnection(String username, String password, Context context) {
-        setUsername(username);
-        setPassword(password);
+        this.username = username;
+        this.password = password;
         this.context = context;
     }
 
@@ -36,26 +37,27 @@ public class XMPPConnection extends AsyncTask<String, String, String> {
         // Create the configuration for this new connection
         XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder();
         try {
-            configBuilder.setUsernameAndPassword((CharSequence) getUsername(), getPassword());
+            configBuilder.setUsernameAndPassword((CharSequence) username, password);
             configBuilder.setResource("ezChat Android v.0.1");
             configBuilder.setXmppDomain("ezlife.eu");
+            configBuilder.setResource("ezChat");
             configBuilder.setSecurityMode(ConnectionConfiguration.SecurityMode.required);
             configBuilder.setKeystoreType(null);
 
             connection = new XMPPTCPConnection(configBuilder.build());
-
             connection.connect();
 
             if (connection.isConnected()) {
 
             }
+
             connection.login();
+
             if (connection.isAuthenticated()) {
                 Intent contactListActivity = new Intent(context, ContactListActivity.class);
                 contactListActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(contactListActivity);
             }
-
         } catch (XmppStringprepException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -67,22 +69,6 @@ public class XMPPConnection extends AsyncTask<String, String, String> {
     @Override
     protected void onPostExecute(String result) {
 
-    }
-
-    public static String getUsername() {
-        return username;
-    }
-
-    public static void setUsername(String username) {
-        XMPPConnection.username = username;
-    }
-
-    public static String getPassword() {
-        return password;
-    }
-
-    public static void setPassword(String password) {
-        XMPPConnection.password = password;
     }
 
     public static AbstractXMPPConnection getConnection() {

@@ -4,17 +4,13 @@ import java.io.Serializable;
 
 /**
  * Created by ajo on 09.02.2017.
+ * Represents POJO from DB-Contact
  */
-
-/*
-* Represents POJO from DB-Contact
-* */
 
 public class ContactEntry implements Serializable {
 
     private long id;
     private String username;
-    private String name;
     private String contactName;
     private int avatar;
 
@@ -23,17 +19,7 @@ public class ContactEntry implements Serializable {
         this.username = username;
         this.avatar = avatar;
         this.contactName = contactName;
-
-        this.name = cutResourceFromUsername(username);
     }
-
-    private static String cutResourceFromUsername(String username) {
-        String str = username;
-        int dotIndex = str.indexOf("@");
-        str = str.substring(0, dotIndex);
-        return str;
-    }
-
 
     public long getId() {
         return id;
@@ -49,14 +35,6 @@ public class ContactEntry implements Serializable {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getContactName() {
