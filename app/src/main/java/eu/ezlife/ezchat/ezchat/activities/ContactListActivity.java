@@ -35,10 +35,6 @@ public class ContactListActivity extends AppCompatActivity implements ListenerSe
         handler.registerObservable(this, getApplicationContext());
         handler.setCurrentChat(null);
 
-        // TODO - move Firebase Stuff to XMPP Connection Class
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        Log.d("TOKEN",refreshedToken);
-
         // retrieve contact List from Server and update DB
         checkForDbUpdates();
         // create contact List on View

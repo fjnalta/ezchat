@@ -2,6 +2,7 @@ package eu.ezlife.ezchat.ezchat.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -19,6 +20,7 @@ import java.util.Calendar;
 import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.components.adapter.ChatHistoryAdapter;
 import eu.ezlife.ezchat.ezchat.components.listener.ListenerService;
+import eu.ezlife.ezchat.ezchat.components.server.PushMessageConnection;
 import eu.ezlife.ezchat.ezchat.components.server.XMPPConnection;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
@@ -107,6 +109,12 @@ public class ChatActivity extends AppCompatActivity implements ListenerService {
                     }
 
                 // TODO - send push message to Server
+                Log.d("Message TO; FROM: ", newMessage.getTo() + ", " + XMPPConnection.getConnection().getUser().asEntityBareJidString());
+                Log.d("LOL",XMPPConnection.getConnection().getUser().toString());
+
+
+
+                new PushMessageConnection(XMPPConnection.getConnection().getUser().asEntityBareJidString(), newMessage.getTo().toString()).execute("");
 
                 // Reset TextBox
                 chatEdit.setText("");
