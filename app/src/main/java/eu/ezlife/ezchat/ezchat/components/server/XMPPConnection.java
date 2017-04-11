@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.chat2.ChatManager;
@@ -20,6 +22,9 @@ import eu.ezlife.ezchat.ezchat.activities.ContactListActivity;
 
 public class XMPPConnection extends AsyncTask<String, String, String> {
 
+    // FireBase UserToken
+    private static String userToken;
+
     private static AbstractXMPPConnection connection;
     private static String username;
     private static String password;
@@ -29,6 +34,10 @@ public class XMPPConnection extends AsyncTask<String, String, String> {
         this.username = username;
         this.password = password;
         this.context = context;
+
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        userToken = refreshedToken;
+        Log.d("TOKEN",userToken);
     }
 
     // connect in Background mode
@@ -73,6 +82,10 @@ public class XMPPConnection extends AsyncTask<String, String, String> {
 
     public static AbstractXMPPConnection getConnection() {
         return connection;
+    }
+
+    public static String getUserToken() {
+        return userToken;
     }
 
 }
