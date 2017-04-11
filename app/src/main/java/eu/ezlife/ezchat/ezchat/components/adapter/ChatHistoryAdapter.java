@@ -1,6 +1,7 @@
 package eu.ezlife.ezchat.ezchat.components.adapter;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +55,8 @@ public class ChatHistoryAdapter extends ArrayAdapter<ChatHistoryEntry> {
     }
 
     private boolean isMyMessage(ChatHistoryEntry msg){
-        if(msg.getTo().equals(XMPPConnection.getConnection().getUser())) {
+
+        if(msg.getTo().asBareJid().toString().equals(XMPPConnection.getConnection().getUser().asEntityBareJid().toString())) {
             return true;
         } else {
             return false;

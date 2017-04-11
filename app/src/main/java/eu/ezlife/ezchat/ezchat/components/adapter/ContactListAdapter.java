@@ -35,26 +35,31 @@ public class ContactListAdapter extends ArrayAdapter<ContactListEntry> {
         View itemView = inflater.inflate(R.layout.contact_list_view, null);
 
         // Find the Contact
-        ContactListEntry currentEntry = contactList.get(position);
+        if(contactList != null) {
+            ContactListEntry currentEntry = contactList.get(position);
 
-        // Fill the View
+            // Fill the View
 //        ImageView imageView = (ImageView) itemView.findViewById(R.id.item_icon_contactlist);
 //        imageView.setImageResource(currentEntry.getAvatar());
 
-        TextView contactNameText = (TextView) itemView.findViewById(R.id.item_text_contactName);
-        contactNameText.setText(currentEntry.getContactName());
+            TextView contactNameText = (TextView) itemView.findViewById(R.id.item_text_contactName);
+            contactNameText.setText(currentEntry.getContactName());
 
-        TextView lastMessageText = (TextView) itemView.findViewById(R.id.item_text_lastMessage);
-        if (currentEntry.isTyping()) {
-            lastMessageText.setText("is typing ...");
-        } else {
-            lastMessageText.setText(currentEntry.getLastMessage());
+            TextView lastMessageText = (TextView) itemView.findViewById(R.id.item_text_lastMessage);
+            if (currentEntry.isTyping()) {
+                lastMessageText.setText("is typing ...");
+            } else {
+                lastMessageText.setText(currentEntry.getLastMessage());
+            }
+
+
+            ImageView statusImage = (ImageView) itemView.findViewById(R.id.item_icon_status);
+            statusImage.setImageResource(currentEntry.getStatus());
+
+
         }
 
-
-        ImageView statusImage = (ImageView) itemView.findViewById(R.id.item_icon_status);
-        statusImage.setImageResource(currentEntry.getStatus());
-
         return itemView;
+
     }
 }

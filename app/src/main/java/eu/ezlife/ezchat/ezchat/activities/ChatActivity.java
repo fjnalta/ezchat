@@ -19,6 +19,7 @@ import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class ChatActivity extends AppCompatActivity {
 
     // Chat related stuff
     private Chat myChat;
-    private ChatManager chatManager;
+
     // Chat history
     private ArrayAdapter<ChatHistoryEntry> chatHistoryAdapter;
     private List<ChatHistoryEntry> chatHistory;
@@ -58,9 +59,28 @@ public class ChatActivity extends AppCompatActivity {
         if (getIntent().getSerializableExtra("ContactListEntry") != null) {
             this.contact = (ContactListEntry) getIntent().getSerializableExtra("ContactListEntry");
         }
+
+        // Create or get Chat
+        try {
+            Jid jid = JidCreate.from(contact.getUsername());
+            myChat = ContactListActivity.getChatManager().chatWith(jid.asEntityBareJidIfPossible());
+                ContactListActivity.getChatManager().addIncomingListener(new IncomingChatMessageListener() {
+                    @Override
+                    public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
+
+                        // Add Message to chatHistory
+                        // chatHistory.add
+
+                    }
+                });
+        } catch (XmppStringprepException e) {
+            e.printStackTrace();
+        }
+
         // Load Chat History
         dbHandler = new DBDataSource(this);
         dbHandler.open();
+        chatHistory = dbHandler.getChatHistory(contact.getId());
         dbHandler.close();
 
         // UI Stuff
@@ -109,6 +129,7 @@ public class ChatActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
+
                 // Create Push Message in Asynchronous Task
 //                new PushMessageConnection(newMessage.getFrom(),newMessage.getTo()).execute("");
 
@@ -123,47 +144,5 @@ public class ChatActivity extends AppCompatActivity {
                 });
             }
         });
-
-        chatManager = ChatManager.getInstanceFor(XMPPConnection.getConnection());
-        chatManager.addIncomingListener(new IncomingChatMessageListener() {
-            @Override
-            public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
-                if (message.getBody() != null) {
-
-                    Message newMessage = new Message();
-                    newMessage.setFrom(message.getFrom());
-                    newMessage.setTo(message.getTo());
-                    newMessage.setBody(message.getBody());
-                    // Create Custom Time Format for DB Sorting
-                    Calendar c = Calendar.getInstance();
-                    // Open DB and save Message
-                    dbHandler.open();
-                    // create DB-Entry and add Item to chatHistoryList
-                    chatHistory.add(dbHandler.createMessage(newMessage.getFrom().toString(),
-                            newMessage.getTo().toString(),
-                            newMessage.getBody(),
-                            c.getTime().toString(),
-                            dbHandler.getContact(contact.getUsername()).getId()));
-                    // Close DB
-                    dbHandler.close();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // notify about the changes
-                            chatHistoryAdapter.notifyDataSetChanged();
-                        }
-                    });
-                }
-            }
-        });
-        try {
-            Jid jid = JidCreate.from(contact.getUsername());
-            myChat = chatManager.chatWith(jid.asEntityBareJidIfPossible());
-        } catch (XmppStringprepException e) {
-            e.printStackTrace();
-        }
-
-
-
     }
 }
