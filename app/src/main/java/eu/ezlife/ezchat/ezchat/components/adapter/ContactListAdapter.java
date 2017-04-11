@@ -35,7 +35,7 @@ public class ContactListAdapter extends ArrayAdapter<ContactListEntry> {
         View itemView = inflater.inflate(R.layout.contact_list_view, null);
 
         // Find the Contact
-        if(contactList != null) {
+        if(contactList.size() >= position) {
             ContactListEntry currentEntry = contactList.get(position);
 
             // Fill the View
@@ -52,14 +52,10 @@ public class ContactListAdapter extends ArrayAdapter<ContactListEntry> {
                 lastMessageText.setText(currentEntry.getLastMessage());
             }
 
-
             ImageView statusImage = (ImageView) itemView.findViewById(R.id.item_icon_status);
             statusImage.setImageResource(currentEntry.getStatus());
-
-
         }
 
         return itemView;
-
     }
 }
