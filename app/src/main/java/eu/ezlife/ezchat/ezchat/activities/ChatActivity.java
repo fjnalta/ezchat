@@ -61,11 +61,6 @@ public class ChatActivity extends AppCompatActivity {
         // Load Chat History
         dbHandler = new DBDataSource(this);
         dbHandler.open();
-        chatHistory = dbHandler.getChatHistory(dbHandler.getContact(contact.getUsername()).getId());
-        for (ChatHistoryEntry curentry : chatHistory) {
-            Log.d("kennsch", "From: " + curentry.getFrom() + " To: " + curentry.getTo());
-        }
-
         dbHandler.close();
 
         // UI Stuff

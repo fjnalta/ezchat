@@ -153,9 +153,6 @@ public class ContactListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Load chatActivity
                 Intent chatActivity = new Intent(getApplicationContext(), ChatActivity.class);
-
-//                chatActivity.putExtra("EXTRA_USERNAME",contactList.get(position).getUsername());
-
                 chatActivity.putExtra("ContactListEntry",contactList.get(position));
                 chatActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getApplicationContext().startActivity(chatActivity);
