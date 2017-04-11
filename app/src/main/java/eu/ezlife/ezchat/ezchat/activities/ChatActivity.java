@@ -80,8 +80,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Message newMessage = new Message();
-                newMessage.setFrom(XMPPConnection.getConnection().getUser());
-
+                newMessage.setFrom(XMPPConnection.getConnection().getUser().asEntityFullJidIfPossible());
                 Jid myUsername = null;
                 try {
                     myUsername = JidCreate.from(contact.getUsername());
@@ -117,6 +116,7 @@ public class ChatActivity extends AppCompatActivity {
                 }
                 // Create Push Message in Asynchronous Task
 //                new PushMessageConnection(newMessage.getFrom(),newMessage.getTo()).execute("");
+
                 // Reset TextBox
                 chatEdit.setText("");
                 // notify about the changes
