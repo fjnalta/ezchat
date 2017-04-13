@@ -31,10 +31,10 @@ public class MyMessageService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
-        Log.d("DATA", "called");
-
+        Log.d("Firebase", "PUSH NOTIFICATION CALLED");
         super.onMessageReceived(remoteMessage);
 
+        // TODO - read contact name from database
         createNotification(remoteMessage.getData().get("contact"));
     }
 
