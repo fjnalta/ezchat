@@ -19,7 +19,7 @@ import eu.ezlife.ezchat.ezchat.activities.ContactListActivity;
  * Created by ajo on 04.02.2017.
  */
 
-// TODO - Make this a real Thread
+// TODO - parse params handle reconnect
 public class XMPPConnection extends AsyncTask<String, String, String> {
 
     // FireBase UserToken
