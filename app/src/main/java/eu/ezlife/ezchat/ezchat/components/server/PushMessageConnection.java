@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 public class PushMessageConnection extends AsyncTask<String, String, String> {
 
     private final String appId = "crWd-zEsn3I:APA91bG31FzgnPcwxSgTLeiXySl7oWq_x-neCEO_nXXEQaTovr8GnNxSiLo93MJYc4xpHN3khFkJQUDF5kFBU7BjpGsrBxwQ4shDxvGfNaH_Qwx2b08uk3zRxIy_MWzGiFSzjby36mUZ";
+    private final String cloudMsgUrl = "http://10.0.150.24:8080/rest/msg";
 
     private String userName;
     private String contactName;
@@ -48,21 +49,18 @@ public class PushMessageConnection extends AsyncTask<String, String, String> {
             json.put("userName", cutDomainFromUsername(this.userName));
             json.put("contactName", cutDomainFromUsername(this.contactName));
             json.put("token", XMPPConnection.getUserToken().trim());
-
-//            URL url = new URL("http://instant.ignorelist.com:8080/ezChatPush/rest/msg");
-            URL url = new URL("http://10.0.150.24:8080/rest/msg");
+            // create Connection
+            URL url = new URL(cloudMsgUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setUseCaches(false);
             conn.setDoOutput(true);
             conn.setDoInput(true);
             conn.setRequestProperty("Content-Type", "application/json");
-
             // Set Basic HTTP Authentication
-            String userCredentials = "able" + ":" + appId.toCharArray();
+            String userCredentials = cutDomainFromUsername(this.userName) + ":" + appId.toCharArray();
             String basicAuth = "Basic " + new String(new Base64().encode(userCredentials.getBytes()));
             conn.setRequestProperty("Authorization", basicAuth);
-
             // Create Writer
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
             wr.write(json.toString());
