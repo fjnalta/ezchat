@@ -3,17 +3,25 @@ package eu.ezlife.ezchat.ezchat.components.server;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.jivesoftware.smack.sasl.packet.SaslStreamElements;
+import org.jivesoftware.smack.util.stringencoder.Base64;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
+import java.net.ProtocolException;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by ajo on 05.04.17.
@@ -35,40 +43,38 @@ public class PushMessageConnection extends AsyncTask<String, String, String> {
     protected String doInBackground(String... params) {
 
         try {
-//            URL url = new URL("http://instant.ignorelist.com:8080/ezChatPush/rest/msg");
-            URL url = new URL("http://192.168.0.11:8080/rest/msg");
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setDoOutput(true);
-            urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("Content-Type","application/json");
-            Authenticator.setDefault(new Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication("able", appId.toCharArray());
-                }
-            });
-
+            // create JSON Body
             JSONObject json = new JSONObject();
-            json.put("userName",cutDomainFromUsername(this.userName));
-            // TODO - change to contactName
-            json.put("contactName",cutDomainFromUsername(this.userName));
-            json.put("token",XMPPConnection.getUserToken());
+            json.put("userName", cutDomainFromUsername(this.userName));
+            json.put("contactName", cutDomainFromUsername(this.contactName));
+            json.put("token", XMPPConnection.getUserToken().trim());
 
-            OutputStreamWriter writer = new OutputStreamWriter(urlConnection.getOutputStream());
-            writer.write(json.toString());
-            writer.flush();
+//            URL url = new URL("http://instant.ignorelist.com:8080/ezChatPush/rest/msg");
+            URL url = new URL("http://10.0.150.24:8080/rest/msg");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setUseCaches(false);
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
 
-            urlConnection.getInputStream();
+            // Set Basic HTTP Authentication
+            String userCredentials = "able" + ":" + appId.toCharArray();
+            String basicAuth = "Basic " + new String(new Base64().encode(userCredentials.getBytes()));
+            conn.setRequestProperty("Authorization", basicAuth);
 
-//            if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                Log.d("PUSH: ", urlConnection.getResponseMessage().toString());
-//            } else {
+            // Create Writer
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write(json.toString());
+            wr.close();
 
-//                Log.d("PUSH: ", urlConnection.getResponseMessage().toString());
+            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                Log.d("PUSH: ", conn.getResponseMessage().toString());
+            } else {
+                Log.d("PUSH: ", conn.getResponseMessage().toString());
                 // Server returned HTTP error code.
-//            }
+            }
 
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {

@@ -110,10 +110,6 @@ public class ChatActivity extends AppCompatActivity implements ListenerService {
 
                 // TODO - send push message to Server
                 Log.d("Message TO; FROM: ", newMessage.getTo() + ", " + XMPPConnection.getConnection().getUser().asEntityBareJidString());
-                Log.d("LOL",XMPPConnection.getConnection().getUser().toString());
-
-
-
                 new PushMessageConnection(XMPPConnection.getConnection().getUser().asEntityBareJidString(), newMessage.getTo().toString()).execute("");
 
                 // Reset TextBox
