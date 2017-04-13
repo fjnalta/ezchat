@@ -7,6 +7,9 @@ import android.util.Log;
 
 /**
  * Created by ajo on 05.02.2017.
+ * Raw Database Interface. All Tables and columns are declared here.
+ * Extends SQLLiteOpenHelper which provides onCreate and onUpgrade to handle
+ * basic database functionality
  */
 public class DBHandler extends SQLiteOpenHelper {
 
@@ -78,7 +81,10 @@ public class DBHandler extends SQLiteOpenHelper {
         Log.d(TAG, "DbHelper hat die Datenbank: " + getDatabaseName() + " erzeugt.");
     }
 
-    // Die onCreate-Methode wird nur aufgerufen, falls die Datenbank noch nicht existiert
+    /**
+     * On create is only called if the database doesn't exist
+     * @param db the database to create
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
         try {
@@ -101,6 +107,13 @@ public class DBHandler extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * OnUpgrade is called if the database version increases. it deletes the whole db
+     * by calling onCreate
+     * @param db the used database
+     * @param oldVersion the old database version
+     * @param newVersion the new database version
+     */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         try {
