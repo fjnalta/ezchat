@@ -18,7 +18,10 @@ import java.util.Collection;
 
 import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.components.adapter.ContactListAdapter;
+import eu.ezlife.ezchat.ezchat.components.firebase.MyIdService;
 import eu.ezlife.ezchat.ezchat.components.listener.ListenerService;
+import eu.ezlife.ezchat.ezchat.components.server.TokenRegistrationConnection;
+import eu.ezlife.ezchat.ezchat.components.server.XMPPConnection;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
 public class ContactListActivity extends AppCompatActivity implements ListenerService {
@@ -34,6 +37,10 @@ public class ContactListActivity extends AppCompatActivity implements ListenerSe
 
         handler.registerObservable(this, getApplicationContext());
         handler.setCurrentChat(null);
+
+        // TODO - move this
+        // Register Created Token after Login
+        new TokenRegistrationConnection(XMPPConnection.getUserToken(), XMPPConnection.getConnection().getUser().asEntityBareJidString()).execute("");
 
         // retrieve contact List from Server and update DB
         checkForDbUpdates();
