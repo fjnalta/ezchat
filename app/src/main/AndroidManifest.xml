@@ -6,17 +6,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <service android:name=".MyFirebaseMessagingService">
-        <intent-filter>
-            <action android:name="com.google.firebase.MESSAGING_EVENT" />
-        </intent-filter>
-    </service>
-    <service android:name=".MyFirebaseInstanceIDService">
-        <intent-filter>
-            <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-        </intent-filter>
-    </service>
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -34,9 +23,7 @@
         <activity android:name=".activities.ContactListActivity" />
         <activity android:name=".activities.ChatActivity" />
 
-        <!--
-            Defining Services
-        -->
+        <!-- Defining Services -->
         <service
             android:name=".components.firebase.MyMessageService">
             <intent-filter>
