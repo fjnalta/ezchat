@@ -8,7 +8,6 @@ import android.util.Log;
 /**
  * Created by ajo on 05.02.2017.
  */
-
 public class DBHandler extends SQLiteOpenHelper {
 
     // Debug Tag

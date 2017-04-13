@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 /**
  * Created by ajo on 04.02.2017.
- * Represents a complex ContactListEntry which extends the Contact DB-Entry
+ * Represents a more complex ContactListEntry which extends the functionality of the
+ * Contact DB-Entry Object
  */
-
 public class ContactListEntry extends ContactEntry implements Serializable {
 
     // Basic Attributes
@@ -23,7 +23,9 @@ public class ContactListEntry extends ContactEntry implements Serializable {
         this.lastMessage = "";
     }
 
-    // Setter + Getter
+    /**
+     * Setter + Getter
+     */
     public int getStatus() {
         return status;
     }

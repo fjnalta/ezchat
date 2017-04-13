@@ -19,8 +19,6 @@ import eu.ezlife.ezchat.ezchat.R;
 /**
  * Created by ajo on 06.04.17.
  */
-
-
 public class MyMessageService extends FirebaseMessagingService {
 
     /**
@@ -31,7 +29,7 @@ public class MyMessageService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
-        Log.d("Firebase", "PUSH NOTIFICATION CALLED");
+        Log.d("FirebaseCloudMessaging", "PUSH NOTIFICATION CALLED");
         super.onMessageReceived(remoteMessage);
 
         // TODO - read contact name from database

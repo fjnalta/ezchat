@@ -18,7 +18,7 @@ import java.net.URL;
 
 public class TokenRegistrationConnection extends AsyncTask<String, String, String> {
 
-    // TODO - set appid in preferences
+    // TODO - save the appId in user preferences
     private final String appId = "crWd-zEsn3I:APA91bG31FzgnPcwxSgTLeiXySl7oWq_x-neCEO_nXXEQaTovr8GnNxSiLo93MJYc4xpHN3khFkJQUDF5kFBU7BjpGsrBxwQ4shDxvGfNaH_Qwx2b08uk3zRxIy_MWzGiFSzjby36mUZ";
     private final String cloudTokenUrl = "http://10.0.150.24:8080/rest/token";
 
@@ -31,6 +31,8 @@ public class TokenRegistrationConnection extends AsyncTask<String, String, Strin
         this.userName = userName;
     }
 
+
+    // TODO - work with asynchronous status codes in constructor
     @Override
     protected String doInBackground(String... params) {
         try {

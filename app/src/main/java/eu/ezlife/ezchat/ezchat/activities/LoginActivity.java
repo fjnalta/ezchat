@@ -44,11 +44,13 @@ public class LoginActivity extends AppCompatActivity {
                 String username = usernameText.getText().toString();
                 String password = passwordText.getText().toString();
                 // Create Connection
+                // TODO - make async call while login to validate status
                 new XMPPConnection(username,password,getApplicationContext()).execute("");
             }
         });
     }
 
+    // TODO - remove local Validation and insert remote Login validation
     public boolean localValidation() {
         boolean valid = true;
 

@@ -19,8 +19,8 @@ import eu.ezlife.ezchat.ezchat.data.ContactEntry;
 
 /**
  * Created by ajo on 06.02.2017.
+ * This class represents the Database Controller. It should be only used in Message Handler
  */
-
 public class DBDataSource {
 
     private DBHandler dbHandler;
@@ -42,6 +42,10 @@ public class DBDataSource {
             DBHandler.COLUMN_CONTACTS_ID
     };
 
+    /**
+     * Creates the database Connection
+     * @param context the actual application context
+     */
     public DBDataSource(Context context) {
         Log.d("DBDataSource", "Unsere DataSource erzeugt jetzt den dbHandler.");
         dbHandler = new DBHandler(context);
@@ -49,15 +53,20 @@ public class DBDataSource {
 
     // -- General DB Handling --
 
+    /**
+     * Opens the Database connection.
+     * needs to be called before every sql statement
+     */
     public void open() {
-        Log.d("DBDataSource", "Eine Referenz auf die Datenbank wird jetzt angefragt.");
         database = dbHandler.getWritableDatabase();
-        Log.d("DBDataSource", "Datenbank-Referenz erhalten. Pfad zur Datenbank: " + database.getPath());
     }
 
+    /**
+     * Closes the Database connection.
+     * has to be called after every executed sql statement
+     */
     public void close() {
         dbHandler.close();
-        Log.d("DBDataSource", "Datenbank mit Hilfe des DbHelpers geschlossen.");
     }
 
     // -- ContactEntry Handling
@@ -196,6 +205,7 @@ public class DBDataSource {
     }
 
     // TODO - delete whole chat History
+
     // TODO - delete chat History Entry
 
     // Use Cursor to return Items from DB

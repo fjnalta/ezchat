@@ -9,7 +9,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jxmpp.stringprep.XmppStringprepException;
@@ -20,6 +19,7 @@ import eu.ezlife.ezchat.ezchat.activities.ContactListActivity;
  * Created by ajo on 04.02.2017.
  */
 
+// TODO - Make this a real Thread
 public class XMPPConnection extends AsyncTask<String, String, String> {
 
     // FireBase UserToken

@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 /**
  * Created by ajo on 04.02.2017.
  */
-
+// TODO - save login, application id and token in preferences
 public class SaveLoginPreferences {
     static final String PREF_USER_NAME = "username";
     static final String PREF_USER_PW = "password";

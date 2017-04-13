@@ -4,9 +4,8 @@ import org.jxmpp.jid.Jid;
 
 /**
  * Created by ajo on 05.02.2017.
- * Repesents POJO from DB-Message
+ * represents plain old java object from Database Message object
  */
-
 public class ChatHistoryEntry {
 
     private long id;
@@ -25,6 +24,9 @@ public class ChatHistoryEntry {
         this.contactId = contactId;
     }
 
+    /**
+     * Setter + Getter
+     */
     public Jid getFrom() {
         return from;
     }

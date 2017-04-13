@@ -27,14 +27,12 @@ import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
 public class ChatActivity extends AppCompatActivity implements ListenerService {
 
-    // Serializable input
+    // Serializable intent
     private ContactListEntry contact;
-
     // UI Stuff
     private ImageView sendButton;
     private EditText chatEdit;
     private ListView chatHistoryView;
-
     // Chat history
     private ArrayAdapter<ChatHistoryEntry> chatHistoryAdapter;
 
@@ -108,8 +106,8 @@ public class ChatActivity extends AppCompatActivity implements ListenerService {
                         e.printStackTrace();
                     }
 
-                // TODO - send push message to Server
-                Log.d("Message TO; FROM: ", newMessage.getTo() + ", " + XMPPConnection.getConnection().getUser().asEntityBareJidString());
+                // Send Push Notification
+                Log.d("Push Notification: ","Sending Msg FROM: " + XMPPConnection.getConnection().getUser().asEntityBareJidString() + "TO: " + newMessage.getTo());
                 new PushMessageConnection(XMPPConnection.getConnection().getUser().asEntityBareJidString(), newMessage.getTo().toString()).execute("");
 
                 // Reset TextBox
@@ -126,7 +124,8 @@ public class ChatActivity extends AppCompatActivity implements ListenerService {
     }
 
     /*
-     * Call this every time the ChatActivity closes to prevent leaking memory
+     * Remove the Observer after Closing the ChatAcitivity
+     * to prevent it from leaking memory.
      */
     @Override
     protected void onStop() {
@@ -134,6 +133,10 @@ public class ChatActivity extends AppCompatActivity implements ListenerService {
         handler.deleteObservable(this);
     }
 
+    /*
+     * Called from Message Handler after incoming Message
+     * was received. Calls to update the view
+     */
     @Override
     public void updateObservable() {
         runOnUiThread(new Runnable() {

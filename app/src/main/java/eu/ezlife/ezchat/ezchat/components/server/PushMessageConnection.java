@@ -3,32 +3,24 @@ package eu.ezlife.ezchat.ezchat.components.server;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.jivesoftware.smack.sasl.packet.SaslStreamElements;
 import org.jivesoftware.smack.util.stringencoder.Base64;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.Authenticator;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by ajo on 05.04.17.
+ * This Class handles the Connection between the Android App and the custom Firebase
+ * Cloud Messaging Server. It sends an asynchronous REST-POST call with contact name, username
+ * and token to authenticate with the username and token and message: contact name
  */
-
 public class PushMessageConnection extends AsyncTask<String, String, String> {
 
+    // TODO - save the appId in user preferences
     private final String appId = "crWd-zEsn3I:APA91bG31FzgnPcwxSgTLeiXySl7oWq_x-neCEO_nXXEQaTovr8GnNxSiLo93MJYc4xpHN3khFkJQUDF5kFBU7BjpGsrBxwQ4shDxvGfNaH_Qwx2b08uk3zRxIy_MWzGiFSzjby36mUZ";
     private final String cloudMsgUrl = "http://10.0.150.24:8080/rest/msg";
 
@@ -40,9 +32,9 @@ public class PushMessageConnection extends AsyncTask<String, String, String> {
         this.contactName = contactName;
     }
 
+    // TODO - work with asynchronous status codes in constructor
     @Override
     protected String doInBackground(String... params) {
-
         try {
             // create JSON Body
             JSONObject json = new JSONObject();

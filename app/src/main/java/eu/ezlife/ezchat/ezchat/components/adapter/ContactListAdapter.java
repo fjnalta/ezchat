@@ -15,6 +15,8 @@ import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
 /**
  * Created by ajo on 06.02.2017.
+ * This class holds the contact list adapter and handles the contact list updates.
+ * it notifies the view after every update.
  */
 
 public class ContactListAdapter extends ArrayAdapter<ContactListEntry> {
@@ -38,9 +40,10 @@ public class ContactListAdapter extends ArrayAdapter<ContactListEntry> {
         if(contactList.size() >= position) {
             ContactListEntry currentEntry = contactList.get(position);
 
+            // TODO - insert custom image
             // Fill the View
-//        ImageView imageView = (ImageView) itemView.findViewById(R.id.item_icon_contactlist);
-//        imageView.setImageResource(currentEntry.getAvatar());
+//          ImageView imageView = (ImageView) itemView.findViewById(R.id.item_icon_contactlist);
+//          imageView.setImageResource(currentEntry.getAvatar());
 
             TextView contactNameText = (TextView) itemView.findViewById(R.id.item_text_contactName);
             contactNameText.setText(currentEntry.getContactName());

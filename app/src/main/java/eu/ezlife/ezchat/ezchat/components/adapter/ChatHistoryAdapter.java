@@ -15,8 +15,9 @@ import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 
 /**
  * Created by ajo on 11.02.2017.
+ * This class holds the Chat history adapter. It handles reads chat History updates from the
+ * database and updates the view
  */
-
 public class ChatHistoryAdapter extends ArrayAdapter<ChatHistoryEntry> {
 
     private List<ChatHistoryEntry> chatHistory;
@@ -53,8 +54,12 @@ public class ChatHistoryAdapter extends ArrayAdapter<ChatHistoryEntry> {
         return itemView;
     }
 
+    /**
+     * Helper Method the check if the message is incoming or outgoing
+     * @param msg the message to process
+     * @return true if the message if outgoing, false if it is incoming
+     */
     private boolean isMyMessage(ChatHistoryEntry msg){
-
         if(msg.getTo().asBareJid().toString().equals(XMPPConnection.getConnection().getUser().asEntityBareJid().toString())) {
             return true;
         } else {

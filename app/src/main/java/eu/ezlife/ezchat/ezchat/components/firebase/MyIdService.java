@@ -11,7 +11,6 @@ import eu.ezlife.ezchat.ezchat.components.server.XMPPConnection;
 /**
  * Created by ajo on 06.04.17.
  */
-
 public class MyIdService extends FirebaseInstanceIdService {
 
     @Override

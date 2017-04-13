@@ -3,13 +3,10 @@ package eu.ezlife.ezchat.ezchat.activities;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.RosterEntry;
@@ -18,12 +15,17 @@ import java.util.Collection;
 
 import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.components.adapter.ContactListAdapter;
-import eu.ezlife.ezchat.ezchat.components.firebase.MyIdService;
 import eu.ezlife.ezchat.ezchat.components.listener.ListenerService;
 import eu.ezlife.ezchat.ezchat.components.server.TokenRegistrationConnection;
 import eu.ezlife.ezchat.ezchat.components.server.XMPPConnection;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
+
+/**
+ * Created by ajo on 04.02.2017.
+ * Activity which represents the Contact List View
+ * Handles the Status and Contact List
+ */
 public class ContactListActivity extends AppCompatActivity implements ListenerService {
 
     // Contact List UI
@@ -88,7 +90,7 @@ public class ContactListActivity extends AppCompatActivity implements ListenerSe
             contactListAdapter.notifyDataSetChanged();
 
         } catch (Exception e) {
-            Log.w("app", e.toString());
+            e.printStackTrace();
         }
     }
 
@@ -109,6 +111,11 @@ public class ContactListActivity extends AppCompatActivity implements ListenerSe
         });
     }
 
+    /**
+     * Helper method to create visual status icons from
+     * the user presence
+     * @param presence Presence to evaluate
+     */
     private int evaluateContactStatus(Presence presence){
         int stat = R.drawable.icon_offline;
         if(presence.isAvailable()) {
@@ -127,6 +134,10 @@ public class ContactListActivity extends AppCompatActivity implements ListenerSe
         return stat;
     }
 
+    /**
+     * Called from Message Handler after incoming Message
+     * was received. Calls to update the view
+     */
     @Override
     public void updateObservable() {
         runOnUiThread(new Runnable() {
@@ -137,6 +148,4 @@ public class ContactListActivity extends AppCompatActivity implements ListenerSe
             }
         });
     }
-
-
 }

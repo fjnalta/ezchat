@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 /**
  * Created by ajo on 09.02.2017.
- * Represents POJO from DB-Contact
+ * Represents plain old java object from DB-Contact
+ * Object is serializable because it is passed between ContactListActivity and ChatActivity
  */
-
 public class ContactEntry implements Serializable {
 
     private long id;
@@ -21,6 +21,9 @@ public class ContactEntry implements Serializable {
         this.contactName = contactName;
     }
 
+    /**
+     * Setter + Getter
+     */
     public long getId() {
         return id;
     }

@@ -113,7 +113,6 @@ public class MessageHandler {
 
     /**
      * Add one ObservableClass to the logicHandler
-     *
      * @param w the Observable to add
      */
     public void registerObservable(ListenerService w, Context context) {
