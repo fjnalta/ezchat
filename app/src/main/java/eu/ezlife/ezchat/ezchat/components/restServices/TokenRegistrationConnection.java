@@ -1,4 +1,4 @@
-package eu.ezlife.ezchat.ezchat.components.server;
+package eu.ezlife.ezchat.ezchat.components.restServices;
 
 import android.os.AsyncTask;
 import android.util.Log;

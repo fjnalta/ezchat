@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.List;
 
 import eu.ezlife.ezchat.ezchat.components.database.DBDataSource;
-import eu.ezlife.ezchat.ezchat.components.server.XMPPConnection;
+import eu.ezlife.ezchat.ezchat.components.xmppConnection.XMPPConnection;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
@@ -27,10 +27,10 @@ import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
  * Created by ajo on 11.04.17.
  */
 
-public class MessageHandler {
+public class PushMessageHandler {
 
     // Observable List
-    private List<ListenerService> list = new ArrayList<>();
+    private List<PushMessageService> list = new ArrayList<>();
     private Context context = null;
 
     // Contact List
@@ -45,7 +45,7 @@ public class MessageHandler {
     // Database
     private DBDataSource dbHandler = null;
 
-    public MessageHandler() {
+    public PushMessageHandler() {
         // Instantiate the Contact List
         roster = Roster.getInstanceFor(XMPPConnection.getConnection());
         // Instantiate ChatManager for all Chats
@@ -115,7 +115,7 @@ public class MessageHandler {
      * Add one ObservableClass to the logicHandler
      * @param w the Observable to add
      */
-    public void registerObservable(ListenerService w, Context context) {
+    public void registerObservable(PushMessageService w, Context context) {
         list.add(w);
         if (this.context == null) {
             this.context = context;
@@ -127,7 +127,7 @@ public class MessageHandler {
      * delete one observable from the observable list
      * @param w observable to delete
      */
-    public void deleteObservable(ListenerService w) {
+    public void deleteObservable(PushMessageService w) {
         list.remove(w);
     }
 
@@ -135,7 +135,7 @@ public class MessageHandler {
      * Update all registered observables
      */
     public void updateAllObservables() {
-        for (ListenerService p : list) {
+        for (PushMessageService p : list) {
             p.updateObservable();
         }
     }

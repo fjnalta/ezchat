@@ -1,4 +1,4 @@
-package eu.ezlife.ezchat.ezchat.components.server;
+package eu.ezlife.ezchat.ezchat.components.restServices;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import eu.ezlife.ezchat.ezchat.components.xmppConnection.XMPPConnection;
 
 /**
  * Created by ajo on 05.04.17.

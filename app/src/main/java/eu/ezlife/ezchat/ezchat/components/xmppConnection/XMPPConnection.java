@@ -1,4 +1,4 @@
-package eu.ezlife.ezchat.ezchat.components.server;
+package eu.ezlife.ezchat.ezchat.components.xmppConnection;
 
 import android.content.Context;
 import android.content.Intent;

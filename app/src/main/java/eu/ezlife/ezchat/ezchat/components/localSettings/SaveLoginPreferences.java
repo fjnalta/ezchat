@@ -1,4 +1,4 @@
-package eu.ezlife.ezchat.ezchat.components;
+package eu.ezlife.ezchat.ezchat.components.localSettings;
 
 import android.content.Context;
 import android.content.SharedPreferences;

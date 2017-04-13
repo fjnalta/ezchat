@@ -5,9 +5,6 @@ import android.util.Log;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
-import eu.ezlife.ezchat.ezchat.components.server.TokenRegistrationConnection;
-import eu.ezlife.ezchat.ezchat.components.server.XMPPConnection;
-
 /**
  * Created by ajo on 06.04.17.
  */

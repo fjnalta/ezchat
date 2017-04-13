@@ -15,9 +15,9 @@ import java.util.Collection;
 
 import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.components.adapter.ContactListAdapter;
-import eu.ezlife.ezchat.ezchat.components.listener.ListenerService;
-import eu.ezlife.ezchat.ezchat.components.server.TokenRegistrationConnection;
-import eu.ezlife.ezchat.ezchat.components.server.XMPPConnection;
+import eu.ezlife.ezchat.ezchat.components.listener.PushMessageService;
+import eu.ezlife.ezchat.ezchat.components.restServices.TokenRegistrationConnection;
+import eu.ezlife.ezchat.ezchat.components.xmppConnection.XMPPConnection;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
 
@@ -26,7 +26,7 @@ import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
  * Activity which represents the Contact List View
  * Handles the Status and Contact List
  */
-public class ContactListActivity extends AppCompatActivity implements ListenerService {
+public class ContactListActivity extends AppCompatActivity implements PushMessageService {
 
     // Contact List UI
     private ListView myList;

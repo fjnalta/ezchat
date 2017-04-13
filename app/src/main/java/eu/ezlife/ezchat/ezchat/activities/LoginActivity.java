@@ -9,7 +9,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import eu.ezlife.ezchat.ezchat.R;
-import eu.ezlife.ezchat.ezchat.components.server.XMPPConnection;
+import eu.ezlife.ezchat.ezchat.components.xmppConnection.XMPPConnection;
 
 public class LoginActivity extends AppCompatActivity {
 
