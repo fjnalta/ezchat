@@ -37,6 +37,7 @@ public class ContactListActivity extends AppCompatActivity implements PushMessag
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_list);
 
+        // Register on PushMessage Listener and Remove the current chat
         handler.registerObservable(this, getApplicationContext());
         handler.setCurrentChat(null);
 

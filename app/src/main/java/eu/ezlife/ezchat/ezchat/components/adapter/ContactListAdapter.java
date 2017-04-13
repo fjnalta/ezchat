@@ -18,7 +18,6 @@ import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
  * This class holds the contact list adapter and handles the contact list updates.
  * it notifies the view after every update.
  */
-
 public class ContactListAdapter extends ArrayAdapter<ContactListEntry> {
 
     private List<ContactListEntry> contactList;
