@@ -20,12 +20,12 @@ import java.util.Calendar;
 import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.components.adapter.ChatHistoryAdapter;
 import eu.ezlife.ezchat.ezchat.components.listener.PushMessageService;
+import eu.ezlife.ezchat.ezchat.components.listener.XMPPConnectionService;
 import eu.ezlife.ezchat.ezchat.components.restServices.PushMessageConnection;
-import eu.ezlife.ezchat.ezchat.components.xmppConnection.XMPPConnection;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
-public class ChatActivity extends AppCompatActivity implements PushMessageService {
+public class ChatActivity extends AppCompatActivity implements PushMessageService, XMPPConnectionService {
 
     // Serializable intent
     private ContactListEntry contact;
@@ -73,7 +73,7 @@ public class ChatActivity extends AppCompatActivity implements PushMessageServic
             @Override
             public void onClick(View view) {
                 Message newMessage = new Message();
-                newMessage.setFrom(XMPPConnection.getConnection().getUser().asEntityFullJidIfPossible());
+                newMessage.setFrom(connectionHandler.getConnection().getUser().asEntityFullJidIfPossible());
                 Jid myUsername = null;
                 try {
                     myUsername = JidCreate.from(contact.getUsername());
@@ -97,7 +97,7 @@ public class ChatActivity extends AppCompatActivity implements PushMessageServic
                 handler.getDbHandler().close();
                 // Send message through XMPP
                     try {
-                        if (XMPPConnection.getConnection().isConnected() && XMPPConnection.getConnection().isAuthenticated()) {
+                        if (connectionHandler.getConnection().isConnected() && connectionHandler.getConnection().isAuthenticated()) {
                             handler.getCurrentChat().send(newMessage);
                         }
                     } catch (SmackException.NotConnectedException e) {
@@ -107,8 +107,8 @@ public class ChatActivity extends AppCompatActivity implements PushMessageServic
                     }
 
                 // Send Push Notification
-                Log.d("Push Notification: ","Sending Msg FROM: " + XMPPConnection.getConnection().getUser().asEntityBareJidString() + "TO: " + newMessage.getTo());
-                new PushMessageConnection(XMPPConnection.getConnection().getUser().asEntityBareJidString(), newMessage.getTo().toString()).execute("");
+                Log.d("Push Notification: ","Sending Msg FROM: " + connectionHandler.getConnection().getUser().asEntityBareJidString() + "TO: " + newMessage.getTo());
+                new PushMessageConnection(connectionHandler.getConnection().getUser().asEntityBareJidString(), newMessage.getTo().toString(), connectionHandler.getUserToken()).execute("");
 
                 // Reset TextBox
                 chatEdit.setText("");
@@ -145,5 +145,10 @@ public class ChatActivity extends AppCompatActivity implements PushMessageServic
                 chatHistoryAdapter.notifyDataSetChanged();
             }
         });
+    }
+
+    @Override
+    public void notifyConnectionInterface() {
+
     }
 }

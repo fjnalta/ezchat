@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.List;
 
 import eu.ezlife.ezchat.ezchat.components.database.DBDataSource;
-import eu.ezlife.ezchat.ezchat.components.xmppConnection.XMPPConnection;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
@@ -27,7 +26,7 @@ import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
  * Created by ajo on 11.04.17.
  */
 
-public class PushMessageHandler {
+public class PushMessageHandler implements XMPPConnectionService {
 
     // Observable List
     private List<PushMessageService> list = new ArrayList<>();
@@ -47,9 +46,9 @@ public class PushMessageHandler {
 
     public PushMessageHandler() {
         // Instantiate the Contact List
-        roster = Roster.getInstanceFor(XMPPConnection.getConnection());
+        roster = Roster.getInstanceFor(connectionHandler.getConnection());
         // Instantiate ChatManager for all Chats
-        chatManager = ChatManager.getInstanceFor(XMPPConnection.getConnection());
+        chatManager = ChatManager.getInstanceFor(connectionHandler.getConnection());
 
         // Message Listener
         chatManager.addIncomingListener(new IncomingChatMessageListener() {
@@ -170,5 +169,10 @@ public class PushMessageHandler {
 
     public void setChatHistory(List<ChatHistoryEntry> chatHistory) {
         this.chatHistory = chatHistory;
+    }
+
+    @Override
+    public void notifyConnectionInterface() {
+
     }
 }

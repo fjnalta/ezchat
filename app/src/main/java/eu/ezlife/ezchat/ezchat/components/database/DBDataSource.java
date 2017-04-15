@@ -13,7 +13,7 @@ import org.jxmpp.stringprep.XmppStringprepException;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.ezlife.ezchat.ezchat.components.xmppConnection.XMPPConnection;
+import eu.ezlife.ezchat.ezchat.components.listener.XMPPConnectionService;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 import eu.ezlife.ezchat.ezchat.data.ContactEntry;
 
@@ -21,7 +21,7 @@ import eu.ezlife.ezchat.ezchat.data.ContactEntry;
  * Created by ajo on 06.02.2017.
  * This class represents the Database Controller. It should be only used in Message Handler
  */
-public class DBDataSource {
+public class DBDataSource implements XMPPConnectionService {
 
     private DBHandler dbHandler;
     private SQLiteDatabase database;
@@ -240,12 +240,18 @@ public class DBDataSource {
         return myHistoryEntry;
     }
 
+    // TODO - clean this shit and remove observer from class
     private boolean isMyMessage(ChatHistoryEntry msg){
-        if(msg.getTo().equals(XMPPConnection.getConnection().getUser())) {
+        if(msg.getTo().equals(connectionHandler.getConnection().getUser())) {
             return true;
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void notifyConnectionInterface() {
+
     }
 }
 

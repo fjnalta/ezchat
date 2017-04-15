@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import eu.ezlife.ezchat.ezchat.R;
-import eu.ezlife.ezchat.ezchat.components.xmppConnection.XMPPConnection;
+import eu.ezlife.ezchat.ezchat.components.listener.XMPPConnectionService;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 
 /**
@@ -18,7 +18,7 @@ import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
  * This class holds the Chat history adapter. It handles reads chat History updates from the
  * database and updates the view
  */
-public class ChatHistoryAdapter extends ArrayAdapter<ChatHistoryEntry> {
+public class ChatHistoryAdapter extends ArrayAdapter<ChatHistoryEntry> implements XMPPConnectionService {
 
     private List<ChatHistoryEntry> chatHistory;
     private Activity context;
@@ -59,11 +59,17 @@ public class ChatHistoryAdapter extends ArrayAdapter<ChatHistoryEntry> {
      * @param msg the message to process
      * @return true if the message if outgoing, false if it is incoming
      */
+    // TODO - clean this shit and remove observer from Class
     private boolean isMyMessage(ChatHistoryEntry msg){
-        if(msg.getTo().asBareJid().toString().equals(XMPPConnection.getConnection().getUser().asEntityBareJid().toString())) {
+        if(msg.getTo().asBareJid().toString().equals(connectionHandler.getConnection().getUser().asEntityBareJid().toString())) {
             return true;
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void notifyConnectionInterface() {
+
     }
 }

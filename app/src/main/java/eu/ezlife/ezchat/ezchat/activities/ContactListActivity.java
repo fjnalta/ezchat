@@ -16,8 +16,8 @@ import java.util.Collection;
 import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.components.adapter.ContactListAdapter;
 import eu.ezlife.ezchat.ezchat.components.listener.PushMessageService;
+import eu.ezlife.ezchat.ezchat.components.listener.XMPPConnectionService;
 import eu.ezlife.ezchat.ezchat.components.restServices.TokenRegistrationConnection;
-import eu.ezlife.ezchat.ezchat.components.xmppConnection.XMPPConnection;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
 
@@ -26,7 +26,7 @@ import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
  * Activity which represents the Contact List View
  * Handles the Status and Contact List
  */
-public class ContactListActivity extends AppCompatActivity implements PushMessageService {
+public class ContactListActivity extends AppCompatActivity implements PushMessageService, XMPPConnectionService {
 
     // Contact List UI
     private ListView myList;
@@ -43,7 +43,7 @@ public class ContactListActivity extends AppCompatActivity implements PushMessag
 
         // TODO - move this
         // Register Created Token after Login
-        new TokenRegistrationConnection(XMPPConnection.getUserToken(), XMPPConnection.getConnection().getUser().asEntityBareJidString()).execute("");
+        new TokenRegistrationConnection(connectionHandler.getUserToken(), connectionHandler.getConnection().getUser().asEntityBareJidString()).execute("");
 
         // retrieve contact List from Server and update DB
         checkForDbUpdates();
@@ -148,5 +148,10 @@ public class ContactListActivity extends AppCompatActivity implements PushMessag
                 contactListAdapter.notifyDataSetChanged();
             }
         });
+    }
+
+    @Override
+    public void notifyConnectionInterface() {
+
     }
 }

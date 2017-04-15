@@ -5,4 +5,9 @@ package eu.ezlife.ezchat.ezchat.components.listener;
  */
 
 public interface XMPPConnectionService {
+
+    XMPPConnectionHandler connectionHandler = new XMPPConnectionHandler();
+
+    public void notifyConnectionInterface();
+
 }

@@ -28,10 +28,12 @@ public class PushMessageConnection extends AsyncTask<String, String, String> {
 
     private String userName;
     private String contactName;
+    private String userToken;
 
-    public PushMessageConnection(String userName, String contactName) {
+    public PushMessageConnection(String userName, String contactName, String userToken) {
         this.userName = userName;
         this.contactName = contactName;
+        this.userToken = userToken;
     }
 
     // TODO - work with asynchronous status codes in constructor
@@ -42,7 +44,7 @@ public class PushMessageConnection extends AsyncTask<String, String, String> {
             JSONObject json = new JSONObject();
             json.put("userName", cutDomainFromUsername(this.userName));
             json.put("contactName", cutDomainFromUsername(this.contactName));
-            json.put("token", XMPPConnection.getUserToken().trim());
+            json.put("token", userToken.trim());
             // create Connection
             URL url = new URL(cloudMsgUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
