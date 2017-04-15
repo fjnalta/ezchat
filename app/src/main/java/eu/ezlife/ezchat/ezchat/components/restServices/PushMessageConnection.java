@@ -12,8 +12,6 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import eu.ezlife.ezchat.ezchat.components.xmppConnection.XMPPConnection;
-
 /**
  * Created by ajo on 05.04.17.
  * This Class handles the Connection between the Android App and the custom Firebase

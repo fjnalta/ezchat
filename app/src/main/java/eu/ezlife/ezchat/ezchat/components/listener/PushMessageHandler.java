@@ -46,6 +46,7 @@ public class PushMessageHandler implements XMPPConnectionService {
 
     public PushMessageHandler() {
         // Instantiate the Contact List
+        // TODO - remove connectionHandler from this Class
         roster = Roster.getInstanceFor(connectionHandler.getConnection());
         // Instantiate ChatManager for all Chats
         chatManager = ChatManager.getInstanceFor(connectionHandler.getConnection());
