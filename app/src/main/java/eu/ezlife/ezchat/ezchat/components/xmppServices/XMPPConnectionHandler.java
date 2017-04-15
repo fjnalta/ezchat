@@ -1,4 +1,4 @@
-package eu.ezlife.ezchat.ezchat.components.listener;
+package eu.ezlife.ezchat.ezchat.components.xmppServices;
 
 import android.os.AsyncTask;
 import android.util.Log;

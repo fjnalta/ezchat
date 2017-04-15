@@ -19,13 +19,13 @@ import java.util.Calendar;
 
 import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.components.adapter.ChatHistoryAdapter;
-import eu.ezlife.ezchat.ezchat.components.listener.PushMessageService;
-import eu.ezlife.ezchat.ezchat.components.listener.XMPPConnectionService;
+import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPMessageService;
+import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPConnectionService;
 import eu.ezlife.ezchat.ezchat.components.restServices.PushMessageConnection;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
-public class ChatActivity extends AppCompatActivity implements PushMessageService, XMPPConnectionService {
+public class ChatActivity extends AppCompatActivity implements XMPPMessageService, XMPPConnectionService {
 
     // Serializable intent
     private ContactListEntry contact;

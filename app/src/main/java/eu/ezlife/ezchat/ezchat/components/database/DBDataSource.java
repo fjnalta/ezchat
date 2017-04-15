@@ -13,7 +13,7 @@ import org.jxmpp.stringprep.XmppStringprepException;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.ezlife.ezchat.ezchat.components.listener.XMPPConnectionService;
+import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPConnectionService;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 import eu.ezlife.ezchat.ezchat.data.ContactEntry;
 

@@ -1,4 +1,4 @@
-package eu.ezlife.ezchat.ezchat.components.firebase;
+package eu.ezlife.ezchat.ezchat.components.firebaseServices;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -19,7 +19,7 @@ import eu.ezlife.ezchat.ezchat.R;
 /**
  * Created by ajo on 06.04.17.
  */
-public class MyMessageService extends FirebaseMessagingService {
+public class MyFireBaseMessageService extends FirebaseMessagingService {
 
     /**
      * Called when message is received.
@@ -31,7 +31,6 @@ public class MyMessageService extends FirebaseMessagingService {
 
         Log.d("FirebaseCloudMessaging", "PUSH NOTIFICATION CALLED");
         super.onMessageReceived(remoteMessage);
-
         // TODO - read contact name from database
         createNotification(remoteMessage.getData().get("contact"));
     }

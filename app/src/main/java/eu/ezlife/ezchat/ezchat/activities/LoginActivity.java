@@ -10,8 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import eu.ezlife.ezchat.ezchat.R;
-import eu.ezlife.ezchat.ezchat.components.listener.XMPPConnectionHandler;
-import eu.ezlife.ezchat.ezchat.components.listener.XMPPConnectionService;
+import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPConnectionHandler;
+import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPConnectionService;
 
 public class LoginActivity extends AppCompatActivity implements XMPPConnectionService {
 
@@ -50,7 +50,6 @@ public class LoginActivity extends AppCompatActivity implements XMPPConnectionSe
                 startService(i);
 
                 connectionHandler.connectConnection();
-//                new XMPPConnection(username,password,getApplicationContext()).execute("");
             }
         });
     }

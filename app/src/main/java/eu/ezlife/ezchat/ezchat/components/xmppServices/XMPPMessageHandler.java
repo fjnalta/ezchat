@@ -1,4 +1,4 @@
-package eu.ezlife.ezchat.ezchat.components.listener;
+package eu.ezlife.ezchat.ezchat.components.xmppServices;
 
 import android.content.Context;
 import android.util.Log;
@@ -25,11 +25,10 @@ import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 /**
  * Created by ajo on 11.04.17.
  */
-
-public class PushMessageHandler implements XMPPConnectionService {
+public class XMPPMessageHandler implements XMPPConnectionService {
 
     // Observable List
-    private List<PushMessageService> list = new ArrayList<>();
+    private List<XMPPMessageService> list = new ArrayList<>();
     private Context context = null;
 
     // Contact List
@@ -44,7 +43,7 @@ public class PushMessageHandler implements XMPPConnectionService {
     // Database
     private DBDataSource dbHandler = null;
 
-    public PushMessageHandler() {
+    public XMPPMessageHandler() {
         // Instantiate the Contact List
         // TODO - remove connectionHandler from this Class
         roster = Roster.getInstanceFor(connectionHandler.getConnection());
@@ -115,7 +114,7 @@ public class PushMessageHandler implements XMPPConnectionService {
      * Add one ObservableClass to the logicHandler
      * @param w the Observable to add
      */
-    public void registerObservable(PushMessageService w, Context context) {
+    public void registerObservable(XMPPMessageService w, Context context) {
         list.add(w);
         if (this.context == null) {
             this.context = context;
@@ -127,7 +126,7 @@ public class PushMessageHandler implements XMPPConnectionService {
      * delete one observable from the observable list
      * @param w observable to delete
      */
-    public void deleteObservable(PushMessageService w) {
+    public void deleteObservable(XMPPMessageService w) {
         list.remove(w);
     }
 
@@ -135,7 +134,7 @@ public class PushMessageHandler implements XMPPConnectionService {
      * Update all registered observables
      */
     public void updateAllObservables() {
-        for (PushMessageService p : list) {
+        for (XMPPMessageService p : list) {
             p.updateObservable();
         }
     }
