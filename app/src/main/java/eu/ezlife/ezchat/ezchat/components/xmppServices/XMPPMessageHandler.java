@@ -25,10 +25,10 @@ import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 /**
  * Created by ajo on 11.04.17.
  */
-public class XMPPMessageHandler implements XMPPConnectionService {
+public class XMPPMessageHandler {
 
     // Observable List
-    private List<XMPPMessageService> list = new ArrayList<>();
+    private List<XMPPService> list = new ArrayList<>();
     private Context context = null;
 
     // Contact List
@@ -44,11 +44,13 @@ public class XMPPMessageHandler implements XMPPConnectionService {
     private DBDataSource dbHandler = null;
 
     public XMPPMessageHandler() {
+        // TODO - only instantiate after connected - if the connection != null
+        // TODO - move this to seperate methods and call it from Connection handler after login
+
         // Instantiate the Contact List
-        // TODO - remove connectionHandler from this Class
-        roster = Roster.getInstanceFor(connectionHandler.getConnection());
+        roster = Roster.getInstanceFor(XMPPConnectionHandler.getConnection());
         // Instantiate ChatManager for all Chats
-        chatManager = ChatManager.getInstanceFor(connectionHandler.getConnection());
+        chatManager = ChatManager.getInstanceFor(XMPPConnectionHandler.getConnection());
 
         // Message Listener
         chatManager.addIncomingListener(new IncomingChatMessageListener() {
@@ -114,7 +116,7 @@ public class XMPPMessageHandler implements XMPPConnectionService {
      * Add one ObservableClass to the logicHandler
      * @param w the Observable to add
      */
-    public void registerObservable(XMPPMessageService w, Context context) {
+    public void registerObservable(XMPPService w, Context context) {
         list.add(w);
         if (this.context == null) {
             this.context = context;
@@ -126,7 +128,7 @@ public class XMPPMessageHandler implements XMPPConnectionService {
      * delete one observable from the observable list
      * @param w observable to delete
      */
-    public void deleteObservable(XMPPMessageService w) {
+    public void deleteObservable(XMPPService w) {
         list.remove(w);
     }
 
@@ -134,8 +136,8 @@ public class XMPPMessageHandler implements XMPPConnectionService {
      * Update all registered observables
      */
     public void updateAllObservables() {
-        for (XMPPMessageService p : list) {
-            p.updateObservable();
+        for (XMPPService p : list) {
+            p.updateMessageObservable();
         }
     }
 
@@ -169,10 +171,5 @@ public class XMPPMessageHandler implements XMPPConnectionService {
 
     public void setChatHistory(List<ChatHistoryEntry> chatHistory) {
         this.chatHistory = chatHistory;
-    }
-
-    @Override
-    public void notifyConnectionInterface() {
-
     }
 }

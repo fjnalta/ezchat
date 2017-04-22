@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import eu.ezlife.ezchat.ezchat.R;
-import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPConnectionService;
+import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 
 /**
@@ -18,7 +18,7 @@ import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
  * This class holds the Chat history adapter. It handles reads chat History updates from the
  * database and updates the view
  */
-public class ChatHistoryAdapter extends ArrayAdapter<ChatHistoryEntry> implements XMPPConnectionService {
+public class ChatHistoryAdapter extends ArrayAdapter<ChatHistoryEntry> implements XMPPService {
 
     private List<ChatHistoryEntry> chatHistory;
     private Activity context;
@@ -69,7 +69,12 @@ public class ChatHistoryAdapter extends ArrayAdapter<ChatHistoryEntry> implement
     }
 
     @Override
-    public void notifyConnectionInterface() {
+    public void updateMessageObservable() {
+
+    }
+
+    @Override
+    public void updateConnectionObservable() {
 
     }
 }

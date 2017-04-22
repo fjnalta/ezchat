@@ -15,18 +15,16 @@ import java.util.Collection;
 
 import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.components.adapter.ContactListAdapter;
-import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPMessageService;
-import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPConnectionService;
+import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
 import eu.ezlife.ezchat.ezchat.components.restServices.TokenRegistrationConnection;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
-
 
 /**
  * Created by ajo on 04.02.2017.
  * Activity which represents the Contact List View
  * Handles the Status and Contact List
  */
-public class ContactListActivity extends AppCompatActivity implements XMPPMessageService, XMPPConnectionService {
+public class ContactListActivity extends AppCompatActivity implements XMPPService {
 
     // Contact List UI
     private ListView myList;
@@ -38,8 +36,8 @@ public class ContactListActivity extends AppCompatActivity implements XMPPMessag
         setContentView(R.layout.activity_contact_list);
 
         // Register on PushMessage Listener and Remove the current chat
-        handler.registerObservable(this, getApplicationContext());
-        handler.setCurrentChat(null);
+        connectionHandler.getMessageHandler().registerObservable(this, getApplicationContext());
+        connectionHandler.getMessageHandler().setCurrentChat(null);
 
         // TODO - move this
         // Register Created Token after Login
@@ -47,47 +45,45 @@ public class ContactListActivity extends AppCompatActivity implements XMPPMessag
 
         // retrieve contact List from Server and update DB
         checkForDbUpdates();
-        // create contact List on View
-        createContactList();
         // Add listener to contact List
         setContactListAdapter();
     }
     
     private void checkForDbUpdates() {
-        handler.getDbHandler().open();
+        connectionHandler.getMessageHandler().getDbHandler().open();
         // check for new users
-        if(handler.getDbHandler().getContacts().size() != handler.getRoster().getEntryCount() && handler.getRoster().getEntryCount() != 0) {
-            for(RosterEntry entry : handler.getRoster().getEntries()) {
-                if(handler.getDbHandler().getContact(entry.getUser()) == null) {
-                    handler.getDbHandler().createContact(entry.getUser(), R.mipmap.ic_launcher, entry.getName());
+        if(connectionHandler.getMessageHandler().getDbHandler().getContacts().size() != connectionHandler.getMessageHandler().getRoster().getEntryCount() && connectionHandler.getMessageHandler().getRoster().getEntryCount() != 0) {
+            for(RosterEntry entry : connectionHandler.getMessageHandler().getRoster().getEntries()) {
+                if(connectionHandler.getMessageHandler().getDbHandler().getContact(entry.getUser()) == null) {
+                    connectionHandler.getMessageHandler().getDbHandler().createContact(entry.getUser(), R.mipmap.ic_launcher, entry.getName());
                 }
             }
         }
 
         // check for avatar changes
 
-        handler.getDbHandler().close();
+        connectionHandler.getMessageHandler().getDbHandler().close();
     }
 
     private void createContactList() {
         try {
-            if (!handler.getRoster().isLoaded())
-                handler.getRoster().reloadAndWait();
+            if (!connectionHandler.getMessageHandler().getRoster().isLoaded())
+                connectionHandler.getMessageHandler().getRoster().reloadAndWait();
 
-            handler.getDbHandler().open();
+            connectionHandler.getMessageHandler().getDbHandler().open();
 
-            Collection<RosterEntry> rosterEntries = handler.getRoster().getEntries();
+            Collection<RosterEntry> rosterEntries = connectionHandler.getMessageHandler().getRoster().getEntries();
             Presence presence;
-            handler.getContactList().clear();
+            connectionHandler.getMessageHandler().getContactList().clear();
 
             for (RosterEntry entry : rosterEntries) {
-                presence = handler.getRoster().getPresence(entry.getJid());
-                ContactListEntry currentEntry = new ContactListEntry(handler.getDbHandler().getContact(entry.getUser()),evaluateContactStatus(presence),presence.isAvailable(),false);
-                currentEntry.setLastMessage(handler.getDbHandler().getLastMessage(entry.getUser()));
-                handler.getContactList().add(currentEntry);
+                presence = connectionHandler.getMessageHandler().getRoster().getPresence(entry.getJid());
+                ContactListEntry currentEntry = new ContactListEntry(connectionHandler.getMessageHandler().getDbHandler().getContact(entry.getUser()),evaluateContactStatus(presence),presence.isAvailable(),false);
+                currentEntry.setLastMessage(connectionHandler.getMessageHandler().getDbHandler().getLastMessage(entry.getUser()));
+                connectionHandler.getMessageHandler().getContactList().add(currentEntry);
             }
 
-            handler.getDbHandler().close();
+            connectionHandler.getMessageHandler().getDbHandler().close();
             contactListAdapter.notifyDataSetChanged();
 
         } catch (Exception e) {
@@ -96,7 +92,7 @@ public class ContactListActivity extends AppCompatActivity implements XMPPMessag
     }
 
     private void setContactListAdapter() {
-        contactListAdapter = new ContactListAdapter(this, handler.getContactList());
+        contactListAdapter = new ContactListAdapter(this, connectionHandler.getMessageHandler().getContactList());
         myList = (ListView) findViewById(R.id.contact_listView);
         myList.setAdapter(contactListAdapter);
 
@@ -105,7 +101,7 @@ public class ContactListActivity extends AppCompatActivity implements XMPPMessag
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Load chatActivity
                 Intent chatActivity = new Intent(getApplicationContext(), ChatActivity.class);
-                chatActivity.putExtra("ContactListEntry",handler.getContactList().get(position));
+                chatActivity.putExtra("ContactListEntry", connectionHandler.getMessageHandler().getContactList().get(position));
                 chatActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getApplicationContext().startActivity(chatActivity);
             }
@@ -140,7 +136,7 @@ public class ContactListActivity extends AppCompatActivity implements XMPPMessag
      * was received. Calls to update the view
      */
     @Override
-    public void updateObservable() {
+    public void updateMessageObservable() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -151,7 +147,13 @@ public class ContactListActivity extends AppCompatActivity implements XMPPMessag
     }
 
     @Override
-    public void notifyConnectionInterface() {
-
+    public void updateConnectionObservable() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                createContactList();
+                contactListAdapter.notifyDataSetChanged();
+            }
+        });
     }
 }

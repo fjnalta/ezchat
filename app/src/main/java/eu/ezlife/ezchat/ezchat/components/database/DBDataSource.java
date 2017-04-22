@@ -13,7 +13,7 @@ import org.jxmpp.stringprep.XmppStringprepException;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPConnectionService;
+import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 import eu.ezlife.ezchat.ezchat.data.ContactEntry;
 
@@ -21,7 +21,7 @@ import eu.ezlife.ezchat.ezchat.data.ContactEntry;
  * Created by ajo on 06.02.2017.
  * This class represents the Database Controller. It should be only used in Message Handler
  */
-public class DBDataSource implements XMPPConnectionService {
+public class DBDataSource implements XMPPService {
 
     private DBHandler dbHandler;
     private SQLiteDatabase database;
@@ -250,7 +250,12 @@ public class DBDataSource implements XMPPConnectionService {
     }
 
     @Override
-    public void notifyConnectionInterface() {
+    public void updateMessageObservable() {
+
+    }
+
+    @Override
+    public void updateConnectionObservable() {
 
     }
 }

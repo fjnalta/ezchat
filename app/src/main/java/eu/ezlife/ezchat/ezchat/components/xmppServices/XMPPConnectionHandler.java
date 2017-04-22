@@ -29,12 +29,15 @@ public class XMPPConnectionHandler implements ConnectionListener {
     private String userToken;
 
     // Observable List
-    private List<XMPPConnectionService> list = new ArrayList<>();
+    private List<XMPPService> list = new ArrayList<>();
 
     // XMPP Connection Fields
-    private AbstractXMPPConnection connection;
+    private static AbstractXMPPConnection connection;
     private boolean connected;
-    private boolean loggedin;
+    private boolean loggedIn;
+
+    // MyMessageHandler
+    private XMPPMessageHandler messageHandler = null;
 
     public XMPPConnectionHandler() {
         try {
@@ -45,7 +48,7 @@ public class XMPPConnectionHandler implements ConnectionListener {
             // Create the configuration for this new connection
             XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder();
             // TODO - get Username and Password from LoginPreferences
-            configBuilder.setUsernameAndPassword((CharSequence) username, password);
+            configBuilder.setUsernameAndPassword((CharSequence) "able", "PMinges1");
             configBuilder.setResource("ezChat Android v.0.1");
             configBuilder.setXmppDomain("ezlife.eu");
             configBuilder.setResource("ezChat");
@@ -69,7 +72,7 @@ public class XMPPConnectionHandler implements ConnectionListener {
      *
      * @param w the Observable to add
      */
-    public void registerObservable(XMPPConnectionService w) {
+    public void registerObservable(XMPPService w) {
         list.add(w);
     }
 
@@ -78,7 +81,7 @@ public class XMPPConnectionHandler implements ConnectionListener {
      *
      * @param w observable to delete
      */
-    public void deleteObservable(XMPPConnectionService w) {
+    public void deleteObservable(XMPPService w) {
         list.remove(w);
     }
 
@@ -86,8 +89,8 @@ public class XMPPConnectionHandler implements ConnectionListener {
      * Update all registered observables
      */
     public void updateAllObservables() {
-        for (XMPPConnectionService p : list) {
-            p.notifyConnectionInterface();
+        for (XMPPService p : list) {
+            p.updateConnectionObservable();
         }
     }
 
@@ -108,7 +111,10 @@ public class XMPPConnectionHandler implements ConnectionListener {
     @Override
     public void authenticated(XMPPConnection connection, boolean resumed) {
         Log.d("xmpp", "Authenticated!");
-        loggedin = true;
+        loggedIn = true;
+        this.messageHandler = new XMPPMessageHandler();
+        // Update FireBase Id
+
         updateAllObservables();
     }
 
@@ -116,7 +122,7 @@ public class XMPPConnectionHandler implements ConnectionListener {
     public void connectionClosed() {
         Log.d("xmpp", "ConnectionCLosed!");
         connected = false;
-        loggedin = false;
+        loggedIn = false;
         updateAllObservables();
     }
 
@@ -124,7 +130,7 @@ public class XMPPConnectionHandler implements ConnectionListener {
     public void connectionClosedOnError(Exception e) {
         Log.d("xmpp", "ConnectionClosedOn Error!");
         connected = false;
-        loggedin = false;
+        loggedIn = false;
         updateAllObservables();
     }
 
@@ -132,14 +138,14 @@ public class XMPPConnectionHandler implements ConnectionListener {
     public void reconnectionSuccessful() {
         Log.d("xmpp", "ReconnectionSuccessful");
         connected = true;
-        loggedin = false;
+        loggedIn = false;
         updateAllObservables();
     }
 
     @Override
     public void reconnectingIn(int seconds) {
         Log.d("xmpp", "Reconnecting " + seconds);
-        loggedin = false;
+        loggedIn = false;
         updateAllObservables();
     }
 
@@ -147,7 +153,7 @@ public class XMPPConnectionHandler implements ConnectionListener {
     public void reconnectionFailed(Exception e) {
         Log.d("xmpp", "ReconnectionFailed!");
         connected = false;
-        loggedin = false;
+        loggedIn = false;
         updateAllObservables();
     }
 
@@ -188,8 +194,7 @@ public class XMPPConnectionHandler implements ConnectionListener {
     }
 
     // Connection Status - Getter
-
-    public AbstractXMPPConnection getConnection() {
+    public static AbstractXMPPConnection getConnection() {
         return connection;
     }
 
@@ -201,7 +206,11 @@ public class XMPPConnectionHandler implements ConnectionListener {
         return connected;
     }
 
-    public boolean isLoggedin() {
-        return loggedin;
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+    public XMPPMessageHandler getMessageHandler() {
+        return messageHandler;
     }
 }
