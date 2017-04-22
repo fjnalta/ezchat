@@ -11,7 +11,6 @@ public interface XMPPService {
     /**
      * update the observables
      */
-    public void updateMessageObservable();
-    public void updateConnectionObservable();
-
+    void updateMessageObservable();
+    void updateConnectionObservable();
 }
