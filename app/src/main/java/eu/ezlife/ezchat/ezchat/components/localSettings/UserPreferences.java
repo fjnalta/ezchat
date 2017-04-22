@@ -9,7 +9,7 @@ import android.preference.PreferenceManager;
  * Holds the static user preferences
  */
 // TODO - implement
-public class SaveLoginPreferences {
+public class UserPreferences {
     static final String PREF_USER_NAME = "username";
     static final String PREF_USER_PW = "password";
     static final String PREF_APP_ID = "appid";
