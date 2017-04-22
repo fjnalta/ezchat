@@ -11,9 +11,9 @@ import android.widget.EditText;
 
 import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPConnectionHandler;
-import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPConnectionService;
+import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
 
-public class LoginActivity extends AppCompatActivity implements XMPPConnectionService {
+public class LoginActivity extends AppCompatActivity implements XMPPService {
 
     private EditText usernameText;
     private EditText passwordText;
@@ -55,14 +55,23 @@ public class LoginActivity extends AppCompatActivity implements XMPPConnectionSe
     }
 
     @Override
-    public void notifyConnectionInterface() {
-        Log.d("LoginActivity", "Update Called");
+    public void updateMessageObservable() {
+
+    }
+
+    @Override
+    public void updateConnectionObservable() {
         if(connectionHandler.getConnection() != null) {
             if(connectionHandler.getConnection().isAuthenticated()) {
                 Intent contactListActivity = new Intent(getApplicationContext(), ContactListActivity.class);
                 contactListActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getApplicationContext().startActivity(contactListActivity);
-                progressDialog.hide();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.hide();
+                    }
+                });
             }
         }
     }
