@@ -7,7 +7,12 @@ package eu.ezlife.ezchat.ezchat.components.xmppServices;
 public interface XMPPConnectionService {
 
     XMPPConnectionHandler connectionHandler = new XMPPConnectionHandler();
+    XMPPMessageHandler messageHandler = new XMPPMessageHandler();
 
-    public void notifyConnectionInterface();
+    /**
+     * update the observables
+     */
+    public void updateMessageObservable();
+    public void updateConnectionObservable();
 
 }
