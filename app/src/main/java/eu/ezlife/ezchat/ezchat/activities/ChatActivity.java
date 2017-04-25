@@ -62,9 +62,11 @@ public class ChatActivity extends AppCompatActivity implements XMPPService {
 
         // UI Stuff
         chatHistoryAdapter = new ChatHistoryAdapter(this, connectionHandler.getMessageHandler().getChatHistory());
-
         chatHistoryView = (ListView) findViewById(R.id.chat_list_view);
         chatHistoryView.setAdapter(chatHistoryAdapter);
+        chatHistoryView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        chatHistoryView.setStackFromBottom(true);
+
         chatEdit = (EditText) findViewById(R.id.chat_edit_text1);
         sendButton = (ImageView) findViewById(R.id.enter_chat1);
 
