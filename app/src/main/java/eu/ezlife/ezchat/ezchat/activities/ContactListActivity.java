@@ -3,6 +3,7 @@ package eu.ezlife.ezchat.ezchat.activities;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -36,6 +37,8 @@ public class ContactListActivity extends AppCompatActivity implements XMPPServic
         setContentView(R.layout.activity_contact_list);
 
         // Register on PushMessage Listener and Remove the current chat
+        connectionHandler.registerObservable(this, getApplicationContext());
+
         connectionHandler.getMessageHandler().registerObservable(this, getApplicationContext());
         connectionHandler.getMessageHandler().setCurrentChat(null);
 
@@ -148,12 +151,14 @@ public class ContactListActivity extends AppCompatActivity implements XMPPServic
 
     @Override
     public void updateConnectionObservable() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                createContactList();
-                contactListAdapter.notifyDataSetChanged();
-            }
-        });
+        if(connectionHandler.getMessageHandler().isRosterLoaded()) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    createContactList();
+                    contactListAdapter.notifyDataSetChanged();
+                }
+            });
+        }
     }
 }

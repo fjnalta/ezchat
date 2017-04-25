@@ -1,5 +1,6 @@
 package eu.ezlife.ezchat.ezchat.components.xmppServices;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -19,11 +20,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.ezlife.ezchat.ezchat.components.localSettings.UserPreferences;
+
 /**
  * Created by ajo on 15.04.17.
  */
 
 public class XMPPConnectionHandler implements ConnectionListener {
+
+    // UserPreferences
+    private UserPreferences prefs = null;
 
     // FireBase UserToken
     private String userToken;
@@ -39,16 +45,19 @@ public class XMPPConnectionHandler implements ConnectionListener {
     // MyMessageHandler
     private XMPPMessageHandler messageHandler = null;
 
-    public XMPPConnectionHandler() {
-        try {
-            String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-            userToken = refreshedToken;
-            Log.d("TOKEN", userToken);
 
+    public XMPPConnectionHandler() {
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        userToken = refreshedToken;
+        Log.d("TOKEN", userToken);
+
+    }
+
+    public void buildConnection() {
+        try {
             // Create the configuration for this new connection
             XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder();
-            // TODO - get Username and Password from LoginPreferences
-            configBuilder.setUsernameAndPassword((CharSequence) "able", "PMinges1");
+            configBuilder.setUsernameAndPassword((CharSequence) prefs.getPrefUserName(), prefs.getPrefPassword());
             configBuilder.setResource("ezChat Android v.0.1");
             configBuilder.setXmppDomain("ezlife.eu");
             configBuilder.setResource("ezChat");
@@ -72,8 +81,11 @@ public class XMPPConnectionHandler implements ConnectionListener {
      *
      * @param w the Observable to add
      */
-    public void registerObservable(XMPPService w) {
+    public void registerObservable(XMPPService w, Context context) {
         list.add(w);
+        if (this.prefs == null) {
+            prefs = new UserPreferences(context);
+        }
     }
 
     /**
@@ -165,7 +177,8 @@ public class XMPPConnectionHandler implements ConnectionListener {
                 try {
                     connection.connect();
                 } catch (IOException | SmackException | XMPPException | InterruptedException e) {
-                    e.printStackTrace();
+                    Log.d("xmpp", "Already connected, try login");
+                    login();
                 }
                 return null;
             }
@@ -178,7 +191,9 @@ public class XMPPConnectionHandler implements ConnectionListener {
         try {
             connection.login();
         } catch (XMPPException | SmackException | IOException e) {
-            e.printStackTrace();
+
+            Log.d("xmpp", "ConnectionFailed!");
+            updateAllObservables();
         } catch (Exception e) {
         }
     }
@@ -191,6 +206,8 @@ public class XMPPConnectionHandler implements ConnectionListener {
                 connection.disconnect();
             }
         }).start();
+        connected = false;
+        loggedIn = false;
     }
 
     // Connection Status - Getter
@@ -212,5 +229,14 @@ public class XMPPConnectionHandler implements ConnectionListener {
 
     public XMPPMessageHandler getMessageHandler() {
         return messageHandler;
+    }
+
+
+    public void setCredentials(String username, String password) {
+        prefs.setCredentials(username, password);
+    }
+
+    public UserPreferences getPrefs() {
+        return prefs;
     }
 }

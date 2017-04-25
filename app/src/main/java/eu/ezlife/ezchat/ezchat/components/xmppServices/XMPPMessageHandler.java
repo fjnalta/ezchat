@@ -33,6 +33,7 @@ public class XMPPMessageHandler {
 
     // Contact List
     private Roster roster = null;
+    private boolean rosterLoaded = false;
     private List<ContactListEntry> contactList = new ArrayList<>();
 
     // Chat
@@ -66,13 +67,14 @@ public class XMPPMessageHandler {
                     dbHandler.open();
                     // create DB-Entry
                     if (currentChat == chat) {
-                        Log.d("Chat: ", "We are in the incoming chat BOYYY");
+                        // if currentChat add to ChatHistory
                         chatHistory.add(dbHandler.createMessage(from.asEntityBareJidString(),
                                 newMessage.getTo().toString(),
                                 newMessage.getBody(),
                                 c.getTime().toString(),
                                 dbHandler.getContact(from.asEntityBareJidString()).getId()));
                     } else {
+                        // if != currentChat only add to DB
                         dbHandler.createMessage(from.asEntityBareJidString(),
                                 newMessage.getTo().toString(),
                                 newMessage.getBody(),
@@ -91,21 +93,26 @@ public class XMPPMessageHandler {
         roster.addRosterListener(new RosterListener() {
             @Override
             public void entriesAdded(Collection<Jid> addresses) {
+                Log.d("ROSTER", "entries added");
+                rosterLoaded = true;
                 updateAllObservables();
             }
 
             @Override
             public void entriesUpdated(Collection<Jid> addresses) {
+                Log.d("ROSTER", "entries updated");
                 updateAllObservables();
             }
 
             @Override
             public void entriesDeleted(Collection<Jid> addresses) {
+                Log.d("ROSTER", "entries deleted");
                 updateAllObservables();
             }
 
             // Ignored events public void entriesAdded(Collection<String> addresses) {}
             public void presenceChanged(Presence presence) {
+                Log.d("ROSTER", "presence changed");
                 updateAllObservables();
             }
         });
@@ -171,5 +178,10 @@ public class XMPPMessageHandler {
 
     public void setChatHistory(List<ChatHistoryEntry> chatHistory) {
         this.chatHistory = chatHistory;
+    }
+
+    // Roster Setter + Getter
+    public boolean isRosterLoaded() {
+        return rosterLoaded;
     }
 }
