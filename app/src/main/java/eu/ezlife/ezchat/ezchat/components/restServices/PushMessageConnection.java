@@ -20,18 +20,18 @@ import java.net.URL;
  */
 public class PushMessageConnection extends AsyncTask<String, String, String> {
 
-    // TODO - save the appId in user preferences
-    private final String appId = "crWd-zEsn3I:APA91bG31FzgnPcwxSgTLeiXySl7oWq_x-neCEO_nXXEQaTovr8GnNxSiLo93MJYc4xpHN3khFkJQUDF5kFBU7BjpGsrBxwQ4shDxvGfNaH_Qwx2b08uk3zRxIy_MWzGiFSzjby36mUZ";
-    private final String cloudMsgUrl = "http://10.0.150.24:8080/rest/msg";
+    private final String cloudMsgUrl = "http://instant.ignorelist.com:5238/ezChatPush/rest/msg";
 
     private String userName;
     private String contactName;
     private String userToken;
+    private String appId;
 
-    public PushMessageConnection(String userName, String contactName, String userToken) {
+    public PushMessageConnection(String userName, String contactName, String userToken, String appId) {
         this.userName = userName;
         this.contactName = contactName;
         this.userToken = userToken;
+        this.appId = appId;
     }
 
     // TODO - work with asynchronous status codes in constructor

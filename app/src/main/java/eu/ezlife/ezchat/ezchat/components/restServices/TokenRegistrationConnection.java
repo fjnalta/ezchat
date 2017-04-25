@@ -18,19 +18,15 @@ import java.net.URL;
 
 public class TokenRegistrationConnection extends AsyncTask<String, String, String> {
 
-    // TODO - save the appId in user preferences
-    private final String appId = "crWd-zEsn3I:APA91bG31FzgnPcwxSgTLeiXySl7oWq_x-neCEO_nXXEQaTovr8GnNxSiLo93MJYc4xpHN3khFkJQUDF5kFBU7BjpGsrBxwQ4shDxvGfNaH_Qwx2b08uk3zRxIy_MWzGiFSzjby36mUZ";
-    private final String cloudTokenUrl = "http://10.0.150.24:8080/rest/token";
+    private final String cloudTokenUrl = "http://instant.ignorelist.com:5238/ezChatPush/rest/token";
 
     private String userName;
     private String token;
-
 
     public TokenRegistrationConnection(String token, String userName) {
         this.token = token;
         this.userName = userName;
     }
-
 
     // TODO - work with asynchronous status codes in constructor
     @Override
@@ -51,7 +47,7 @@ public class TokenRegistrationConnection extends AsyncTask<String, String, Strin
             conn.setRequestProperty("Content-Type", "application/json");
 
             // Set Basic HTTP Authentication
-            String userCredentials = cutDomainFromUsername(this.userName) + ":" + appId.toCharArray();
+            String userCredentials = cutDomainFromUsername(this.userName) + ":" + "APPID";
             String basicAuth = "Basic " + new String(new Base64().encode(userCredentials.getBytes()));
             conn.setRequestProperty("Authorization", basicAuth);
 
@@ -61,9 +57,9 @@ public class TokenRegistrationConnection extends AsyncTask<String, String, Strin
             wr.close();
 
             if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                Log.d("PUSH: ", conn.getResponseMessage().toString());
+                Log.d("TokenRegistration: ", conn.getResponseMessage().toString());
             } else {
-                Log.d("PUSH: ", conn.getResponseMessage().toString());
+                Log.d("TokenRegistration: ", conn.getResponseMessage().toString());
                 // Server returned HTTP error code.
             }
 

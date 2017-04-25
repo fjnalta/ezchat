@@ -31,9 +31,6 @@ public class XMPPConnectionHandler implements ConnectionListener {
     // UserPreferences
     private UserPreferences prefs = null;
 
-    // FireBase UserToken
-    private String userToken;
-
     // Observable List
     private List<XMPPService> list = new ArrayList<>();
 
@@ -45,13 +42,7 @@ public class XMPPConnectionHandler implements ConnectionListener {
     // MyMessageHandler
     private XMPPMessageHandler messageHandler = null;
 
-
-    public XMPPConnectionHandler() {
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        userToken = refreshedToken;
-        Log.d("TOKEN", userToken);
-
-    }
+    private Context context;
 
     public void buildConnection() {
         try {
@@ -84,7 +75,9 @@ public class XMPPConnectionHandler implements ConnectionListener {
     public void registerObservable(XMPPService w, Context context) {
         list.add(w);
         if (this.prefs == null) {
+            this.context = context;
             prefs = new UserPreferences(context);
+
         }
     }
 
@@ -117,16 +110,17 @@ public class XMPPConnectionHandler implements ConnectionListener {
         if (!connection.isAuthenticated()) {
             login();
         }
-        updateAllObservables();
     }
 
     @Override
     public void authenticated(XMPPConnection connection, boolean resumed) {
         Log.d("xmpp", "Authenticated!");
         loggedIn = true;
-        this.messageHandler = new XMPPMessageHandler();
-        // Update FireBase Id
+        this.messageHandler = new XMPPMessageHandler(context);
 
+        // Update FireBase Id
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        prefs.setPrefFireBaseToken(refreshedToken);
         updateAllObservables();
     }
 
@@ -215,10 +209,6 @@ public class XMPPConnectionHandler implements ConnectionListener {
         return connection;
     }
 
-    public String getUserToken() {
-        return userToken;
-    }
-
     public boolean isConnected() {
         return connected;
     }
@@ -230,7 +220,6 @@ public class XMPPConnectionHandler implements ConnectionListener {
     public XMPPMessageHandler getMessageHandler() {
         return messageHandler;
     }
-
 
     public void setCredentials(String username, String password) {
         prefs.setCredentials(username, password);

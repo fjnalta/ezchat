@@ -16,6 +16,7 @@ import java.util.List;
 import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 import eu.ezlife.ezchat.ezchat.data.ContactEntry;
+import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
 /**
  * Created by ajo on 06.02.2017.
@@ -121,8 +122,8 @@ public class DBDataSource implements XMPPService {
             contactEntries.add(entry);
             cursor.moveToNext();
         }
-        cursor.close();
 
+        cursor.close();
         return contactEntries;
     }
 
@@ -144,12 +145,7 @@ public class DBDataSource implements XMPPService {
             cursor.close();
 
             if(currentEntry != null) {
-                if(isMyMessage(currentEntry)) {
-
-                    return "-> - " + currentEntry.getBody();
-                } else {
-                    return "<- - " + currentEntry.getBody();
-                }
+                return currentEntry.getBody();
             } else {
                 return " - ";
             }
@@ -162,6 +158,7 @@ public class DBDataSource implements XMPPService {
 
     // Create and return new Chat History Message
     public ChatHistoryEntry createMessage(String from, String to, String text, String date, long userId) {
+        Log.d("CreateMessage","Called");
         ContentValues values = new ContentValues();
         values.put(DBHandler.COLUMN_SNDR, from);
         values.put(DBHandler.COLUMN_RCPT, to);

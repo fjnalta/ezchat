@@ -9,11 +9,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.roster.RosterEntry;
-
-import java.util.Collection;
-
 import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.components.adapter.ContactListAdapter;
 import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
@@ -32,69 +27,32 @@ public class ContactListActivity extends AppCompatActivity implements XMPPServic
     private ArrayAdapter<ContactListEntry> contactListAdapter;
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        connectionHandler.getMessageHandler().registerObservable(this, getApplicationContext());
+        connectionHandler.getMessageHandler().setCurrentChat(null);
+
+        contactListAdapter.notifyDataSetChanged();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_list);
 
-        // Register on PushMessage Listener and Remove the current chat
         connectionHandler.registerObservable(this, getApplicationContext());
 
-        connectionHandler.getMessageHandler().registerObservable(this, getApplicationContext());
-        connectionHandler.getMessageHandler().setCurrentChat(null);
+        // Register REST FirebaseId
+        new TokenRegistrationConnection(connectionHandler.getPrefs().getPrefFireBaseToken(), connectionHandler.getConnection().getUser().asEntityBareJidString()).execute("");
 
-        // TODO - move this
-        // Register Created Token after Login
-        new TokenRegistrationConnection(connectionHandler.getUserToken(), connectionHandler.getConnection().getUser().asEntityBareJidString()).execute("");
-
-        // retrieve contact List from Server and update DB
-        checkForDbUpdates();
         // Add listener to contact List
         setContactListAdapter();
     }
-    
-    private void checkForDbUpdates() {
-        connectionHandler.getMessageHandler().getDbHandler().open();
-        // check for new users
-        if(connectionHandler.getMessageHandler().getDbHandler().getContacts().size() != connectionHandler.getMessageHandler().getRoster().getEntryCount() && connectionHandler.getMessageHandler().getRoster().getEntryCount() != 0) {
-            for(RosterEntry entry : connectionHandler.getMessageHandler().getRoster().getEntries()) {
-                if(connectionHandler.getMessageHandler().getDbHandler().getContact(entry.getUser()) == null) {
-                    connectionHandler.getMessageHandler().getDbHandler().createContact(entry.getUser(), R.mipmap.ic_launcher, entry.getName());
-                }
-            }
-        }
-
-        // check for avatar changes
-
-        connectionHandler.getMessageHandler().getDbHandler().close();
-    }
-
-    private void createContactList() {
-        try {
-            if (!connectionHandler.getMessageHandler().getRoster().isLoaded())
-                connectionHandler.getMessageHandler().getRoster().reloadAndWait();
-
-            connectionHandler.getMessageHandler().getDbHandler().open();
-
-            Collection<RosterEntry> rosterEntries = connectionHandler.getMessageHandler().getRoster().getEntries();
-            Presence presence;
-            connectionHandler.getMessageHandler().getContactList().clear();
-
-            for (RosterEntry entry : rosterEntries) {
-                presence = connectionHandler.getMessageHandler().getRoster().getPresence(entry.getJid());
-                ContactListEntry currentEntry = new ContactListEntry(connectionHandler.getMessageHandler().getDbHandler().getContact(entry.getUser()),evaluateContactStatus(presence),presence.isAvailable(),false);
-                currentEntry.setLastMessage(connectionHandler.getMessageHandler().getDbHandler().getLastMessage(entry.getUser()));
-                connectionHandler.getMessageHandler().getContactList().add(currentEntry);
-            }
-
-            connectionHandler.getMessageHandler().getDbHandler().close();
-            contactListAdapter.notifyDataSetChanged();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     private void setContactListAdapter() {
+
+        Log.d("ContactListAdapter","notified");
+
         contactListAdapter = new ContactListAdapter(this, connectionHandler.getMessageHandler().getContactList());
         myList = (ListView) findViewById(R.id.contact_listView);
         myList.setAdapter(contactListAdapter);
@@ -112,29 +70,6 @@ public class ContactListActivity extends AppCompatActivity implements XMPPServic
     }
 
     /**
-     * Helper method to create visual status icons from
-     * the user presence
-     * @param presence Presence to evaluate
-     */
-    private int evaluateContactStatus(Presence presence){
-        int stat = R.drawable.icon_offline;
-        if(presence.isAvailable()) {
-            if(presence.getMode().name().equals("available")) {
-                stat = R.drawable.icon_online;
-            }
-            if(presence.getMode().name().equals("away")) {
-                stat = R.drawable.icon_away;
-            }
-            if(presence.getMode().name().equals("dnd")) {
-                stat = R.drawable.icon_dnd;
-            }
-        } else {
-            stat = R.drawable.icon_offline;
-        }
-        return stat;
-    }
-
-    /**
      * Called from Message Handler after incoming Message
      * was received. Calls to update the view
      */
@@ -143,7 +78,6 @@ public class ContactListActivity extends AppCompatActivity implements XMPPServic
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                createContactList();
                 contactListAdapter.notifyDataSetChanged();
             }
         });
@@ -151,14 +85,17 @@ public class ContactListActivity extends AppCompatActivity implements XMPPServic
 
     @Override
     public void updateConnectionObservable() {
-        if(connectionHandler.getMessageHandler().isRosterLoaded()) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    createContactList();
-                    contactListAdapter.notifyDataSetChanged();
-                }
-            });
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                contactListAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        connectionHandler.getMessageHandler().deleteObservable(this);
     }
 }

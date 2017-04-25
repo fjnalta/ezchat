@@ -40,12 +40,12 @@ public class ChatActivity extends AppCompatActivity implements XMPPService {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        connectionHandler.getMessageHandler().registerObservable(this, getApplicationContext());
+
         // Get Contact Information from Intent
         if (getIntent().getSerializableExtra("ContactListEntry") != null) {
             this.contact = (ContactListEntry) getIntent().getSerializableExtra("ContactListEntry");
         }
-
-        connectionHandler.getMessageHandler().registerObservable(this, getApplicationContext());
 
         // Set or create current Chat
         try {
@@ -109,7 +109,7 @@ public class ChatActivity extends AppCompatActivity implements XMPPService {
 
                 // Send Push Notification
                 Log.d("Push Notification: ","Sending Msg FROM: " + connectionHandler.getConnection().getUser().asEntityBareJidString() + "TO: " + newMessage.getTo());
-                new PushMessageConnection(connectionHandler.getConnection().getUser().asEntityBareJidString(), newMessage.getTo().toString(), connectionHandler.getUserToken()).execute("");
+                new PushMessageConnection(connectionHandler.getConnection().getUser().asEntityBareJidString(), newMessage.getTo().toString(), connectionHandler.getPrefs().getPrefFireBaseToken(), connectionHandler.getPrefs().getPrefAppId()).execute("");
 
                 // Reset TextBox
                 chatEdit.setText("");
@@ -129,8 +129,8 @@ public class ChatActivity extends AppCompatActivity implements XMPPService {
      * to prevent it from leaking memory.
      */
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         connectionHandler.getMessageHandler().deleteObservable(this);
     }
 

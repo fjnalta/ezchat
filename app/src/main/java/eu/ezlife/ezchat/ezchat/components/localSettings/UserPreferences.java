@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 
-import de.measite.minidns.record.A;
-
 /**
  * Holds the static user preferences
  */
