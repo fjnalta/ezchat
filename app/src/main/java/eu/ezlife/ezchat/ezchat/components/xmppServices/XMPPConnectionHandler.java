@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eu.ezlife.ezchat.ezchat.components.localSettings.UserPreferences;
+import eu.ezlife.ezchat.ezchat.components.restServices.TokenRegistrationConnection;
 
 /**
  * Created by ajo on 15.04.17.
@@ -121,6 +122,10 @@ public class XMPPConnectionHandler implements ConnectionListener {
         // Update FireBase Id
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         prefs.setPrefFireBaseToken(refreshedToken);
+
+        // Register REST FirebaseId
+        new TokenRegistrationConnection(prefs.getPrefFireBaseToken(), connection.getUser().asEntityBareJidString()).execute("");
+
         updateAllObservables();
     }
 

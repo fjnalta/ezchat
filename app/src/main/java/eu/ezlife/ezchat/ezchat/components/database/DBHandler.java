@@ -17,7 +17,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public static final String TAG = "MyDBHelper";
     // DB-Settings
     public static final String DB_NAME = "ezChat.db";
-    public static final int DB_VERSION = 30;
+    public static final int DB_VERSION = 31;
     // Tables
     public static final String TABLE_CONTACTS = "contacts";
     public static final String TABLE_SETTINGS = "settings";

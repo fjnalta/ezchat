@@ -237,15 +237,6 @@ public class DBDataSource implements XMPPService {
         return myHistoryEntry;
     }
 
-    // TODO - clean this shit and remove observer from class
-    private boolean isMyMessage(ChatHistoryEntry msg){
-        if(msg.getTo().equals(connectionHandler.getConnection().getUser())) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     @Override
     public void updateMessageObservable() {
 

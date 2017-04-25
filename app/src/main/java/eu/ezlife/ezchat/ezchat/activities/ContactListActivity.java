@@ -42,9 +42,6 @@ public class ContactListActivity extends AppCompatActivity implements XMPPServic
 
         connectionHandler.registerObservable(this, getApplicationContext());
 
-        // Register REST FirebaseId
-        new TokenRegistrationConnection(connectionHandler.getPrefs().getPrefFireBaseToken(), connectionHandler.getConnection().getUser().asEntityBareJidString()).execute("");
-
         // Add listener to contact List
         setContactListAdapter();
     }

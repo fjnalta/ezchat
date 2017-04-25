@@ -85,7 +85,6 @@ public class XMPPMessageHandler {
                     // Close DB
                     dbHandler.close();
 
-                    loadContactList();
                     updateAllObservables();
                 }
             }
@@ -106,8 +105,17 @@ public class XMPPMessageHandler {
                         dbHandler.createContact(entry.getUser(), R.mipmap.ic_launcher, entry.getName());
                     }
                 }
+
+                contactList.clear();
+                for (RosterEntry entry : rosterEntries) {
+                    // create contactList Object
+                    presence = roster.getPresence(entry.getJid());
+                    ContactListEntry currentEntry = new ContactListEntry(dbHandler.getContact(entry.getUser()), evaluateContactStatus(presence), presence.isAvailable(), false);
+                    currentEntry.setLastMessage(dbHandler.getLastMessage(entry.getUser()));
+                    contactList.add(currentEntry);
+                }
                 dbHandler.close();
-                loadContactList();
+
                 updateAllObservables();
             }
 
@@ -141,7 +149,6 @@ public class XMPPMessageHandler {
             public void presenceChanged(Presence presence) {
                 Log.d("ROSTER", "presence changed");
                 updateContact(presence);
-                updateAllObservables();
             }
         });
 
@@ -186,23 +193,6 @@ public class XMPPMessageHandler {
         return contactList;
     }
 
-    private void loadContactList() {
-        Log.d("XMPPMessageHandler","Loading Contact List");
-        dbHandler.open();
-        Collection<RosterEntry> rosterEntries = roster.getEntries();
-        Presence presence;
-        contactList.clear();
-        for (RosterEntry entry : rosterEntries) {
-            // create contactList Object
-            presence = roster.getPresence(entry.getJid());
-            ContactListEntry currentEntry = new ContactListEntry(dbHandler.getContact(entry.getUser()), evaluateContactStatus(presence), presence.isAvailable(), false);
-            currentEntry.setLastMessage(dbHandler.getLastMessage(entry.getUser()));
-            contactList.add(currentEntry);
-        }
-        dbHandler.close();
-
-    }
-
     private void updateContact(Presence presence) {
         for(ContactListEntry entry : contactList) {
             if(presence.getFrom().asBareJid().toString().equals(entry.getUsername())) {
@@ -210,6 +200,7 @@ public class XMPPMessageHandler {
                 entry.setStatus(evaluateContactStatus(presence));
             }
         }
+        updateAllObservables();
     }
 
     /**
@@ -256,13 +247,5 @@ public class XMPPMessageHandler {
 
     public void setChatHistory(List<ChatHistoryEntry> chatHistory) {
         this.chatHistory = chatHistory;
-    }
-
-    // TODO - clean this shit
-    private String cutDomainFromUsername(String username) {
-        String str = username;
-        int dotIndex = str.indexOf("@");
-        str = str.substring(0, dotIndex);
-        return str;
     }
 }
