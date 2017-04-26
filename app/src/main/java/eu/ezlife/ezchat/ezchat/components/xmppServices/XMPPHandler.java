@@ -103,7 +103,9 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
                     connection.connect();
                 } catch (IOException | SmackException | XMPPException | InterruptedException e) {
                     Log.d("xmpp", "Already connected, try login");
-                    login();
+                    if(connection.isConnected()) {
+                        login();
+                    }
                 }
                 return null;
             }
