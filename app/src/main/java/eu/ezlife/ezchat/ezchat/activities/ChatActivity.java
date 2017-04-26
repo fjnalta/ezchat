@@ -28,6 +28,11 @@ import eu.ezlife.ezchat.ezchat.components.restServices.PushMessageConnection;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
+/**
+ * Created by ajo on 04.02.2017.
+ * Activity which represents the Chat View
+ * Handles outgoing XMPP and Push messages
+ */
 public class ChatActivity extends AppCompatActivity implements XMPPService, Observer {
 
     // Serializable intent
