@@ -236,16 +236,6 @@ public class DBDataSource implements XMPPService {
 
         return myHistoryEntry;
     }
-
-    @Override
-    public void updateMessageObservable() {
-
-    }
-
-    @Override
-    public void updateConnectionObservable() {
-
-    }
 }
 
 

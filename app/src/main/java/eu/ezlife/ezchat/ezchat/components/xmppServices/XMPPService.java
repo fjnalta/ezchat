@@ -1,16 +1,13 @@
 package eu.ezlife.ezchat.ezchat.components.xmppServices;
 
+import java.util.Observable;
+
 /**
  * Created by ajo on 15.04.17.
  */
 
 public interface XMPPService {
 
-    XMPPConnectionHandler connectionHandler = new XMPPConnectionHandler();
+    XMPPHandler handler = new XMPPHandler();
 
-    /**
-     * update the observables
-     */
-    void updateMessageObservable();
-    void updateConnectionObservable();
 }

@@ -16,15 +16,19 @@ import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
 
 import java.util.Calendar;
+import java.util.Observable;
+import java.util.Observer;
 
 import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.components.adapter.ChatHistoryAdapter;
+import eu.ezlife.ezchat.ezchat.components.database.DBDataSource;
+import eu.ezlife.ezchat.ezchat.components.localSettings.UserPreferences;
 import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
 import eu.ezlife.ezchat.ezchat.components.restServices.PushMessageConnection;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
-public class ChatActivity extends AppCompatActivity implements XMPPService {
+public class ChatActivity extends AppCompatActivity implements XMPPService, Observer {
 
     // Serializable intent
     private ContactListEntry contact;
@@ -35,12 +39,32 @@ public class ChatActivity extends AppCompatActivity implements XMPPService {
     // Chat history
     private ArrayAdapter<ChatHistoryEntry> chatHistoryAdapter;
 
+    // DatabaseHandler
+    private DBDataSource dbHandler = null;
+    // UserPreferences
+    private UserPreferences prefs = null;
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        handler.deleteObserver(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        handler.setAndroidContext(this);
+        handler.addObserver(this);
+        chatHistoryAdapter.notifyDataSetChanged();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        connectionHandler.getMessageHandler().registerObservable(this, getApplicationContext());
+        dbHandler = new DBDataSource(this);
+        prefs = new UserPreferences(this);
 
         // Get Contact Information from Intent
         if (getIntent().getSerializableExtra("ContactListEntry") != null) {
@@ -50,18 +74,18 @@ public class ChatActivity extends AppCompatActivity implements XMPPService {
         // Set or create current Chat
         try {
             Jid jid = JidCreate.from(contact.getUsername());
-            connectionHandler.getMessageHandler().setCurrentChat(connectionHandler.getMessageHandler().getChatManager().chatWith(jid.asEntityBareJidIfPossible()));
+            handler.setCurrentChat(handler.getChatManager().chatWith(jid.asEntityBareJidIfPossible()));
         } catch (XmppStringprepException e) {
             e.printStackTrace();
         }
 
         // Set the current Chat history
-        connectionHandler.getMessageHandler().getDbHandler().open();
-        connectionHandler.getMessageHandler().setChatHistory(connectionHandler.getMessageHandler().getDbHandler().getChatHistory(contact.getId()));
-        connectionHandler.getMessageHandler().getDbHandler().close();
+        dbHandler.open();
+        handler.setChatHistory(dbHandler.getChatHistory(contact.getId()));
+        dbHandler.close();
 
         // UI Stuff
-        chatHistoryAdapter = new ChatHistoryAdapter(this, connectionHandler.getMessageHandler().getChatHistory());
+        chatHistoryAdapter = new ChatHistoryAdapter(this, handler.getChatHistory());
         chatHistoryView = (ListView) findViewById(R.id.chat_list_view);
         chatHistoryView.setAdapter(chatHistoryAdapter);
         chatHistoryView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
@@ -74,7 +98,7 @@ public class ChatActivity extends AppCompatActivity implements XMPPService {
             @Override
             public void onClick(View view) {
                 Message newMessage = new Message();
-                newMessage.setFrom(connectionHandler.getConnection().getUser().asEntityFullJidIfPossible());
+                newMessage.setFrom(handler.connection.getUser().asEntityFullJidIfPossible());
                 Jid myUsername = null;
                 try {
                     myUsername = JidCreate.from(contact.getUsername());
@@ -87,19 +111,27 @@ public class ChatActivity extends AppCompatActivity implements XMPPService {
                 // Create Custom Time Format for DB Sorting
                 Calendar c = Calendar.getInstance();
                 // Open DB and save Message
-                connectionHandler.getMessageHandler().getDbHandler().open();
+                dbHandler.open();
                 // create DB-Entry and add Item to chatHistoryList
-                connectionHandler.getMessageHandler().getChatHistory().add(connectionHandler.getMessageHandler().getDbHandler().createMessage(newMessage.getFrom().toString(),
+                handler.getChatHistory().add(dbHandler.createMessage(newMessage.getFrom().toString(),
                         newMessage.getTo().toString(),
                         newMessage.getBody(),
                         c.getTime().toString(),
-                        connectionHandler.getMessageHandler().getDbHandler().getContact(contact.getUsername()).getId()));
+                        dbHandler.getContact(contact.getUsername()).getId()));
                 // Close DB
-                connectionHandler.getMessageHandler().getDbHandler().close();
+                dbHandler.close();
+
+                // Set last Message
+                for(ContactListEntry entry : handler.getContactList()) {
+                    if(entry.getUsername().equals(newMessage.getTo().toString())) {
+                        entry.setLastMessage(newMessage.getBody());
+                    }
+                }
+
                 // Send message through XMPP
                     try {
-                        if (connectionHandler.getConnection().isConnected() && connectionHandler.getConnection().isAuthenticated()) {
-                            connectionHandler.getMessageHandler().getCurrentChat().send(newMessage);
+                        if (handler.connection.isConnected() && handler.connection.isAuthenticated()) {
+                            handler.getCurrentChat().send(newMessage);
                         }
                     } catch (SmackException.NotConnectedException e) {
                         e.printStackTrace();
@@ -108,8 +140,8 @@ public class ChatActivity extends AppCompatActivity implements XMPPService {
                     }
 
                 // Send Push Notification
-                Log.d("Push Notification: ","Sending Msg FROM: " + connectionHandler.getConnection().getUser().asEntityBareJidString() + "TO: " + newMessage.getTo());
-                new PushMessageConnection(connectionHandler.getConnection().getUser().asEntityBareJidString(), newMessage.getTo().toString(), connectionHandler.getPrefs().getPrefFireBaseToken(), connectionHandler.getPrefs().getPrefAppId()).execute("");
+                Log.d("Push Notification: ","Sending Msg FROM: " + handler.connection.getUser().asEntityBareJidString() + "TO: " + newMessage.getTo());
+                new PushMessageConnection(handler.connection.getUser().asEntityBareJidString(), newMessage.getTo().toString(), prefs.getPrefFireBaseToken(), prefs.getPrefAppId()).execute("");
 
                 // Reset TextBox
                 chatEdit.setText("");
@@ -125,31 +157,16 @@ public class ChatActivity extends AppCompatActivity implements XMPPService {
     }
 
     /*
-     * Remove the Observer after Closing the ChatAcitivity
-     * to prevent it from leaking memory.
-     */
-    @Override
-    protected void onPause() {
-        super.onPause();
-        connectionHandler.getMessageHandler().deleteObservable(this);
-    }
-
-    /*
      * Called from Message Handler after incoming Message
      * was received. Calls to update the view
      */
     @Override
-    public void updateMessageObservable() {
+    public void update(Observable o, Object arg) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 chatHistoryAdapter.notifyDataSetChanged();
             }
         });
-    }
-
-    @Override
-    public void updateConnectionObservable() {
-
     }
 }

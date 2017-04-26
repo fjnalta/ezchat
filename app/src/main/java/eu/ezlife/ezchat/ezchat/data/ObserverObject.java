@@ -5,4 +5,18 @@ package eu.ezlife.ezchat.ezchat.data;
  */
 
 public class ObserverObject {
+
+    private String text = "";
+
+    public ObserverObject(String text) {
+        this.text = text;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
 }

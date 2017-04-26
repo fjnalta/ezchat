@@ -10,11 +10,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.components.localSettings.UserPreferences;
 import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
+import eu.ezlife.ezchat.ezchat.data.ObserverObject;
 
-public class LoginActivity extends AppCompatActivity implements XMPPService {
+public class LoginActivity extends AppCompatActivity implements XMPPService, Observer {
 
     private EditText usernameText;
     private EditText passwordText;
@@ -22,12 +26,29 @@ public class LoginActivity extends AppCompatActivity implements XMPPService {
 
     private ProgressDialog progressDialog;
 
+    // UserPreferences
+    private UserPreferences prefs = null;
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        handler.deleteObserver(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        handler.setAndroidContext(this);
+        handler.addObserver(this);
+        handler.setCurrentChat(null);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        connectionHandler.registerObservable(this, getApplicationContext());
+        prefs = new UserPreferences(this);
 
         usernameText = (EditText) findViewById(R.id.input_username);
         passwordText = (EditText) findViewById(R.id.input_password);
@@ -41,40 +62,33 @@ public class LoginActivity extends AppCompatActivity implements XMPPService {
             @Override
             public void onClick(View v) {
                 progressDialog.show();
-                // Set user credentials
-                connectionHandler.setCredentials(usernameText.getText().toString(), passwordText.getText().toString());
                 // Create Connection
-                connectionHandler.buildConnection();
-                connectionHandler.connectConnection();
+                prefs.setCredentials(usernameText.getText().toString(), passwordText.getText().toString());
+                handler.buildConnection(prefs.getPrefUserName(), prefs.getPrefPassword());
             }
         });
 
         checkForSavedLogin();
     }
 
+    /**
+     * Checks the user Preferences for saved logins
+     */
     private void checkForSavedLogin() {
-        UserPreferences prefs = new UserPreferences(getApplicationContext());
-        if(!prefs.getPrefUserName().equals("") && !prefs.getPrefPassword().equals("")) {
+        if (!prefs.getPrefUserName().equals("") && !prefs.getPrefPassword().equals("")) {
             progressDialog.show();
-            connectionHandler.setCredentials(prefs.getPrefUserName(), prefs.getPrefPassword());
             // Create Connection
-            connectionHandler.buildConnection();
-            connectionHandler.connectConnection();
+            handler.buildConnection(prefs.getPrefUserName(), prefs.getPrefPassword());
         }
     }
 
-    @Override
-    public void updateMessageObservable() {
-        // No need to handle this in login activity
-    }
 
     @Override
-    public void updateConnectionObservable() {
-        Log.d("LoginActivity","Call load contactList");
-
-        if(connectionHandler.getConnection() != null) {
-            // Connection successful
-            if(connectionHandler.isLoggedIn() && connectionHandler.isConnected()) {
+    public void update(Observable o, Object arg) {
+        if(arg != null) {
+            ObserverObject response = (ObserverObject) arg;
+            if (response.getText().equals("authenticated")) {
+                // Connection successful
                 Intent contactListActivity = new Intent(getApplicationContext(), ContactListActivity.class);
                 contactListActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getApplicationContext().startActivity(contactListActivity);
@@ -85,10 +99,9 @@ public class LoginActivity extends AppCompatActivity implements XMPPService {
                         progressDialog.hide();
                     }
                 });
-            }
-
-            // Login failed
-            if(connectionHandler.isConnected() && !connectionHandler.isLoggedIn() || !connectionHandler.isConnected() && !connectionHandler.isLoggedIn()) {
+            } else {
+                // TODO - add loginFailed status code
+                // Connection failed
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -98,15 +111,5 @@ public class LoginActivity extends AppCompatActivity implements XMPPService {
                 });
             }
         }
-    }
-
-    /*
- * Remove the Observer after Closing the LoginActivity
- * to prevent it from leaking memory.
- */
-    @Override
-    protected void onStop() {
-        super.onStop();
-        connectionHandler.deleteObservable(this);
     }
 }

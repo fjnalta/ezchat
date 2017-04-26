@@ -9,10 +9,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.components.adapter.ContactListAdapter;
 import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
-import eu.ezlife.ezchat.ezchat.components.restServices.TokenRegistrationConnection;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
 /**
@@ -20,18 +22,31 @@ import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
  * Activity which represents the Contact List View
  * Handles the Status and Contact List
  */
-public class ContactListActivity extends AppCompatActivity implements XMPPService {
+public class ContactListActivity extends AppCompatActivity implements XMPPService, Observer {
 
     // Contact List UI
     private ListView myList;
     private ArrayAdapter<ContactListEntry> contactListAdapter;
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        connectionHandler.getMessageHandler().registerObservable(this, getApplicationContext());
-        connectionHandler.getMessageHandler().setCurrentChat(null);
+    protected void onStop() {
+        super.onStop();
+        handler.deleteObserver(this);
+    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        handler.disconnectConnection();
+        handler.deleteObserver(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        handler.setAndroidContext(this);
+        handler.addObserver(this);
+        handler.setCurrentChat(null);
         contactListAdapter.notifyDataSetChanged();
     }
 
@@ -39,18 +54,12 @@ public class ContactListActivity extends AppCompatActivity implements XMPPServic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_list);
-
-        connectionHandler.registerObservable(this, getApplicationContext());
-
         // Add listener to contact List
         setContactListAdapter();
     }
 
     private void setContactListAdapter() {
-
-        Log.d("ContactListAdapter","notified");
-
-        contactListAdapter = new ContactListAdapter(this, connectionHandler.getMessageHandler().getContactList());
+        contactListAdapter = new ContactListAdapter(this, handler.getContactList());
         myList = (ListView) findViewById(R.id.contact_listView);
         myList.setAdapter(contactListAdapter);
 
@@ -59,7 +68,7 @@ public class ContactListActivity extends AppCompatActivity implements XMPPServic
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Load chatActivity
                 Intent chatActivity = new Intent(getApplicationContext(), ChatActivity.class);
-                chatActivity.putExtra("ContactListEntry", connectionHandler.getMessageHandler().getContactList().get(position));
+                chatActivity.putExtra("ContactListEntry", handler.getContactList().get(position));
                 chatActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getApplicationContext().startActivity(chatActivity);
             }
@@ -67,32 +76,17 @@ public class ContactListActivity extends AppCompatActivity implements XMPPServic
     }
 
     /**
-     * Called from Message Handler after incoming Message
-     * was received. Calls to update the view
+     * Called from XMPPHandler after incoming Message, connection change or
+     * status change. Updates the view
      */
     @Override
-    public void updateMessageObservable() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                contactListAdapter.notifyDataSetChanged();
-            }
-        });
-    }
+    public void update(Observable o, Object arg) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    contactListAdapter.notifyDataSetChanged();
+                }
+            });
 
-    @Override
-    public void updateConnectionObservable() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                contactListAdapter.notifyDataSetChanged();
-            }
-        });
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        connectionHandler.getMessageHandler().deleteObservable(this);
     }
 }

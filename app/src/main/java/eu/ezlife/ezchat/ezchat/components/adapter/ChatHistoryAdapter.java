@@ -62,20 +62,10 @@ public class ChatHistoryAdapter extends ArrayAdapter<ChatHistoryEntry> implement
      */
     // TODO - clean this shit and remove observer from Class
     private boolean isMyMessage(ChatHistoryEntry msg){
-        if(msg.getTo().asBareJid().toString().equals(connectionHandler.getConnection().getUser().asEntityBareJid().toString())) {
+        if(msg.getTo().asBareJid().toString().equals(handler.connection.getUser().asEntityBareJid().toString())) {
             return true;
         } else {
             return false;
         }
-    }
-
-    @Override
-    public void updateMessageObservable() {
-
-    }
-
-    @Override
-    public void updateConnectionObservable() {
-
     }
 }
