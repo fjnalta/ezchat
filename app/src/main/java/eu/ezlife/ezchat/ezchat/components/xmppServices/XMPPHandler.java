@@ -389,8 +389,8 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
             protected Boolean doInBackground(Void... params) {
                 dbHandler.open();
                 for (RosterEntry entry : rosterEntries) {
-                    if (!dbHandler.contactExists(entry.getUser())) {
-                        dbHandler.createContact(entry.getUser(), R.mipmap.ic_launcher, entry.getName());
+                    if (!dbHandler.contactExists(entry.getJid().toString())) {
+                        dbHandler.createContact(entry.getJid().toString(), R.mipmap.ic_launcher, entry.getName());
                         Log.d("ROSTER", "contact created");
                     }
                 }
@@ -407,21 +407,11 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
                 for (RosterEntry entry : rosterEntries) {
 
                     Presence presence = roster.getPresence(entry.getJid());
-                    ContactListEntry contactEntry = new ContactListEntry(dbHandler.getContact(entry.getUser()),evaluateContactStatus(presence), presence.isAvailable(), false);
+                    ContactListEntry contactEntry = new ContactListEntry(dbHandler.getContact(entry.getJid().toString()),evaluateContactStatus(presence), presence.isAvailable(), false);
                     contactEntry.setLastMessage(dbHandler.getLastMessage(contactEntry.getUsername()));
                     contactList.add(contactEntry);
-
-
-
-                    //                   ContactEntry current = dbHandler.getContact(entry.getUser());
-                    // update contactList DB if user not in DB
-                    //                   Presence presence;
-                    //                   presence = roster.getPresence(entry.getJid());
-
-                    //                   ContactListEntry currentEntry = new ContactListEntry(current, evaluateContactStatus(presence), presence.isAvailable(), false);
-                    //                   currentEntry.setLastMessage(dbHandler.getLastMessage(currentEntry.getUsername()));
-                    //                   contactList.add(currentEntry);
                 }
+
                 dbHandler.close();
 
                 setChanged();
