@@ -20,7 +20,7 @@ import java.net.URL;
  */
 public class PushMessageConnection extends AsyncTask<String, String, String> {
 
-    private final String cloudMsgUrl = "http://instant.ignorelist.com:5238/ezChatPush/rest/msg";
+    private final String cloudMsgUrl = "https://ezlife.eu:5238/ezChatPush/rest/msg";
 
     private String userName;
     private String contactName;

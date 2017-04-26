@@ -18,7 +18,7 @@ import java.net.URL;
 
 public class TokenRegistrationConnection extends AsyncTask<String, String, String> {
 
-    private final String cloudTokenUrl = "http://instant.ignorelist.com:5238/ezChatPush/rest/token";
+    private final String cloudTokenUrl = "https://ezlife.eu:5238/ezChatPush/rest/token";
 
     private String userName;
     private String token;
