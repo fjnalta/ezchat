@@ -38,7 +38,6 @@ public class ChatActivity extends AppCompatActivity implements XMPPService, Obse
     private ListView chatHistoryView;
     // Chat history
     private ArrayAdapter<ChatHistoryEntry> chatHistoryAdapter;
-
     // DatabaseHandler
     private DBDataSource dbHandler = null;
     // UserPreferences
@@ -122,25 +121,26 @@ public class ChatActivity extends AppCompatActivity implements XMPPService, Obse
                 dbHandler.close();
 
                 // Set last Message
-                for(ContactListEntry entry : handler.getContactList()) {
-                    if(entry.getUsername().equals(newMessage.getTo().toString())) {
+                for (ContactListEntry entry : handler.getContactList()) {
+                    if (entry.getUsername().equals(newMessage.getTo().toString())) {
                         entry.setLastMessage(newMessage.getBody());
                     }
                 }
 
                 // Send message through XMPP
-                    try {
-                        if (handler.connection.isConnected() && handler.connection.isAuthenticated()) {
-                            handler.getCurrentChat().send(newMessage);
-                        }
-                    } catch (SmackException.NotConnectedException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                try {
+                    if (handler.connection.isConnected() && handler.connection.isAuthenticated()) {
+                        handler.getCurrentChat().send(newMessage);
                     }
+                } catch (SmackException.NotConnectedException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
+                // TODO - use AsyncTask stuff
                 // Send Push Notification
-                Log.d("Push Notification: ","Sending Msg FROM: " + handler.connection.getUser().asEntityBareJidString() + "TO: " + newMessage.getTo());
+                Log.d("Push Notification: ", "Sending Msg FROM: " + handler.connection.getUser().asEntityBareJidString() + "TO: " + newMessage.getTo());
                 new PushMessageConnection(handler.connection.getUser().asEntityBareJidString(), newMessage.getTo().toString(), prefs.getPrefFireBaseToken(), prefs.getPrefAppId()).execute("");
 
                 // Reset TextBox
@@ -157,8 +157,8 @@ public class ChatActivity extends AppCompatActivity implements XMPPService, Obse
     }
 
     /*
-     * Called from Message Handler after incoming Message
-     * was received. Calls to update the view
+     * Called from XMPPHandler after incoming Message
+     * was received. Updates the view.
      */
     @Override
     public void update(Observable o, Object arg) {
