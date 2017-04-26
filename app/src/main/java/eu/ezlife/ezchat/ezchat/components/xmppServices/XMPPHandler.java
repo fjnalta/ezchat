@@ -39,6 +39,7 @@ import eu.ezlife.ezchat.ezchat.components.database.DBDataSource;
 import eu.ezlife.ezchat.ezchat.components.localSettings.UserPreferences;
 import eu.ezlife.ezchat.ezchat.components.restServices.TokenRegistrationConnection;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
+import eu.ezlife.ezchat.ezchat.data.ContactEntry;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 import eu.ezlife.ezchat.ezchat.data.ObserverObject;
 
@@ -126,7 +127,7 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
      * Disconnect Method
      */
     public void disconnectConnection() {
-        Log.d("xmpp","Disconnecting");
+        Log.d("xmpp", "Disconnecting");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -178,6 +179,7 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
 
     // Helper Methods
     // --------------
+
     /**
      * Helper method to create visual status icons from
      * the user presence
@@ -323,8 +325,8 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
                     c.getTime().toString(),
                     dbHandler.getContact(from.asEntityBareJidString()).getId());
             // Set the last message in contactList
-            for(ContactListEntry entry : contactList) {
-                if(entry.getUsername().equals(from.asEntityBareJidString())) {
+            for (ContactListEntry entry : contactList) {
+                if (entry.getUsername().equals(from.asEntityBareJidString())) {
                     entry.setLastMessage(newMessage.getBody());
                 }
             }
@@ -378,35 +380,60 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
     // ------------------
 
     @Override
-    public void onRosterLoaded(Roster roster) {
-        Log.d("ROSTER", "entries loaded");
-        Collection<RosterEntry> rosterEntries = roster.getEntries();
-        dbHandler.open();
-        Presence presence;
+    public void onRosterLoaded(final Roster roster) {
+        Log.d("ROSTER", "load contact list");
+        final Collection<RosterEntry> rosterEntries = roster.getEntries();
 
-        for (RosterEntry entry : rosterEntries) {
-            // update contactListDB
-            if (dbHandler.getContact(entry.getUser()) == null) {
-                dbHandler.createContact(entry.getUser(), R.mipmap.ic_launcher, entry.getName());
+        AsyncTask<Void, Void, Boolean> rosterThread = new AsyncTask<Void, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                dbHandler.open();
+                for (RosterEntry entry : rosterEntries) {
+                    if (!dbHandler.contactExists(entry.getUser())) {
+                        dbHandler.createContact(entry.getUser(), R.mipmap.ic_launcher, entry.getName());
+                        Log.d("ROSTER", "contact created");
+                    }
+                }
+                dbHandler.close();
+                return true;
             }
-        }
 
-        contactList.clear();
-        for (RosterEntry entry : rosterEntries) {
-            // create contactList Object
-            presence = roster.getPresence(entry.getJid());
-            ContactListEntry currentEntry = new ContactListEntry(dbHandler.getContact(entry.getUser()), evaluateContactStatus(presence), presence.isAvailable(), false);
-            currentEntry.setLastMessage(dbHandler.getLastMessage(entry.getUser()));
-            contactList.add(currentEntry);
-        }
-        dbHandler.close();
+            @Override
+            protected void onPostExecute(Boolean result) {
+                super.onPostExecute(result);
 
-        setChanged();
-        notifyObservers();
+                contactList.clear();
+                dbHandler.open();
+                for (RosterEntry entry : rosterEntries) {
+
+                    Presence presence = roster.getPresence(entry.getJid());
+                    ContactListEntry contactEntry = new ContactListEntry(dbHandler.getContact(entry.getUser()),evaluateContactStatus(presence), presence.isAvailable(), false);
+                    contactEntry.setLastMessage(dbHandler.getLastMessage(contactEntry.getUsername()));
+                    contactList.add(contactEntry);
+
+
+
+                    //                   ContactEntry current = dbHandler.getContact(entry.getUser());
+                    // update contactList DB if user not in DB
+                    //                   Presence presence;
+                    //                   presence = roster.getPresence(entry.getJid());
+
+                    //                   ContactListEntry currentEntry = new ContactListEntry(current, evaluateContactStatus(presence), presence.isAvailable(), false);
+                    //                   currentEntry.setLastMessage(dbHandler.getLastMessage(currentEntry.getUsername()));
+                    //                   contactList.add(currentEntry);
+                }
+                dbHandler.close();
+
+                setChanged();
+                notifyObservers();
+
+            }
+        };
+        rosterThread.execute();
     }
 
     @Override
     public void onRosterLoadingFailed(Exception exception) {
-
+        Log.d("ROSTER", "Loading Failed");
     }
 }

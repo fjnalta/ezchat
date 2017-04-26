@@ -20,7 +20,7 @@ public class ContactListEntry extends ContactEntry implements Serializable {
         this.status = status;
         this.isTyping = isTyping;
         this.isOnline = isOnline;
-        this.lastMessage = "";
+        this.lastMessage = "-";
     }
 
     /**

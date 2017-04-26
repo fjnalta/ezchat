@@ -45,6 +45,7 @@ public class DBDataSource implements XMPPService {
 
     /**
      * Creates the database Connection
+     *
      * @param context the actual application context
      */
     public DBDataSource(Context context) {
@@ -94,37 +95,59 @@ public class DBDataSource implements XMPPService {
     public ContactEntry getContact(String username) {
         ContactEntry myContact = null;
 
+
         Cursor cursor = database.query(DBHandler.TABLE_CONTACTS,
                 columns_contacts, DBHandler.COLUMN_USERNAME + "=\"" + username + "\"",
                 null, null, null, null);
-        cursor.moveToFirst();
 
-        while (!cursor.isAfterLast()) {
-            myContact = cursorToContact(cursor);
-            cursor.moveToNext();
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+
+            while (!cursor.isAfterLast()) {
+                myContact = cursorToContact(cursor);
+                cursor.moveToNext();
+            }
+
+
         }
 
         cursor.close();
+
         return myContact;
     }
 
-    public List<ContactEntry> getContacts() {
+    public boolean contactExists(String username) {
+        Cursor cursor = database.rawQuery("SELECT 1 FROM " + DBHandler.TABLE_CONTACTS + " WHERE " + "\"" + DBHandler.COLUMN_USERNAME + "\"" + "= ?",
+                new String[]{username});
+        boolean exists = (cursor.getCount() > 0);
+        cursor.close();
+        return exists;
+    }
+
+    public List<ContactListEntry> getContacts() {
         List<ContactEntry> contactEntries = new ArrayList<>();
+        List<ContactListEntry> myEntries = new ArrayList<>();
 
         Cursor cursor = database.query(DBHandler.TABLE_CONTACTS,
                 columns_contacts, null,
                 null, null, null, null);
         cursor.moveToFirst();
-        ContactEntry entry;
 
         while (!cursor.isAfterLast()) {
-            entry = cursorToContact(cursor);
+            ContactEntry entry = cursorToContact(cursor);
             contactEntries.add(entry);
             cursor.moveToNext();
         }
 
         cursor.close();
-        return contactEntries;
+
+
+        for (ContactEntry entry : contactEntries) {
+            myEntries.add(new ContactListEntry(entry, 0, false, false));
+        }
+
+        return myEntries;
     }
 
     public boolean deleteContact(String username) {
@@ -136,15 +159,16 @@ public class DBDataSource implements XMPPService {
 
     public String getLastMessage(String username) {
         ChatHistoryEntry currentEntry = null;
+
         Cursor cursor = database.query(DBHandler.TABLE_MESSAGES,
                 columns_messages, DBHandler.COLUMN_CONTACTS_ID + "=" + getContact(username).getId(),
                 null, null, null, DBHandler.COLUMN_ID + " DESC");
-        if(cursor.getCount() != 0) {
+        if (cursor.getCount() != 0) {
             cursor.moveToFirst();
             currentEntry = cursorToChatHistoryEntry(cursor);
             cursor.close();
 
-            if(currentEntry != null) {
+            if (currentEntry != null) {
                 return currentEntry.getBody();
             } else {
                 return " - ";
@@ -152,13 +176,14 @@ public class DBDataSource implements XMPPService {
         } else {
             return " - ";
         }
+
     }
 
     // -- Chat History Handling --
 
     // Create and return new Chat History Message
     public ChatHistoryEntry createMessage(String from, String to, String text, String date, long userId) {
-        Log.d("CreateMessage","Called");
+        Log.d("CreateMessage", "Called");
         ContentValues values = new ContentValues();
         values.put(DBHandler.COLUMN_SNDR, from);
         values.put(DBHandler.COLUMN_RCPT, to);

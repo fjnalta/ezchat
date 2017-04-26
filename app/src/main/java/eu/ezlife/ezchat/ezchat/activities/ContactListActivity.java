@@ -9,6 +9,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -54,11 +56,8 @@ public class ContactListActivity extends AppCompatActivity implements XMPPServic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_list);
-        // Add listener to contact List
-        setContactListAdapter();
-    }
 
-    private void setContactListAdapter() {
+        // Add listener to contact List
         contactListAdapter = new ContactListAdapter(this, handler.getContactList());
         myList = (ListView) findViewById(R.id.contact_listView);
         myList.setAdapter(contactListAdapter);
@@ -81,12 +80,12 @@ public class ContactListActivity extends AppCompatActivity implements XMPPServic
      */
     @Override
     public void update(Observable o, Object arg) {
+        Log.d("ContactList","UpdateRoster");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     contactListAdapter.notifyDataSetChanged();
                 }
             });
-
     }
 }
