@@ -228,6 +228,8 @@ public class DBDataSource implements XMPPService {
 
     // TODO - delete whole chat History
 
+    // TODO - delete whole chat History for one contact
+
     // TODO - delete chat History Entry
 
     // Use Cursor to return Items from DB

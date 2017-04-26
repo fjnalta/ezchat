@@ -24,6 +24,8 @@ public class LoginActivity extends AppCompatActivity implements XMPPService, Obs
     private EditText passwordText;
     private Button loginButton;
 
+    // TODO - implement register Activity
+
     private ProgressDialog progressDialog;
 
     // UserPreferences

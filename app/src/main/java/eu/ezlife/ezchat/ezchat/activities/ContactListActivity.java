@@ -72,6 +72,14 @@ public class ContactListActivity extends AppCompatActivity implements XMPPServic
                 getApplicationContext().startActivity(chatActivity);
             }
         });
+
+        // TODO - implement Long click -> delete contact, rename contact
+        myList.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                return false;
+            }
+        });
     }
 
     /**
