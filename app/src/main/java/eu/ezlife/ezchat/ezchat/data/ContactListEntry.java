@@ -7,7 +7,7 @@ import java.io.Serializable;
  * Represents a more complex ContactListEntry which extends the functionality of the
  * Contact DB-Entry Object
  */
-public class ContactListEntry extends ContactEntry implements Serializable {
+public class ContactListEntry extends ContactEntry {
 
     // Basic Attributes
     private int status;
