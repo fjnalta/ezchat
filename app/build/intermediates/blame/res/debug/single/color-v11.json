@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/color-v11/abc_background_cache_hint_selector_material_light.xml",
+        "source": "/home/ajo/.android/build-cache/2ef7e32ecf29c3abb2d8066a8dc07cea72c0dec4/output/res/color-v11/abc_background_cache_hint_selector_material_light.xml"
+    },
+    {
+        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/color-v11/abc_background_cache_hint_selector_material_dark.xml",
+        "source": "/home/ajo/.android/build-cache/2ef7e32ecf29c3abb2d8066a8dc07cea72c0dec4/output/res/color-v11/abc_background_cache_hint_selector_material_dark.xml"
+    }
+]

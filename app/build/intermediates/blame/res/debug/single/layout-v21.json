@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/layout-v21/notification_action.xml",
+        "source": "/home/ajo/.android/build-cache/2ef7e32ecf29c3abb2d8066a8dc07cea72c0dec4/output/res/layout-v21/notification_action.xml"
+    },
+    {
+        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/layout-v21/notification_action_tombstone.xml",
+        "source": "/home/ajo/.android/build-cache/2ef7e32ecf29c3abb2d8066a8dc07cea72c0dec4/output/res/layout-v21/notification_action_tombstone.xml"
+    },
+    {
+        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/layout-v21/notification_template_custom_big.xml",
+        "source": "/home/ajo/.android/build-cache/2ef7e32ecf29c3abb2d8066a8dc07cea72c0dec4/output/res/layout-v21/notification_template_custom_big.xml"
+    },
+    {
+        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/layout-v21/notification_template_icon_group.xml",
+        "source": "/home/ajo/.android/build-cache/2ef7e32ecf29c3abb2d8066a8dc07cea72c0dec4/output/res/layout-v21/notification_template_icon_group.xml"
+    }
+]
