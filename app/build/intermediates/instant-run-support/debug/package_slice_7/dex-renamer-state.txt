@@ -1,0 +1,4 @@
+#Sat Apr 29 16:05:18 CEST 2017
+base.0=/Users/ajo/Documents/Java/ezChat/app/build/intermediates/transforms/dex/debug/folders/1000/5/slice_7
+renamed.0=classes.dex
+file.0=/Users/ajo/Documents/Java/ezChat/app/build/intermediates/transforms/dex/debug/folders/1000/5/slice_7/classes.dex
