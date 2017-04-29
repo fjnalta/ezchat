@@ -1,10 +1,10 @@
 [
     {
-        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/anim-v21/design_bottom_sheet_slide_out.xml",
-        "source": "/home/ajo/.android/build-cache/d6b47ac653ce3c230e1cdd982d67be0829650049/output/res/anim-v21/design_bottom_sheet_slide_out.xml"
+        "merged": "/Users/ajo/Documents/Java/ezChat/app/build/intermediates/res/merged/debug/anim-v21/design_bottom_sheet_slide_in.xml",
+        "source": "/Users/ajo/.android/build-cache/d52d2cdae29bd32db05307f15b7e030c1f42a6a7/output/res/anim-v21/design_bottom_sheet_slide_in.xml"
     },
     {
-        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/anim-v21/design_bottom_sheet_slide_in.xml",
-        "source": "/home/ajo/.android/build-cache/d6b47ac653ce3c230e1cdd982d67be0829650049/output/res/anim-v21/design_bottom_sheet_slide_in.xml"
+        "merged": "/Users/ajo/Documents/Java/ezChat/app/build/intermediates/res/merged/debug/anim-v21/design_bottom_sheet_slide_out.xml",
+        "source": "/Users/ajo/.android/build-cache/d52d2cdae29bd32db05307f15b7e030c1f42a6a7/output/res/anim-v21/design_bottom_sheet_slide_out.xml"
     }
 ]

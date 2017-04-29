@@ -1,10 +1,10 @@
 [
     {
-        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/drawable-anydpi-v21/design_ic_visibility_off.xml",
-        "source": "/home/ajo/.android/build-cache/d6b47ac653ce3c230e1cdd982d67be0829650049/output/res/drawable-anydpi-v21/design_ic_visibility_off.xml"
+        "merged": "/Users/ajo/Documents/Java/ezChat/app/build/intermediates/res/merged/debug/drawable-anydpi-v21/design_ic_visibility.xml",
+        "source": "/Users/ajo/.android/build-cache/d52d2cdae29bd32db05307f15b7e030c1f42a6a7/output/res/drawable-anydpi-v21/design_ic_visibility.xml"
     },
     {
-        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/drawable-anydpi-v21/design_ic_visibility.xml",
-        "source": "/home/ajo/.android/build-cache/d6b47ac653ce3c230e1cdd982d67be0829650049/output/res/drawable-anydpi-v21/design_ic_visibility.xml"
+        "merged": "/Users/ajo/Documents/Java/ezChat/app/build/intermediates/res/merged/debug/drawable-anydpi-v21/design_ic_visibility_off.xml",
+        "source": "/Users/ajo/.android/build-cache/d52d2cdae29bd32db05307f15b7e030c1f42a6a7/output/res/drawable-anydpi-v21/design_ic_visibility_off.xml"
     }
 ]
