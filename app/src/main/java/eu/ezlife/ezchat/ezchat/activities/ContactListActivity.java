@@ -1,7 +1,6 @@
 package eu.ezlife.ezchat.ezchat.activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,11 +9,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.Observable;
-import java.util.Observer;
 
 import eu.ezlife.ezchat.ezchat.R;
+import eu.ezlife.ezchat.ezchat.activities.base.BaseActivity;
 import eu.ezlife.ezchat.ezchat.components.adapter.ContactListAdapter;
-import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
 /**
@@ -22,17 +20,11 @@ import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
  * Activity which represents the Contact List View
  * Handles the Status and Contact List
  */
-public class ContactListActivity extends AppCompatActivity implements XMPPService, Observer {
+public class ContactListActivity extends BaseActivity {
 
     // Contact List UI
     private ListView myList;
     private ArrayAdapter<ContactListEntry> contactListAdapter;
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        handler.deleteObserver(this);
-    }
 
     @Override
     public void onBackPressed() {
@@ -44,14 +36,12 @@ public class ContactListActivity extends AppCompatActivity implements XMPPServic
     @Override
     protected void onStart() {
         super.onStart();
-        handler.setAndroidContext(this);
-        handler.addObserver(this);
         handler.setCurrentChat(null);
         contactListAdapter.notifyDataSetChanged();
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_list);
 

@@ -3,22 +3,18 @@ package eu.ezlife.ezchat.ezchat.activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.Observable;
-import java.util.Observer;
 
 import eu.ezlife.ezchat.ezchat.R;
-import eu.ezlife.ezchat.ezchat.components.localSettings.UserPreferences;
-import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
+import eu.ezlife.ezchat.ezchat.activities.base.BaseActivity;
 import eu.ezlife.ezchat.ezchat.data.ObserverObject;
 
-public class LoginActivity extends AppCompatActivity implements XMPPService, Observer {
+public class LoginActivity extends BaseActivity {
 
     private EditText usernameText;
     private EditText passwordText;
@@ -28,20 +24,9 @@ public class LoginActivity extends AppCompatActivity implements XMPPService, Obs
 
     private ProgressDialog progressDialog;
 
-    // UserPreferences
-    private UserPreferences prefs = null;
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        handler.deleteObserver(this);
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
-        handler.setAndroidContext(this);
-        handler.addObserver(this);
         handler.setCurrentChat(null);
     }
 
@@ -49,8 +34,6 @@ public class LoginActivity extends AppCompatActivity implements XMPPService, Obs
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        prefs = new UserPreferences(this);
 
         usernameText = (EditText) findViewById(R.id.input_username);
         passwordText = (EditText) findViewById(R.id.input_password);

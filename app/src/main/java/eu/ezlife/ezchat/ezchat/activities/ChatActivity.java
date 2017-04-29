@@ -1,6 +1,5 @@
 package eu.ezlife.ezchat.ezchat.activities;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,13 +16,11 @@ import org.jxmpp.stringprep.XmppStringprepException;
 
 import java.util.Calendar;
 import java.util.Observable;
-import java.util.Observer;
 
 import eu.ezlife.ezchat.ezchat.R;
+import eu.ezlife.ezchat.ezchat.activities.base.BaseActivity;
 import eu.ezlife.ezchat.ezchat.components.adapter.ChatHistoryAdapter;
 import eu.ezlife.ezchat.ezchat.components.database.DBDataSource;
-import eu.ezlife.ezchat.ezchat.components.localSettings.UserPreferences;
-import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
 import eu.ezlife.ezchat.ezchat.components.restServices.PushMessageConnection;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
@@ -33,7 +30,7 @@ import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
  * Activity which represents the Chat View
  * Handles outgoing XMPP and Push messages
  */
-public class ChatActivity extends AppCompatActivity implements XMPPService, Observer {
+public class ChatActivity extends BaseActivity {
 
     // Serializable intent
     private ContactListEntry contact;
@@ -45,30 +42,19 @@ public class ChatActivity extends AppCompatActivity implements XMPPService, Obse
     private ArrayAdapter<ChatHistoryEntry> chatHistoryAdapter;
     // DatabaseHandler
     private DBDataSource dbHandler = null;
-    // UserPreferences
-    private UserPreferences prefs = null;
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        handler.deleteObserver(this);
-    }
 
     @Override
     protected void onStart() {
         super.onStart();
-        handler.setAndroidContext(this);
-        handler.addObserver(this);
         chatHistoryAdapter.notifyDataSetChanged();
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
         dbHandler = new DBDataSource(this);
-        prefs = new UserPreferences(this);
 
         // Get Contact Information from Intent
         if (getIntent().getSerializableExtra("ContactListEntry") != null) {
