@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@mipmap/ic_launcher"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:id="@+id/item_icon_contactlist"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_chat_send"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:id="@+id/item_icon_status"
+        android:layout_alignTop="@+id/item_text_contactName"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:text="Username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:id="@+id/item_text_contactName"
+        android:layout_alignTop="@+id/item_icon_contactlist"
+        android:layout_toEndOf="@+id/item_icon_contactlist"
+        android:layout_marginStart="16dp" />
+
+    <TextView
+        android:text="LastMessage / isTyping"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/item_text_lastMessage"
+        android:layout_alignBottom="@+id/item_icon_contactlist"
+        android:layout_alignStart="@+id/item_text_contactName"
+        android:layout_below="@+id/item_text_contactName" />
+</RelativeLayout>
