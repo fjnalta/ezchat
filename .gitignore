@@ -9,3 +9,17 @@ local.properties
 gradlew
 gradlew.bat
 Würde app/build/ löschen
+Würde app/build/generated/res/resValues/ löschen
+Würde app/build/generated/res/rs/ löschen
+Würde app/build/generated/source/aidl/ löschen
+Würde app/build/generated/source/apt/ löschen
+Würde app/build/generated/source/rs/ löschen
+Würde app/build/intermediates/incremental/mergeDebugAndroidTestResources/aapt-temp/ löschen
+Würde app/build/intermediates/incremental/mergeDebugResources/aapt-temp/ löschen
+Würde app/build/intermediates/incremental/packageDebugAndroidTest/ löschen
+Würde app/build/intermediates/incremental/packageRelease/ löschen
+Würde app/build/intermediates/incremental/processDebugAndroidTestResources/ löschen
+Würde app/build/intermediates/incremental/processDebugResources/ löschen
+Würde app/build/intermediates/manifest/tmp/ löschen
+Würde app/build/intermediates/rs/ löschen
+Würde app/build/tmp/ löschen

@@ -1,11 +1,27 @@
 [
     {
+        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/color-v23/abc_tint_spinner.xml",
+        "source": "/home/ajo/.android/build-cache/2ef7e32ecf29c3abb2d8066a8dc07cea72c0dec4/output/res/color-v23/abc_tint_spinner.xml"
+    },
+    {
+        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/color-v23/abc_tint_switch_thumb.xml",
+        "source": "/home/ajo/.android/build-cache/2ef7e32ecf29c3abb2d8066a8dc07cea72c0dec4/output/res/color-v23/abc_tint_switch_thumb.xml"
+    },
+    {
+        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/color-v23/abc_tint_seek_thumb.xml",
+        "source": "/home/ajo/.android/build-cache/2ef7e32ecf29c3abb2d8066a8dc07cea72c0dec4/output/res/color-v23/abc_tint_seek_thumb.xml"
+    },
+    {
         "merged": "/Users/ajo/Documents/Java/ezChat/app/build/intermediates/res/merged/debug/color-v23/abc_tint_spinner.xml",
         "source": "/Users/ajo/.android/build-cache/252a7489bf1250f913dfc9d9eeca3de4dde7e9c1/output/res/color-v23/abc_tint_spinner.xml"
     },
     {
         "merged": "/Users/ajo/Documents/Java/ezChat/app/build/intermediates/res/merged/debug/color-v23/abc_tint_switch_track.xml",
         "source": "/Users/ajo/.android/build-cache/252a7489bf1250f913dfc9d9eeca3de4dde7e9c1/output/res/color-v23/abc_tint_switch_track.xml"
+    },
+    {
+        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/color-v23/abc_btn_colored_text_material.xml",
+        "source": "/home/ajo/.android/build-cache/2ef7e32ecf29c3abb2d8066a8dc07cea72c0dec4/output/res/color-v23/abc_btn_colored_text_material.xml"
     },
     {
         "merged": "/Users/ajo/Documents/Java/ezChat/app/build/intermediates/res/merged/debug/color-v23/abc_tint_btn_checkable.xml",
@@ -16,8 +32,24 @@
         "source": "/Users/ajo/.android/build-cache/252a7489bf1250f913dfc9d9eeca3de4dde7e9c1/output/res/color-v23/abc_btn_colored_borderless_text_material.xml"
     },
     {
+        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/color-v23/abc_tint_switch_track.xml",
+        "source": "/home/ajo/.android/build-cache/2ef7e32ecf29c3abb2d8066a8dc07cea72c0dec4/output/res/color-v23/abc_tint_switch_track.xml"
+    },
+    {
+        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/color-v23/abc_color_highlight_material.xml",
+        "source": "/home/ajo/.android/build-cache/2ef7e32ecf29c3abb2d8066a8dc07cea72c0dec4/output/res/color-v23/abc_color_highlight_material.xml"
+    },
+    {
         "merged": "/Users/ajo/Documents/Java/ezChat/app/build/intermediates/res/merged/debug/color-v23/abc_tint_switch_thumb.xml",
         "source": "/Users/ajo/.android/build-cache/252a7489bf1250f913dfc9d9eeca3de4dde7e9c1/output/res/color-v23/abc_tint_switch_thumb.xml"
+    },
+    {
+        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/color-v23/design_tint_password_toggle.xml",
+        "source": "/home/ajo/.android/build-cache/d6b47ac653ce3c230e1cdd982d67be0829650049/output/res/color-v23/design_tint_password_toggle.xml"
+    },
+    {
+        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/color-v23/abc_tint_btn_checkable.xml",
+        "source": "/home/ajo/.android/build-cache/2ef7e32ecf29c3abb2d8066a8dc07cea72c0dec4/output/res/color-v23/abc_tint_btn_checkable.xml"
     },
     {
         "merged": "/Users/ajo/Documents/Java/ezChat/app/build/intermediates/res/merged/debug/color-v23/abc_tint_default.xml",
@@ -30,6 +62,18 @@
     {
         "merged": "/Users/ajo/Documents/Java/ezChat/app/build/intermediates/res/merged/debug/color-v23/abc_btn_colored_text_material.xml",
         "source": "/Users/ajo/.android/build-cache/252a7489bf1250f913dfc9d9eeca3de4dde7e9c1/output/res/color-v23/abc_btn_colored_text_material.xml"
+    },
+    {
+        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/color-v23/abc_tint_edittext.xml",
+        "source": "/home/ajo/.android/build-cache/2ef7e32ecf29c3abb2d8066a8dc07cea72c0dec4/output/res/color-v23/abc_tint_edittext.xml"
+    },
+    {
+        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/color-v23/abc_tint_default.xml",
+        "source": "/home/ajo/.android/build-cache/2ef7e32ecf29c3abb2d8066a8dc07cea72c0dec4/output/res/color-v23/abc_tint_default.xml"
+    },
+    {
+        "merged": "/home/ajo/Dokumente/Android/ezChat/app/build/intermediates/res/merged/debug/color-v23/abc_btn_colored_borderless_text_material.xml",
+        "source": "/home/ajo/.android/build-cache/2ef7e32ecf29c3abb2d8066a8dc07cea72c0dec4/output/res/color-v23/abc_btn_colored_borderless_text_material.xml"
     },
     {
         "merged": "/Users/ajo/Documents/Java/ezChat/app/build/intermediates/res/merged/debug/color-v23/abc_tint_edittext.xml",
