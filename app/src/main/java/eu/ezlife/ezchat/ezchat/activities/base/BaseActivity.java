@@ -3,11 +3,14 @@ package eu.ezlife.ezchat.ezchat.activities.base;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Observer;
 
+import eu.ezlife.ezchat.ezchat.R;
+import eu.ezlife.ezchat.ezchat.activities.ContactListActivity;
 import eu.ezlife.ezchat.ezchat.activities.LoginActivity;
 import eu.ezlife.ezchat.ezchat.components.localSettings.UserPreferences;
 import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
@@ -30,7 +33,6 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
 
     @Override
     protected void onStart() {
-
         handler.setAndroidContext(this);
         handler.addObserver(this);
 
@@ -51,7 +53,6 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
         this.prefs = new UserPreferences(this);
     }
 
@@ -62,8 +63,6 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
         handler.deleteObserver(this);
         // handle XMPP disconnect
         applicationDidEnterBackground();
-
-
     }
 
     private void applicationDidEnterBackground() {
@@ -79,7 +78,12 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
     @Override
     public void onBackPressed() {
         if (this instanceof LoginActivity) {
-        } else {
+        }
+        if (this instanceof ContactListActivity) {
+            onStop();
+            moveTaskToBack(true);
+        }
+        else {
             isBackPressed = true;
         }
         Log.d(TAG, "onBackPressed " + isBackPressed + "" + this.getLocalClassName());

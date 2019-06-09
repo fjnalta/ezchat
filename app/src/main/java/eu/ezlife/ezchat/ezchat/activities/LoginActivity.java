@@ -3,6 +3,7 @@ package eu.ezlife.ezchat.ezchat.activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,14 +21,18 @@ public class LoginActivity extends BaseActivity {
     private EditText passwordText;
     private Button loginButton;
 
-    // TODO - implement register Activity
-
     private ProgressDialog progressDialog;
+
+    // TODO - implement register Activity
 
     @Override
     protected void onStart() {
         super.onStart();
         handler.setCurrentChat(null);
+
+        // Setup Toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
     @Override
@@ -43,6 +48,7 @@ public class LoginActivity extends BaseActivity {
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
 
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,21 +58,7 @@ public class LoginActivity extends BaseActivity {
                 handler.buildConnection(prefs.getPrefUserName(), prefs.getPrefPassword());
             }
         });
-
-        checkForSavedLogin();
     }
-
-    /**
-     * Checks the user Preferences for saved logins
-     */
-    private void checkForSavedLogin() {
-        if (!prefs.getPrefUserName().equals("") && !prefs.getPrefPassword().equals("")) {
-            progressDialog.show();
-            // Create Connection
-            handler.buildConnection(prefs.getPrefUserName(), prefs.getPrefPassword());
-        }
-    }
-
 
     @Override
     public void update(Observable o, Object arg) {
@@ -85,7 +77,6 @@ public class LoginActivity extends BaseActivity {
                     }
                 });
             } else {
-                // TODO - add loginFailed status code
                 // Connection failed
                 runOnUiThread(new Runnable() {
                     @Override
