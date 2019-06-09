@@ -7,4 +7,4 @@ local.properties
 .externalNativeBuild
 gradlew
 gradlew.bat
-app/build/*
+app/build
