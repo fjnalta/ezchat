@@ -1,7 +1,5 @@
 package eu.ezlife.ezchat.ezchat.data;
 
-import java.io.Serializable;
-
 /**
  * Created by ajo on 04.02.2017.
  * Represents a more complex ContactListEntry which extends the functionality of the

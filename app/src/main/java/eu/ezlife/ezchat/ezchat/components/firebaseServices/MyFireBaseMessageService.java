@@ -7,12 +7,15 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import eu.ezlife.ezchat.ezchat.activities.ContactListActivity;
 import eu.ezlife.ezchat.ezchat.R;
+import eu.ezlife.ezchat.ezchat.activities.ContactListActivity;
+import eu.ezlife.ezchat.ezchat.components.localSettings.UserPreferences;
 
 
 /**
@@ -28,6 +31,19 @@ public class MyFireBaseMessageService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
         createNotification(remoteMessage.getData().get("contact"));
+    }
+
+    @Override
+    public void onNewToken(String s) {
+        super.onNewToken(s);
+        // Get updated InstanceID token.
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        UserPreferences prefs = new UserPreferences(getApplicationContext());
+        prefs.setPrefFireBaseToken(refreshedToken);
+
+        // TODO - update token at REST Server
+
+        Log.e("NEW_TOKEN",s);
     }
 
     /**

@@ -39,7 +39,6 @@ import eu.ezlife.ezchat.ezchat.components.database.DBDataSource;
 import eu.ezlife.ezchat.ezchat.components.localSettings.UserPreferences;
 import eu.ezlife.ezchat.ezchat.components.restServices.TokenRegistrationConnection;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
-import eu.ezlife.ezchat.ezchat.data.ContactEntry;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 import eu.ezlife.ezchat.ezchat.data.ObserverObject;
 
@@ -280,7 +279,6 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
         notifyObservers();
     }
 
-    @Override
     public void reconnectionSuccessful() {
         Log.d("xmpp", "ReconnectionSuccessful");
         connected = true;
@@ -289,7 +287,6 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
         notifyObservers();
     }
 
-    @Override
     public void reconnectingIn(int seconds) {
         Log.d("xmpp", "Reconnecting " + seconds);
         loggedIn = false;
@@ -297,7 +294,6 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
         notifyObservers();
     }
 
-    @Override
     public void reconnectionFailed(Exception e) {
         Log.d("xmpp", "ReconnectionFailed!");
         connected = false;

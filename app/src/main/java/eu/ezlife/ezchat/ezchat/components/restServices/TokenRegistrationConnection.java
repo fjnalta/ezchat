@@ -63,6 +63,16 @@ public class TokenRegistrationConnection extends AsyncTask<String, String, Strin
                 // Server returned HTTP error code.
             }
 
+            // USE NEW FIREBASE TOKEN
+            //FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( MyActivity.this,  new OnSuccessListener<InstanceIdResult>() {
+            //    @Override
+            //    public void onSuccess(InstanceIdResult instanceIdResult) {
+            //        String newToken = instanceIdResult.getToken();
+            //        Log.e("newToken",newToken);
+
+            //    }
+            //});
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
