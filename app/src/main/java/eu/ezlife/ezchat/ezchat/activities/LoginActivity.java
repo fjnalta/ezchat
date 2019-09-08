@@ -59,7 +59,6 @@ public class LoginActivity extends BaseActivity {
 
                 // Create Connection
                 handler.buildConnection(sharedPref.getString("PREF_USER_NAME",""), sharedPref.getString("PREF_USER_PW",""));
-                Log.d("Login: ", sharedPref.getString("PREF_USER_NAME","") + sharedPref.getString("PREF_USER_PW",""));
             }
         });
     }
