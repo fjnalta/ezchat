@@ -187,15 +187,28 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
         return contactList;
     }
 
+    public List<Jid> getNewSubs() {
+        return newSubs;
+    }
+
     public void addContact(String jid) {
+        SubscribeAnswer returnValue;
         for(Jid entry : newSubs) {
             if (entry.toString().equals(jid)) {
+                Log.d("ADDCONTACT","found");
                 try {
+                    Log.d("ADDCONTACT", roster.isRosterLoadedAtLogin() + "");
+                    Log.d("ADDCONTACT","called");
+
+
+                    roster.sendSubscriptionRequest(entry.asBareJid());
                     roster.createEntry(entry.asBareJid(), jid, null);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 newSubs.remove(entry);
+                notifyObservers();
             }
 
         }
@@ -235,7 +248,7 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
      */
     private void updateContact(Presence presence) {
         for (ContactListEntry entry : contactList) {
-            if (presence.getFrom().asBareJid().toString().equals(entry.getUsername())) {
+            if (presence.getFrom().asBareJid().toString().equals(entry.getJid())) {
                 Log.d("presence", "called found");
                 entry.setStatus(evaluateContactStatus(presence));
             }
@@ -348,7 +361,7 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
                     dbHandler.getContact(from.asEntityBareJidString()).getId());
             // Set the last message in contactList
             for (ContactListEntry entry : contactList) {
-                if (entry.getUsername().equals(from.asEntityBareJidString())) {
+                if (entry.getJid().equals(from.asEntityBareJidString())) {
                     entry.setLastMessage(newMessage.getBody());
                 }
             }
@@ -412,6 +425,19 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
 
         }
         Log.d(TAG, "Banger end");
+
+        contactList.clear();
+        for (RosterEntry entry : rosterEntries) {
+            Presence presence = roster.getPresence(entry.getJid());
+            ContactListEntry contactEntry = new ContactListEntry(entry.getJid(),evaluateContactStatus(presence), presence.isAvailable(), false, true);
+//            contactEntry.setLastMessage(dbHandler.getLastMessage(contactEntry.getUsername()));
+            contactList.add(contactEntry);
+        }
+
+        setChanged();
+        notifyObservers();
+
+
 /*        AsyncTask<Void, Void, Boolean> rosterThread = new AsyncTask<Void, Void, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... params) {
@@ -461,13 +487,10 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
 
     @Override
     public SubscribeAnswer processSubscribe(Jid from, Presence subscribeRequest) {
-//        Log.d(TAG + " Sub", from.toString());
-
-        if(!(newSubs.contains(from))) {
-            newSubs.add(from);
-        }
+        // TODO - implement any form of popup for revoke/approve subscription
+        SubscribeAnswer answer = SubscribeAnswer.ApproveAndAlsoRequestIfRequired;
         setChanged();
         notifyObservers(new ObserverObject("new_subscription"));
-        return null;
+        return answer;
     }
 }

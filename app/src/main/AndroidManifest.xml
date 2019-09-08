@@ -12,7 +12,6 @@
         android:minSdkVersion="15"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.AddContactActivity"></activity>
         <activity android:name=".activities.ContactListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,6 +19,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activities.ContactsActivity" />
         <activity android:name=".activities.LoginActivity" />
         <activity android:name=".activities.ChatActivity" /> <!-- Defining Services -->
         <service

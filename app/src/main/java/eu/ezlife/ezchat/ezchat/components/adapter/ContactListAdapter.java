@@ -45,7 +45,7 @@ public class ContactListAdapter extends ArrayAdapter<ContactListEntry> {
 //          imageView.setImageResource(currentEntry.getAvatar());
 
             TextView contactNameText = (TextView) itemView.findViewById(R.id.item_text_contactName);
-            contactNameText.setText(currentEntry.getContactName());
+            contactNameText.setText(currentEntry.getJid());
 
             TextView lastMessageText = (TextView) itemView.findViewById(R.id.item_text_lastMessage);
             if (currentEntry.isTyping()) {

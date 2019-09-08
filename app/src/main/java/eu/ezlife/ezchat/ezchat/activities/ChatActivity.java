@@ -48,8 +48,8 @@ public class ChatActivity extends BaseActivity {
         super.onStart();
 
         // TODO - insert User Name
-        toolbar.setTitle("Chat with - NAME");
-        setSupportActionBar(toolbar);
+        //toolbar.setTitle("Chat with - NAME");
+        //setSupportActionBar(toolbar);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class ChatActivity extends BaseActivity {
 
         // Set or create current Chat
         try {
-            Jid jid = JidCreate.from(contact.getUsername());
+            Jid jid = JidCreate.from(contact.getJid());
             handler.setCurrentChat(handler.getChatManager().chatWith(jid.asEntityBareJidIfPossible()));
         } catch (XmppStringprepException e) {
             e.printStackTrace();
@@ -74,7 +74,7 @@ public class ChatActivity extends BaseActivity {
 
         // Set the current Chat history
         dbHandler.open();
-        handler.setChatHistory(dbHandler.getChatHistory(contact.getId()));
+//        handler.setChatHistory(dbHandler.getChatHistory(contact.getJid()));
         dbHandler.close();
 
         // UI Stuff
@@ -94,7 +94,7 @@ public class ChatActivity extends BaseActivity {
                 newMessage.setFrom(handler.connection.getUser().asEntityFullJidIfPossible());
                 Jid myUsername = null;
                 try {
-                    myUsername = JidCreate.from(contact.getUsername());
+                    myUsername = JidCreate.from(contact.getJid());
                 } catch (XmppStringprepException e) {
                     e.printStackTrace();
                 }
@@ -104,19 +104,19 @@ public class ChatActivity extends BaseActivity {
                 // Create Custom Time Format for DB Sorting
                 Calendar c = Calendar.getInstance();
                 // Open DB and save Message
-                dbHandler.open();
+/*                dbHandler.open();
                 // create DB-Entry and add Item to chatHistoryList
                 handler.getChatHistory().add(dbHandler.createMessage(newMessage.getFrom().toString(),
                         newMessage.getTo().toString(),
                         newMessage.getBody(),
                         c.getTime().toString(),
-                        dbHandler.getContact(contact.getUsername()).getId()));
+                        dbHandler.getContact(contact.getJid()).getId()));
                 // Close DB
-                dbHandler.close();
+                dbHandler.close();*/
 
                 // Set last Message
                 for (ContactListEntry entry : handler.getContactList()) {
-                    if (entry.getUsername().equals(newMessage.getTo().toString())) {
+                    if (entry.getJid().equals(newMessage.getTo().toString())) {
                         entry.setLastMessage(newMessage.getBody());
                     }
                 }

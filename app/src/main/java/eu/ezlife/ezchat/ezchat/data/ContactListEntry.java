@@ -1,24 +1,36 @@
 package eu.ezlife.ezchat.ezchat.data;
 
+import org.jxmpp.jid.Jid;
+
+import java.io.Serializable;
+
 /**
  * Created by ajo on 04.02.2017.
- * Represents a more complex ContactListEntry which extends the functionality of the
- * Contact DB-Entry Object
+ * Represents a more complex ContactListEntry which includes available information from DB Object ContactEntry
  */
-public class ContactListEntry extends ContactEntry {
+public class ContactListEntry implements Serializable {
 
     // Basic Attributes
+    private Jid jid;
     private int status;
     private boolean isOnline;
     private boolean isTyping;
+    private boolean isSubscribed;
     private String lastMessage;
 
-    public ContactListEntry(ContactEntry entry, int status, boolean isOnline, boolean isTyping){
-        super(entry.getId(),entry.getUsername(),entry.getAvatar(),entry.getContactName());
+    public ContactListEntry(Jid jid, int status, boolean isOnline, boolean isTyping, boolean isSubscribed){
+        this.jid = jid;
         this.status = status;
         this.isTyping = isTyping;
         this.isOnline = isOnline;
+        this.isSubscribed = isSubscribed;
         this.lastMessage = "-";
+
+        loadMoreFromDb();
+    }
+
+    private void loadMoreFromDb() {
+        // TODO - fill up object with data from DB
     }
 
     /**
@@ -54,6 +66,22 @@ public class ContactListEntry extends ContactEntry {
 
     public void setLastMessage(String lastMessage) {
         this.lastMessage = lastMessage;
+    }
+
+    public boolean isSubscribed() {
+        return isSubscribed;
+    }
+
+    public void setSubscribed(boolean subscribed) {
+        isSubscribed = subscribed;
+    }
+
+    public Jid getJid() {
+        return jid;
+    }
+
+    public void setJid(Jid jid) {
+        this.jid = jid;
     }
 
 }

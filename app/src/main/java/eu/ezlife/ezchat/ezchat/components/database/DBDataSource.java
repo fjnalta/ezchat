@@ -125,7 +125,7 @@ public class DBDataSource implements XMPPService {
         return exists;
     }
 
-    public List<ContactListEntry> getContacts() {
+    /*public List<ContactListEntry> getContacts() {
         List<ContactEntry> contactEntries = new ArrayList<>();
         List<ContactListEntry> myEntries = new ArrayList<>();
 
@@ -148,7 +148,7 @@ public class DBDataSource implements XMPPService {
         }
 
         return myEntries;
-    }
+    }*/
 
     public boolean deleteContact(String username) {
 

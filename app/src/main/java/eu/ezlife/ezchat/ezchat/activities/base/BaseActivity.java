@@ -2,18 +2,11 @@ package eu.ezlife.ezchat.ezchat.activities.base;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.pm.ActivityInfo;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -23,15 +16,13 @@ import android.widget.Toast;
 
 import org.minidns.dnsserverlookup.android21.AndroidUsingLinkProperties;
 
-import java.util.Observable;
 import java.util.Observer;
 
 import eu.ezlife.ezchat.ezchat.R;
-import eu.ezlife.ezchat.ezchat.activities.AddContactActivity;
+import eu.ezlife.ezchat.ezchat.activities.ContactsActivity;
 import eu.ezlife.ezchat.ezchat.activities.ContactListActivity;
 import eu.ezlife.ezchat.ezchat.activities.LoginActivity;
 import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
-import eu.ezlife.ezchat.ezchat.data.ObserverObject;
 
 /**
  * Created by ajo on 28.04.17.
@@ -144,9 +135,9 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
         switch (item.getItemId()) {
 
             case R.id.menu_add_contact:
-                Log.d(TAG, "Add Contact");
-                if (!(this instanceof AddContactActivity)) {
-                    Intent addContactActivity = new Intent(getApplicationContext(), AddContactActivity.class);
+                Log.d(TAG, "Contacts");
+                if (!(this instanceof ContactsActivity)) {
+                    Intent addContactActivity = new Intent(getApplicationContext(), ContactsActivity.class);
                     addContactActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     getApplicationContext().startActivity(addContactActivity);
                     break;
