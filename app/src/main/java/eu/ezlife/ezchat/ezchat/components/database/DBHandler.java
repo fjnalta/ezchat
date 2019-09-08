@@ -14,7 +14,7 @@ import android.util.Log;
 public class DBHandler extends SQLiteOpenHelper {
 
     // Debug Tag
-    public static final String TAG = "Database";
+    private static final String TAG = "Database";
 
     // DB-Settings
     public static final String DB_NAME = "ezChat.db";

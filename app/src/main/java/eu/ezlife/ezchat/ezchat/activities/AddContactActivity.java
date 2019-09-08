@@ -10,6 +10,14 @@ import eu.ezlife.ezchat.ezchat.activities.base.BaseActivity;
 
 public class AddContactActivity extends BaseActivity {
 
+    protected static final String TAG = "AddContactActivity";
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_contact);
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -18,16 +26,8 @@ public class AddContactActivity extends BaseActivity {
         setSupportActionBar(toolbar);
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_contact);
-
-
-    }
 
     @Override
     public void update(Observable o, Object arg) {
-
     }
 }

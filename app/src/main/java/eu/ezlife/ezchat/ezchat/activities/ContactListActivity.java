@@ -1,16 +1,12 @@
 package eu.ezlife.ezchat.ezchat.activities;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.Observable;
 
@@ -18,7 +14,6 @@ import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.activities.base.BaseActivity;
 import eu.ezlife.ezchat.ezchat.components.adapter.ContactListAdapter;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
-import eu.ezlife.ezchat.ezchat.data.ObserverObject;
 
 /**
  * Created by ajo on 04.02.2017.
@@ -28,21 +23,23 @@ import eu.ezlife.ezchat.ezchat.data.ObserverObject;
 public class ContactListActivity extends BaseActivity {
 
     // Contact List UI
-    private ListView myList;
+    private ListView contactList;
     private ArrayAdapter<ContactListEntry> contactListAdapter;
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         handler.disconnectConnection();
-        handler.deleteObserver(this);
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        handler.setCurrentChat(null);
-        contactListAdapter.notifyDataSetChanged();
+    protected void onNewIntent(Intent intent) {
+        Log.d("newIntent","called");
+        super.onNewIntent(intent);
+        if(intent.getStringExtra("methodName").equals("accept_subs")){
+
+            handler.addContact(intent.getStringExtra("jid"));
+        }
     }
 
     @Override
@@ -50,13 +47,13 @@ public class ContactListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_list);
 
-        // Add listener to contact List
+        // Add listener to Contact List
         contactListAdapter = new ContactListAdapter(this, handler.getContactList());
-        myList = (ListView) findViewById(R.id.contact_listView);
-        myList.setAdapter(contactListAdapter);
+        contactList = (ListView) findViewById(R.id.contact_list_view);
+        contactList.setAdapter(contactListAdapter);
 
         // Add onClickListener to all Items
-        myList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        contactList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Load chatActivity
                 Intent chatActivity = new Intent(getApplicationContext(), ChatActivity.class);
@@ -67,12 +64,18 @@ public class ContactListActivity extends BaseActivity {
         });
 
         // TODO - implement Long click -> delete contact, rename contact
-        myList.setOnLongClickListener(new View.OnLongClickListener() {
+        contactList.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 return false;
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        handler.setCurrentChat(null);
     }
 
     /**
@@ -81,16 +84,15 @@ public class ContactListActivity extends BaseActivity {
      */
     @Override
     public void update(Observable o, Object arg) {
-/*        if(arg != null) {
-            ObserverObject response = (ObserverObject) arg;
-            if (response.getText().equals("authenticated")) {
-                runOnUiThread(new Runnable() {
+
+
+        /*                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
                     }
-                });
-            } else {
+                });*/
+        /*else {
                 // Connection failed
                 runOnUiThread(new Runnable() {
                     @Override
@@ -99,7 +101,6 @@ public class ContactListActivity extends BaseActivity {
 
                     }
                 });
-            }
         }*/
 
         Log.d("ContactList","UpdateRoster");

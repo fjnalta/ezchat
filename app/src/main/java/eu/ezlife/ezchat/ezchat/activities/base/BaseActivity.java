@@ -1,11 +1,19 @@
 package eu.ezlife.ezchat.ezchat.activities.base;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -13,6 +21,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import org.minidns.dnsserverlookup.android21.AndroidUsingLinkProperties;
+
+import java.util.Observable;
 import java.util.Observer;
 
 import eu.ezlife.ezchat.ezchat.R;
@@ -20,6 +31,7 @@ import eu.ezlife.ezchat.ezchat.activities.AddContactActivity;
 import eu.ezlife.ezchat.ezchat.activities.ContactListActivity;
 import eu.ezlife.ezchat.ezchat.activities.LoginActivity;
 import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
+import eu.ezlife.ezchat.ezchat.data.ObserverObject;
 
 /**
  * Created by ajo on 28.04.17.
@@ -56,6 +68,8 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
 
         // Handle Application State
         applicationWillEnterForeground();
+
+        createNotificationChannel();
     }
 
     private void applicationWillEnterForeground() {
@@ -68,6 +82,7 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AndroidUsingLinkProperties.setup(this.getApplicationContext());
     }
 
     @Override
@@ -101,6 +116,7 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
             isBackPressed = true;
         }
         Log.d(TAG, "onBackPressed " + isBackPressed + "" + this.getLocalClassName());
+        handler.deleteObserver(this);
         super.onBackPressed();
     }
 
@@ -161,11 +177,10 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
                 break;
 
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
+                break;
         }
-
+        // If we got here, the user's action was not recognized.
+        // Invoke the superclass to handle it.
         return super.onOptionsItemSelected(item);
     }
 
@@ -182,9 +197,28 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
             // Back to Login Activity
             if(!(this instanceof LoginActivity)) {
                 Intent loginActivity = new Intent(getApplicationContext(), LoginActivity.class);
-                loginActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                loginActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 getApplicationContext().startActivity(loginActivity);
             }
+        }
+    }
+
+    /**
+     * Fucking Notifications
+     */
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("ezchat", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
         }
     }
 }

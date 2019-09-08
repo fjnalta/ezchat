@@ -3,6 +3,7 @@ package eu.ezlife.ezchat.ezchat.components.xmppServices;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -10,23 +11,29 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
+import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterListener;
 import org.jivesoftware.smack.roster.RosterLoadedListener;
+import org.jivesoftware.smack.roster.SubscribeListener;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.stringprep.XmppStringprepException;
+import org.minidns.dnsserverlookup.android21.AndroidUsingLinkProperties;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,7 +53,10 @@ import eu.ezlife.ezchat.ezchat.data.ObserverObject;
  * Created by ajo on 26.04.17.
  */
 
-public class XMPPHandler extends Observable implements ConnectionListener, IncomingChatMessageListener, RosterListener, RosterLoadedListener {
+public class XMPPHandler extends Observable implements ConnectionListener, IncomingChatMessageListener, RosterListener, RosterLoadedListener, SubscribeListener {
+
+    // Debug Tag
+    private static final String TAG = "XMPPHandler";
 
     // XMPP Connection Fields
     public static AbstractXMPPConnection connection = null;
@@ -61,6 +71,7 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
     // Contact List
     private Roster roster = null;
     private List<ContactListEntry> contactList = new ArrayList<>();
+    private List<Jid> newSubs = new ArrayList<>();
 
     // Database
     private DBDataSource dbHandler = null;
@@ -74,13 +85,15 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
     public void buildConnection(String username, String password) {
         try {
             // Create the configuration for this new connection
-            XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder();
-            configBuilder.setUsernameAndPassword((CharSequence) username, password);
-            configBuilder.setResource("ezChat Android v.0.1");
-            configBuilder.setXmppDomain("ezlife.eu");
-            configBuilder.setResource("ezChat");
-            configBuilder.setSecurityMode(ConnectionConfiguration.SecurityMode.required);
-            configBuilder.setKeystoreType(null);
+            XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder()
+                    .setUsernameAndPassword((CharSequence) username, password)
+                    .setDnssecMode(ConnectionConfiguration.DnssecMode.disabled)
+                    .setHost("ezlife.eu")
+                    .setPort(5222)
+                    .setXmppDomain("ezlife.eu")
+                    .setResource("ezChat")
+//                    .setSecurityMode(ConnectionConfiguration.SecurityMode.required)
+                    .setKeystoreType(null);
 
             connection = new XMPPTCPConnection(configBuilder.build());
             connection.addConnectionListener(this);
@@ -174,6 +187,20 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
         return contactList;
     }
 
+    public void addContact(String jid) {
+        for(Jid entry : newSubs) {
+            if (entry.toString().equals(jid)) {
+                try {
+                    roster.createEntry(entry.asBareJid(), jid, null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                newSubs.remove(entry);
+            }
+
+        }
+    }
+
     // Helper Methods
     // --------------
 
@@ -242,12 +269,13 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
 
         // activate Roster Listener
         roster = Roster.getInstanceFor(this.connection);
-        roster.addRosterLoadedListener(this);
         roster.addRosterListener(this);
+        roster.addRosterLoadedListener(this);
+        roster.addSubscribeListener(this);
 
         // TODO - AsncTask -.-
         // Update FireBase Id
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+//        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
 //        prefs.setPrefFireBaseToken(refreshedToken);
 
         // Register REST FireBaseId
@@ -376,9 +404,15 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
     @Override
     public void onRosterLoaded(final Roster roster) {
         Log.d("ROSTER", "load contact list");
-        /*final Collection<RosterEntry> rosterEntries = roster.getEntries();
+        final Collection<RosterEntry> rosterEntries = roster.getEntries();
+        Log.d(TAG, "Banger start");
+        for (RosterEntry entry : rosterEntries) {
 
-        AsyncTask<Void, Void, Boolean> rosterThread = new AsyncTask<Void, Void, Boolean>() {
+            Log.d(TAG, entry.getJid().toString());
+
+        }
+        Log.d(TAG, "Banger end");
+/*        AsyncTask<Void, Void, Boolean> rosterThread = new AsyncTask<Void, Void, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... params) {
                 dbHandler.open();
@@ -412,12 +446,28 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
                 notifyObservers();
 
             }
-        };
-        rosterThread.execute();*/
+        };*/
+        //rosterThread.execute();
     }
 
     @Override
     public void onRosterLoadingFailed(Exception exception) {
         Log.d("ROSTER", "Loading Failed");
+    }
+
+    // ------------------
+    // XMPP Subscription
+    // ------------------
+
+    @Override
+    public SubscribeAnswer processSubscribe(Jid from, Presence subscribeRequest) {
+//        Log.d(TAG + " Sub", from.toString());
+
+        if(!(newSubs.contains(from))) {
+            newSubs.add(from);
+        }
+        setChanged();
+        notifyObservers(new ObserverObject("new_subscription"));
+        return null;
     }
 }

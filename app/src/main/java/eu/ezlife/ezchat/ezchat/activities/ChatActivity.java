@@ -46,7 +46,10 @@ public class ChatActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        chatHistoryAdapter.notifyDataSetChanged();
+
+        // TODO - insert User Name
+        toolbar.setTitle("Chat with - NAME");
+        setSupportActionBar(toolbar);
     }
 
     @Override

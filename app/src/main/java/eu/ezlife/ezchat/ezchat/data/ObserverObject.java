@@ -1,5 +1,7 @@
 package eu.ezlife.ezchat.ezchat.data;
 
+import org.jxmpp.jid.Jid;
+
 /**
  * Created by ajo on 26.04.17.
  */
