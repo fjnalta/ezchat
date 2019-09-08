@@ -10,4 +10,6 @@
     <string name="btn_send">Send Message</string>
     <string name="link_signup">No Account yet? Create one</string>
     <string name="type_your_message">Type your Message..</string>
+
+    <string name="menu_logout">Logout</string>
 </resources>

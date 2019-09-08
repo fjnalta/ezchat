@@ -3,7 +3,7 @@ package eu.ezlife.ezchat.ezchat.activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,12 +15,13 @@ import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.activities.base.BaseActivity;
 import eu.ezlife.ezchat.ezchat.data.ObserverObject;
 
+import static android.content.SharedPreferences.*;
+
 public class LoginActivity extends BaseActivity {
 
     private EditText usernameText;
     private EditText passwordText;
     private Button loginButton;
-
     private ProgressDialog progressDialog;
 
     // TODO - implement register Activity
@@ -29,10 +30,6 @@ public class LoginActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         handler.setCurrentChat(null);
-
-        // Setup Toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
     }
 
     @Override
@@ -53,9 +50,16 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 progressDialog.show();
+
+                // Save Credentials
+                Editor editor = sharedPref.edit();
+                editor.putString("PREF_USER_NAME", usernameText.getText().toString());
+                editor.putString("PREF_USER_PW", passwordText.getText().toString());
+                editor.apply();
+
                 // Create Connection
-                prefs.setCredentials(usernameText.getText().toString(), passwordText.getText().toString());
-                handler.buildConnection(prefs.getPrefUserName(), prefs.getPrefPassword());
+                handler.buildConnection(sharedPref.getString("PREF_USER_NAME",""), sharedPref.getString("PREF_USER_PW",""));
+                Log.d("Login: ", sharedPref.getString("PREF_USER_NAME","") + sharedPref.getString("PREF_USER_PW",""));
             }
         });
     }

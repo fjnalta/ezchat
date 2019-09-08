@@ -27,6 +27,13 @@ public class DBDataSource implements XMPPService {
     private DBHandler dbHandler;
     private SQLiteDatabase database;
 
+    private String[] columns_settings = {
+            DBHandler.COLUMN_ID,
+            DBHandler.COLUMN_SHORT_DESCRIPTION,
+            DBHandler.COLUMN_DESCRIPTION,
+            DBHandler.COLUMN_VALUE,
+    };
+
     private String[] columns_contacts = {
             DBHandler.COLUMN_ID,
             DBHandler.COLUMN_USERNAME,
@@ -40,7 +47,7 @@ public class DBDataSource implements XMPPService {
             DBHandler.COLUMN_RCPT,
             DBHandler.COLUMN_DATE,
             DBHandler.COLUMN_CONTENT,
-            DBHandler.COLUMN_CONTACTS_ID
+            DBHandler.COLUMN_USERNAME
     };
 
     /**
@@ -49,12 +56,11 @@ public class DBDataSource implements XMPPService {
      * @param context the actual application context
      */
     public DBDataSource(Context context) {
-        Log.d("DBDataSource", "Unsere DataSource erzeugt jetzt den dbHandler.");
+        Log.d("DBDataSource", "Erzeuge dbHandler.");
         dbHandler = new DBHandler(context);
     }
 
     // -- General DB Handling --
-
     /**
      * Opens the Database connection.
      * needs to be called before every sql statement
@@ -72,7 +78,6 @@ public class DBDataSource implements XMPPService {
     }
 
     // -- ContactEntry Handling
-
     public ContactEntry createContact(String username, int avatar, String contactName) {
         ContentValues values = new ContentValues();
         values.put(DBHandler.COLUMN_USERNAME, username);
@@ -95,11 +100,9 @@ public class DBDataSource implements XMPPService {
     public ContactEntry getContact(String username) {
         ContactEntry myContact = null;
 
-
         Cursor cursor = database.query(DBHandler.TABLE_CONTACTS,
                 columns_contacts, DBHandler.COLUMN_USERNAME + "=\"" + username + "\"",
                 null, null, null, null);
-
 
         if (cursor != null) {
             cursor.moveToFirst();
@@ -108,12 +111,9 @@ public class DBDataSource implements XMPPService {
                 myContact = cursorToContact(cursor);
                 cursor.moveToNext();
             }
-
-
         }
 
         cursor.close();
-
         return myContact;
     }
 
@@ -161,7 +161,7 @@ public class DBDataSource implements XMPPService {
         ChatHistoryEntry currentEntry = null;
 
         Cursor cursor = database.query(DBHandler.TABLE_MESSAGES,
-                columns_messages, DBHandler.COLUMN_CONTACTS_ID + "=" + getContact(username).getId(),
+                columns_messages, DBHandler.COLUMN_USERNAME + "=" + getContact(username).getUsername(),
                 null, null, null, DBHandler.COLUMN_ID + " DESC");
         if (cursor.getCount() != 0) {
             cursor.moveToFirst();
@@ -182,14 +182,14 @@ public class DBDataSource implements XMPPService {
     // -- Chat History Handling --
 
     // Create and return new Chat History Message
-    public ChatHistoryEntry createMessage(String from, String to, String text, String date, long userId) {
+    public ChatHistoryEntry createMessage(String from, String to, String text, String date, long username) {
         Log.d("CreateMessage", "Called");
         ContentValues values = new ContentValues();
         values.put(DBHandler.COLUMN_SNDR, from);
         values.put(DBHandler.COLUMN_RCPT, to);
         values.put(DBHandler.COLUMN_DATE, date);
         values.put(DBHandler.COLUMN_CONTENT, text);
-        values.put(DBHandler.COLUMN_CONTACTS_ID, userId);
+        values.put(DBHandler.COLUMN_USERNAME, username);
 
         long insertId = database.insert(DBHandler.TABLE_MESSAGES, null, values);
 
@@ -209,7 +209,7 @@ public class DBDataSource implements XMPPService {
         List<ChatHistoryEntry> chatHistoryList = new ArrayList<>();
 
         Cursor cursor = database.query(DBHandler.TABLE_MESSAGES,
-                columns_messages, DBHandler.COLUMN_CONTACTS_ID + "=\"" + contactId + "\"",
+                columns_messages, DBHandler.COLUMN_USERNAME + "=\"" + contactId + "\"",
                 null, null, null, null);
 
         cursor.moveToFirst();
@@ -257,7 +257,7 @@ public class DBDataSource implements XMPPService {
 
         String date = cursor.getString(cursor.getColumnIndex(DBHandler.COLUMN_DATE));
         String text = cursor.getString(cursor.getColumnIndex(DBHandler.COLUMN_CONTENT));
-        int contactsId = cursor.getInt(cursor.getColumnIndex(DBHandler.COLUMN_CONTACTS_ID));
+        int contactsId = cursor.getInt(cursor.getColumnIndex(DBHandler.COLUMN_USERNAME));
 
         ChatHistoryEntry myHistoryEntry = new ChatHistoryEntry(id, from, to, date, text, contactsId);
 

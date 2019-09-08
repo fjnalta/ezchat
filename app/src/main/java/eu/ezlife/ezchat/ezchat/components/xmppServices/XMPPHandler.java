@@ -1,5 +1,6 @@
 package eu.ezlife.ezchat.ezchat.components.xmppServices;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -36,7 +37,6 @@ import java.util.Observable;
 
 import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.components.database.DBDataSource;
-import eu.ezlife.ezchat.ezchat.components.localSettings.UserPreferences;
 import eu.ezlife.ezchat.ezchat.components.restServices.TokenRegistrationConnection;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
@@ -50,8 +50,8 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
 
     // XMPP Connection Fields
     public static AbstractXMPPConnection connection = null;
-    private boolean connected = false;
-    private boolean loggedIn = false;
+    public boolean connected = false;
+    public boolean loggedIn = false;
 
     // Chat
     private ChatManager chatManager = null;
@@ -64,9 +64,6 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
 
     // Database
     private DBDataSource dbHandler = null;
-    // UserPreferences
-    private UserPreferences prefs = null;
-
 
     /**
      * Connect Method
@@ -147,7 +144,6 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
      */
     public void setAndroidContext(Context ctx) {
         dbHandler = new DBDataSource(ctx);
-        prefs = new UserPreferences(ctx);
     }
 
     // Chat Methods
@@ -252,10 +248,10 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
         // TODO - AsncTask -.-
         // Update FireBase Id
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        prefs.setPrefFireBaseToken(refreshedToken);
+//        prefs.setPrefFireBaseToken(refreshedToken);
 
         // Register REST FireBaseId
-        new TokenRegistrationConnection(prefs.getPrefFireBaseToken(), connection.getUser().asEntityBareJidString()).execute("");
+//        new TokenRegistrationConnection(prefs.getPrefFireBaseToken(), connection.getUser().asEntityBareJidString()).execute("");
 
         setChanged();
         notifyObservers(new ObserverObject("authenticated"));
@@ -380,7 +376,7 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
     @Override
     public void onRosterLoaded(final Roster roster) {
         Log.d("ROSTER", "load contact list");
-        final Collection<RosterEntry> rosterEntries = roster.getEntries();
+        /*final Collection<RosterEntry> rosterEntries = roster.getEntries();
 
         AsyncTask<Void, Void, Boolean> rosterThread = new AsyncTask<Void, Void, Boolean>() {
             @Override
@@ -417,7 +413,7 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
 
             }
         };
-        rosterThread.execute();
+        rosterThread.execute();*/
     }
 
     @Override

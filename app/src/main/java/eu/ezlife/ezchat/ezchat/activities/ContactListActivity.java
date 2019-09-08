@@ -2,6 +2,7 @@ package eu.ezlife.ezchat.ezchat.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -29,7 +30,6 @@ public class ContactListActivity extends BaseActivity {
     // Contact List UI
     private ListView myList;
     private ArrayAdapter<ContactListEntry> contactListAdapter;
-    private ProgressDialog progressDialog;
 
     @Override
     public void onBackPressed() {
@@ -41,13 +41,8 @@ public class ContactListActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        checkForSavedLogin();
         handler.setCurrentChat(null);
         contactListAdapter.notifyDataSetChanged();
-
-        // Setup Toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
     }
 
     @Override
@@ -86,13 +81,13 @@ public class ContactListActivity extends BaseActivity {
      */
     @Override
     public void update(Observable o, Object arg) {
-        if(arg != null) {
+/*        if(arg != null) {
             ObserverObject response = (ObserverObject) arg;
             if (response.getText().equals("authenticated")) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressDialog.hide();
+
                     }
                 });
             } else {
@@ -100,16 +95,12 @@ public class ContactListActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressDialog.hide();
-                        Toast.makeText(getApplicationContext(), "Login failed", Toast.LENGTH_SHORT).show();
+
+
                     }
                 });
-                // Back to login activity
-                Intent loginActivity = new Intent(getApplicationContext(), LoginActivity.class);
-                loginActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                getApplicationContext().startActivity(loginActivity);
             }
-        }
+        }*/
 
         Log.d("ContactList","UpdateRoster");
             runOnUiThread(new Runnable() {
@@ -118,22 +109,5 @@ public class ContactListActivity extends BaseActivity {
                     contactListAdapter.notifyDataSetChanged();
                 }
             });
-    }
-
-    /**
-     * Checks the user Preferences for saved login
-     */
-    private void checkForSavedLogin() {
-        progressDialog = new ProgressDialog(ContactListActivity.this, R.style.AppTheme);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
-
-        if (!prefs.getPrefUserName().equals("") && !prefs.getPrefPassword().equals("")) {
-            if (handler.connection == null) {
-                progressDialog.show();
-                // Create Connection
-                handler.buildConnection(prefs.getPrefUserName(), prefs.getPrefPassword());
-            }
-        }
     }
 }

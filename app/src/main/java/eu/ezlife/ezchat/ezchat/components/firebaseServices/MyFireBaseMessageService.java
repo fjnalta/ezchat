@@ -15,7 +15,6 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.activities.ContactListActivity;
-import eu.ezlife.ezchat.ezchat.components.localSettings.UserPreferences;
 
 
 /**
@@ -29,21 +28,21 @@ public class MyFireBaseMessageService extends FirebaseMessagingService {
      */
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        super.onMessageReceived(remoteMessage);
-        createNotification(remoteMessage.getData().get("contact"));
+/*        super.onMessageReceived(remoteMessage);
+        createNotification(remoteMessage.getData().get("contact"));*/
     }
 
     @Override
     public void onNewToken(String s) {
-        super.onNewToken(s);
+/*        super.onNewToken(s);
         // Get updated InstanceID token.
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        UserPreferences prefs = new UserPreferences(getApplicationContext());
-        prefs.setPrefFireBaseToken(refreshedToken);
+//        UserPreferences prefs = new UserPreferences(getApplicationContext());
+//        prefs.setPrefFireBaseToken(refreshedToken);
 
         // TODO - update token at REST Server
 
-        Log.e("NEW_TOKEN",s);
+        Log.e("NEW_TOKEN",s);*/
     }
 
     /**
@@ -51,7 +50,7 @@ public class MyFireBaseMessageService extends FirebaseMessagingService {
      * @param messageBody FCM message body received.
      */
     private void createNotification(String messageBody) {
-        Intent intent = new Intent(this, ContactListActivity.class);
+/*        Intent intent = new Intent(this, ContactListActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
@@ -67,6 +66,6 @@ public class MyFireBaseMessageService extends FirebaseMessagingService {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(0, notificationBuilder.build());
+        notificationManager.notify(0, notificationBuilder.build());*/
     }
 }

@@ -1,10 +1,16 @@
 package eu.ezlife.ezchat.ezchat.activities.base;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.Observer;
@@ -12,7 +18,6 @@ import java.util.Observer;
 import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.activities.ContactListActivity;
 import eu.ezlife.ezchat.ezchat.activities.LoginActivity;
-import eu.ezlife.ezchat.ezchat.components.localSettings.UserPreferences;
 import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
 
 /**
@@ -23,37 +28,44 @@ import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
 public abstract class BaseActivity extends AppCompatActivity implements XMPPService, Observer {
 
     // track Application status
-    protected static final String TAG = BaseActivity.class.getName();
+    protected static final String TAG = "BaseActivity";
     public static boolean isAppWentToBg = false;
     public static boolean isWindowFocused = false;
     public static boolean isBackPressed = false;
 
-    // User Preferences
-    public UserPreferences prefs = null;
+    public SharedPreferences sharedPref;
 
     @Override
     protected void onStart() {
+        super.onStart();
+
         handler.setAndroidContext(this);
         handler.addObserver(this);
 
+        // Setup Toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // Load Shared Preferences
+        sharedPref = getSharedPreferences("ezchat", MODE_PRIVATE);
+
+        // Handle XMPP Connection
+        checkForSavedLogin();
+
+        // Handle Application State
         applicationWillEnterForeground();
-        super.onStart();
     }
 
     private void applicationWillEnterForeground() {
         if (isAppWentToBg) {
             isAppWentToBg = false;
-            Toast.makeText(getApplicationContext(), "Connecting",
-                    Toast.LENGTH_SHORT).show();
-            handler.buildConnection(prefs.getPrefUserName(),prefs.getPrefPassword());
+            Toast.makeText(getApplicationContext(), "Connecting", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        this.prefs = new UserPreferences(this);
     }
 
     @Override
@@ -101,4 +113,58 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
         super.onWindowFocusChanged(hasFocus);
     }
 
+    // Handle Top Menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.options, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_logout:
+                // delete User Prefs and return to LoginActivity
+                Log.d(TAG, "Logout");
+
+                Editor editor = sharedPref.edit();
+                editor.putString("PREF_USER_NAME", "");
+                editor.putString("PREF_USER_PW", "");
+                editor.apply();
+
+                if (handler.connection != null) {
+                    handler.disconnectConnection();
+                }
+
+                Intent loginActivity = new Intent(getApplicationContext(), LoginActivity.class);
+                loginActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getApplicationContext().startActivity(loginActivity);
+
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /**
+     * Checks the user Preferences for saved login
+     */
+    private void checkForSavedLogin() {
+        if (!(sharedPref.getString("PREF_USER_NAME","").equals("")) && !(sharedPref.getString("PREF_USER_PW","").equals(""))) {
+            if (handler.connected == false || handler.loggedIn == false) {
+                // Create Connection
+                handler.buildConnection(sharedPref.getString("PREF_USER_NAME",""), sharedPref.getString("PREF_USER_PW",""));
+            }
+        } else {
+            // Back to login activity
+            if(!(this instanceof LoginActivity)) {
+                Intent loginActivity = new Intent(getApplicationContext(), LoginActivity.class);
+                loginActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getApplicationContext().startActivity(loginActivity);
+            }
+        }
+    }
 }

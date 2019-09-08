@@ -132,7 +132,7 @@ public class ChatActivity extends BaseActivity {
                 // TODO - use AsyncTask stuff
                 // Send Push Notification
                 Log.d("Push Notification: ", "Sending Msg FROM: " + handler.connection.getUser().asEntityBareJidString() + "TO: " + newMessage.getTo());
-                new PushMessageConnection(handler.connection.getUser().asEntityBareJidString(), newMessage.getTo().toString(), prefs.getPrefFireBaseToken(), prefs.getPrefAppId()).execute("");
+//                new PushMessageConnection(handler.connection.getUser().asEntityBareJidString(), newMessage.getTo().toString(), prefs.getPrefFireBaseToken(), prefs.getPrefAppId()).execute("");
 
                 // Reset TextBox
                 chatEdit.setText("");
