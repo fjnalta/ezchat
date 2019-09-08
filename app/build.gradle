@@ -33,6 +33,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:17.0.0'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'android.arch.navigation:navigation-fragment:1.0.0'
+    implementation 'android.arch.navigation:navigation-ui:1.0.0'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -51,4 +54,6 @@ repositories {
     mavenCentral()
 }
 
-apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'androidx.navigation.safeargs'// Google Play services Gradle plugin
+

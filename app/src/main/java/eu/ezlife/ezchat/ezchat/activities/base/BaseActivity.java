@@ -16,6 +16,7 @@ import android.widget.Toast;
 import java.util.Observer;
 
 import eu.ezlife.ezchat.ezchat.R;
+import eu.ezlife.ezchat.ezchat.activities.AddContactActivity;
 import eu.ezlife.ezchat.ezchat.activities.ContactListActivity;
 import eu.ezlife.ezchat.ezchat.activities.LoginActivity;
 import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
@@ -27,12 +28,13 @@ import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
  */
 public abstract class BaseActivity extends AppCompatActivity implements XMPPService, Observer {
 
-    // track Application status
+    // Track Application status
     protected static final String TAG = "BaseActivity";
     public static boolean isAppWentToBg = false;
     public static boolean isWindowFocused = false;
     public static boolean isBackPressed = false;
 
+    public Toolbar toolbar;
     public SharedPreferences sharedPref;
 
     @Override
@@ -43,7 +45,7 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
         handler.addObserver(this);
 
         // Setup Toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // Load Shared Preferences
@@ -124,6 +126,22 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+
+            case R.id.menu_add_contact:
+                Log.d(TAG, "Add Contact");
+                if (!(this instanceof AddContactActivity)) {
+                    Intent addContactActivity = new Intent(getApplicationContext(), AddContactActivity.class);
+                    addContactActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    getApplicationContext().startActivity(addContactActivity);
+                    break;
+                }
+                break;
+
+            case R.id.menu_settings:
+                // TODO - Show Settings Activity
+                Log.d(TAG, "Settings");
+                break;
+
             case R.id.menu_logout:
                 // delete User Prefs and return to LoginActivity
                 Log.d(TAG, "Logout");
@@ -140,13 +158,15 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
                 Intent loginActivity = new Intent(getApplicationContext(), LoginActivity.class);
                 loginActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getApplicationContext().startActivity(loginActivity);
-
+                break;
 
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -159,7 +179,7 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
                 handler.buildConnection(sharedPref.getString("PREF_USER_NAME",""), sharedPref.getString("PREF_USER_PW",""));
             }
         } else {
-            // Back to login activity
+            // Back to Login Activity
             if(!(this instanceof LoginActivity)) {
                 Intent loginActivity = new Intent(getApplicationContext(), LoginActivity.class);
                 loginActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
