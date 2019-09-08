@@ -37,7 +37,6 @@ public class ContactListActivity extends BaseActivity {
         Log.d("newIntent","called");
         super.onNewIntent(intent);
         if(intent.getStringExtra("methodName").equals("accept_subs")){
-
             handler.addContact(intent.getStringExtra("jid"));
         }
     }
@@ -84,31 +83,12 @@ public class ContactListActivity extends BaseActivity {
      */
     @Override
     public void update(Observable o, Object arg) {
-
-
-        /*                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                    }
-                });*/
-        /*else {
-                // Connection failed
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-
-                    }
-                });
-        }*/
-
         Log.d("ContactList","UpdateRoster");
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    contactListAdapter.notifyDataSetChanged();
-                }
-            });
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                contactListAdapter.notifyDataSetChanged();
+            }
+        });
     }
 }

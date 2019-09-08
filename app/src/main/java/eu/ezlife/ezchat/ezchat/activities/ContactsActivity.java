@@ -1,7 +1,10 @@
 package eu.ezlife.ezchat.ezchat.activities;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import org.jxmpp.jid.Jid;
@@ -16,6 +19,8 @@ public class ContactsActivity extends BaseActivity {
 
     protected static final String TAG = "ContactsActivity";
     private ListView newContactList;
+    private Button addContactButton;
+    private EditText username;
     private ArrayAdapter<Jid> newContactAdapter;
 
     @Override
@@ -24,9 +29,20 @@ public class ContactsActivity extends BaseActivity {
         setContentView(R.layout.activity_contacts);
 
         // Add listener to Contact List
-        newContactAdapter = new NewContactAdapter(this, handler.getNewSubs());
+//        newContactAdapter = new NewContactAdapter(this, handler.getNewSubs());
         newContactList = (ListView) findViewById(R.id.new_contact_list_view);
-        newContactList.setAdapter(newContactAdapter);
+//        newContactList.setAdapter(newContactAdapter);
+
+        username = (EditText) findViewById(R.id.input_add_contact);
+
+        addContactButton = (Button) findViewById(R.id.btn_add_contact);
+        addContactButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handler.addContact(username.getText().toString());
+                username.setText("");
+            }
+        });
 
     }
 

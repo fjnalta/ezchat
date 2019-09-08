@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import org.minidns.dnsserverlookup.android21.AndroidUsingLinkProperties;
@@ -23,6 +24,7 @@ import eu.ezlife.ezchat.ezchat.activities.ContactsActivity;
 import eu.ezlife.ezchat.ezchat.activities.ContactListActivity;
 import eu.ezlife.ezchat.ezchat.activities.LoginActivity;
 import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
+import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
 /**
  * Created by ajo on 28.04.17.

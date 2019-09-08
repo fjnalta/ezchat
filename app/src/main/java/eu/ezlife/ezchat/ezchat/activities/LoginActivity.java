@@ -39,7 +39,7 @@ public class LoginActivity extends BaseActivity {
 
         usernameText = (EditText) findViewById(R.id.input_username);
         passwordText = (EditText) findViewById(R.id.input_password);
-        loginButton = (Button) findViewById(R.id.btn_add_contact);
+        loginButton = (Button) findViewById(R.id.btn_login);
 
         progressDialog = new ProgressDialog(LoginActivity.this, R.style.AppTheme);
         progressDialog.setIndeterminate(true);
