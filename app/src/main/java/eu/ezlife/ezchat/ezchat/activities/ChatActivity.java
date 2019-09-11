@@ -39,7 +39,7 @@ public class ChatActivity extends BaseActivity {
     private EditText chatEdit;
     private ListView chatHistoryView;
     // Chat history
-//    private ArrayAdapter<ChatHistoryEntry> chatHistoryAdapter;
+    private ArrayAdapter<ChatHistoryEntry> chatHistoryAdapter;
     // DatabaseHandler
     private DBDataSource dbHandler = null;
 
@@ -55,8 +55,6 @@ public class ChatActivity extends BaseActivity {
             this.contact = (ContactListEntry) getIntent().getSerializableExtra("ContactListEntry");
         }
 
-        dbHandler.open();
-
         // Set or create current Chat
         try {
             Jid jid = JidCreate.from(contact.getJid());
@@ -66,16 +64,16 @@ public class ChatActivity extends BaseActivity {
         }
 
         // Set the current Chat history
-
-//        handler.setChatHistory(dbHandler.getChatHistory(contact.getJid()));
+        dbHandler.open();
+        handler.setChatHistory(dbHandler.getChatHistory(contact.getJid()));
         dbHandler.close();
 
         // UI Stuff
-/*        chatHistoryAdapter = new ChatHistoryAdapter(this, handler.getChatHistory());
+        chatHistoryAdapter = new ChatHistoryAdapter(this, handler.getChatHistory());
         chatHistoryView = (ListView) findViewById(R.id.chat_list_view);
         chatHistoryView.setAdapter(chatHistoryAdapter);
         chatHistoryView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-        chatHistoryView.setStackFromBottom(true);*/
+        chatHistoryView.setStackFromBottom(true);
 
         chatEdit = (EditText) findViewById(R.id.chat_edit_text1);
         sendButton = (ImageView) findViewById(R.id.enter_chat1);
@@ -97,22 +95,15 @@ public class ChatActivity extends BaseActivity {
                 // Create Custom Time Format for DB Sorting
                 Calendar c = Calendar.getInstance();
                 // Open DB and save Message
-/*                dbHandler.open();
+                dbHandler.open();
                 // create DB-Entry and add Item to chatHistoryList
                 handler.getChatHistory().add(dbHandler.createMessage(newMessage.getFrom().toString(),
                         newMessage.getTo().toString(),
                         newMessage.getBody(),
                         c.getTime().toString(),
-                        dbHandler.getContact(contact.getJid()).getId()));
+                        newMessage.getTo().toString()));
                 // Close DB
-                dbHandler.close();*/
-
-                // Set last Message
-                for (ContactListEntry entry : handler.getContactList()) {
-                    if (entry.getJid().equals(newMessage.getTo().toString())) {
-                        entry.setLastMessage(newMessage.getBody());
-                    }
-                }
+                dbHandler.close();
 
                 // Send message through XMPP
                 try {
@@ -127,18 +118,18 @@ public class ChatActivity extends BaseActivity {
 
                 // TODO - use AsyncTask stuff
                 // Send Push Notification
-                Log.d("Push Notification: ", "Sending Msg FROM: " + handler.connection.getUser().asEntityBareJidString() + "TO: " + newMessage.getTo());
+//                Log.d("Push Notification: ", "Sending Msg FROM: " + handler.connection.getUser().asEntityBareJidString() + "TO: " + newMessage.getTo());
 //                new PushMessageConnection(handler.connection.getUser().asEntityBareJidString(), newMessage.getTo().toString(), prefs.getPrefFireBaseToken(), prefs.getPrefAppId()).execute("");
 
                 // Reset TextBox
                 chatEdit.setText("");
                 // notify about the changes
-/*                runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         chatHistoryAdapter.notifyDataSetChanged();
                     }
-                });*/
+                });
             }
         });
     }
@@ -157,11 +148,11 @@ public class ChatActivity extends BaseActivity {
      */
     @Override
     public void update(Observable o, Object arg) {
-/*        runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 chatHistoryAdapter.notifyDataSetChanged();
             }
-        });*/
+        });
     }
 }

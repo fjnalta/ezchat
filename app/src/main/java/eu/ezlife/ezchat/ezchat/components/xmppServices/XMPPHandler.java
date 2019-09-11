@@ -63,7 +63,7 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
     private Chat currentChat = null;
 
     // Contact List
-    private Roster roster = null;
+    public Roster roster = null;
     public List<ContactListEntry> contactList = new ArrayList<>();
 
     // Database
@@ -371,13 +371,13 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
             // Create Custom Time Format for DB Sorting
             Calendar c = Calendar.getInstance();
             // Open DB and save Message
-//            dbHandler.open();
+            dbHandler.open();
             // create DB-Entry
-/*            ChatHistoryEntry curEntry = dbHandler.createMessage(from.asEntityBareJidString(),
+            ChatHistoryEntry curEntry = dbHandler.createMessage(from.asEntityBareJidString(),
                     newMessage.getTo().toString(),
                     newMessage.getBody(),
                     c.getTime().toString(),
-                    dbHandler.getContact(from.asEntityBareJidString()).getId());*/
+                    dbHandler.getContact(from.asEntityBareJidString()).getUsername());
             // Set the last message in contactList
             for (ContactListEntry entry : contactList) {
                 if (entry.getJid().equals(from.asEntityBareJidString())) {
@@ -385,11 +385,13 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
                 }
             }
             // Add message to chat if the chat is active
-/*            if (currentChat == chat) {
+            if (currentChat == chat) {
                 chatHistory.add(curEntry);
-            }*/
+            }
             // Close DB
-//            dbHandler.close();
+            dbHandler.close();
+
+            createContactList();
 
             setChanged();
             notifyObservers();
@@ -453,7 +455,7 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
         Log.d("ROSTER", "Loading Failed");
     }
 
-    private void createContactList() {
+    public void createContactList() {
         Log.d("ROSTER", "load contact list");
         Collection<RosterEntry> rosterEntries = roster.getEntries();
         contactList.clear();
@@ -470,8 +472,7 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
             } else {
                 // Enrich data if entry exists
                 contactEntry.setNickName(dbHandler.getContact(contactEntry.getJid().toString()).getContactName());
-                Log.d("SETNICKNAME", dbHandler.getContact(contactEntry.getJid().toString()).getContactName());
-//              contactEntry.setLastMessage(dbHandler.getLastMessage(contactEntry.getUsername()));
+                contactEntry.setLastMessage(dbHandler.getLastMessage(contactEntry.getJid().toString()));
             }
             contactList.add(contactEntry);
         }

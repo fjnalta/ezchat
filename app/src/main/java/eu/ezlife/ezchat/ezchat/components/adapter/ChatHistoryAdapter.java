@@ -14,6 +14,8 @@ import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
 
+import static eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService.handler;
+
 /**
  * Created by ajo on 11.02.2017.
  * This class holds the Chat history adapter. It handles reads chat History updates from the
@@ -60,13 +62,12 @@ public class ChatHistoryAdapter extends ArrayAdapter<ChatHistoryEntry> {
      * @param msg the message to process
      * @return true if the message if outgoing, false if it is incoming
      */
-    // TODO - clean this shit and remove observer from Class
+    // TODO - clean this shit
     private boolean isMyMessage(ChatHistoryEntry msg){
-/*        if(msg.getTo().asBareJid().toString().equals(handler.connection.getUser().asEntityBareJid().toString())) {
+        if(msg.getTo().asBareJid().toString().equals(handler.connection.getUser().asEntityBareJid().toString())) {
             return true;
         } else {
             return false;
-        }*/
-        return false;
+        }
     }
 }
