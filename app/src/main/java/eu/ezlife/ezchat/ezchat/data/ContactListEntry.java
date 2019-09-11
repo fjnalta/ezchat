@@ -18,6 +18,9 @@ public class ContactListEntry implements Serializable {
     private boolean isSubscribed;
     private String lastMessage;
 
+    // DB Attributes
+    private String nickName;
+
     public ContactListEntry(Jid jid, int status, boolean isOnline, boolean isTyping, boolean isSubscribed){
         this.jid = jid;
         this.status = status;
@@ -25,12 +28,6 @@ public class ContactListEntry implements Serializable {
         this.isOnline = isOnline;
         this.isSubscribed = isSubscribed;
         this.lastMessage = "-";
-
-        loadMoreFromDb();
-    }
-
-    private void loadMoreFromDb() {
-        // TODO - fill up object with data from DB
     }
 
     /**
@@ -82,6 +79,14 @@ public class ContactListEntry implements Serializable {
 
     public void setJid(Jid jid) {
         this.jid = jid;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
 }

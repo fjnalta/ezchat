@@ -39,18 +39,9 @@ public class ChatActivity extends BaseActivity {
     private EditText chatEdit;
     private ListView chatHistoryView;
     // Chat history
-    private ArrayAdapter<ChatHistoryEntry> chatHistoryAdapter;
+//    private ArrayAdapter<ChatHistoryEntry> chatHistoryAdapter;
     // DatabaseHandler
     private DBDataSource dbHandler = null;
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        // TODO - insert User Name
-        //toolbar.setTitle("Chat with - NAME");
-        //setSupportActionBar(toolbar);
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,6 +55,8 @@ public class ChatActivity extends BaseActivity {
             this.contact = (ContactListEntry) getIntent().getSerializableExtra("ContactListEntry");
         }
 
+        dbHandler.open();
+
         // Set or create current Chat
         try {
             Jid jid = JidCreate.from(contact.getJid());
@@ -73,16 +66,16 @@ public class ChatActivity extends BaseActivity {
         }
 
         // Set the current Chat history
-        dbHandler.open();
+
 //        handler.setChatHistory(dbHandler.getChatHistory(contact.getJid()));
         dbHandler.close();
 
         // UI Stuff
-        chatHistoryAdapter = new ChatHistoryAdapter(this, handler.getChatHistory());
+/*        chatHistoryAdapter = new ChatHistoryAdapter(this, handler.getChatHistory());
         chatHistoryView = (ListView) findViewById(R.id.chat_list_view);
         chatHistoryView.setAdapter(chatHistoryAdapter);
         chatHistoryView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-        chatHistoryView.setStackFromBottom(true);
+        chatHistoryView.setStackFromBottom(true);*/
 
         chatEdit = (EditText) findViewById(R.id.chat_edit_text1);
         sendButton = (ImageView) findViewById(R.id.enter_chat1);
@@ -140,14 +133,21 @@ public class ChatActivity extends BaseActivity {
                 // Reset TextBox
                 chatEdit.setText("");
                 // notify about the changes
-                runOnUiThread(new Runnable() {
+/*                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         chatHistoryAdapter.notifyDataSetChanged();
                     }
-                });
+                });*/
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        toolbar.setTitle("Chat with - " + this.contact.getNickName());
+        setSupportActionBar(toolbar);
     }
 
     /*
@@ -156,11 +156,11 @@ public class ChatActivity extends BaseActivity {
      */
     @Override
     public void update(Observable o, Object arg) {
-        runOnUiThread(new Runnable() {
+/*        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 chatHistoryAdapter.notifyDataSetChanged();
             }
-        });
+        });*/
     }
 }

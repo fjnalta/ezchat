@@ -12,7 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import org.minidns.dnsserverlookup.android21.AndroidUsingLinkProperties;
@@ -20,11 +19,11 @@ import org.minidns.dnsserverlookup.android21.AndroidUsingLinkProperties;
 import java.util.Observer;
 
 import eu.ezlife.ezchat.ezchat.R;
-import eu.ezlife.ezchat.ezchat.activities.ContactsActivity;
 import eu.ezlife.ezchat.ezchat.activities.ContactListActivity;
+import eu.ezlife.ezchat.ezchat.activities.ContactsActivity;
 import eu.ezlife.ezchat.ezchat.activities.LoginActivity;
+import eu.ezlife.ezchat.ezchat.activities.ProfileActivity;
 import eu.ezlife.ezchat.ezchat.components.xmppServices.XMPPService;
-import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 
 /**
  * Created by ajo on 28.04.17.
@@ -42,16 +41,19 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
     public Toolbar toolbar;
     public SharedPreferences sharedPref;
 
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        AndroidUsingLinkProperties.setup(this.getApplicationContext());
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
 
         handler.setAndroidContext(this);
         handler.addObserver(this);
-
-        // Setup Toolbar
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         // Load Shared Preferences
         sharedPref = getSharedPreferences("ezchat", MODE_PRIVATE);
@@ -63,6 +65,10 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
         applicationWillEnterForeground();
 
         createNotificationChannel();
+
+        // Setup Toolbar
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
     private void applicationWillEnterForeground() {
@@ -72,19 +78,14 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
         }
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        AndroidUsingLinkProperties.setup(this.getApplicationContext());
-    }
 
     @Override
     protected void onStop() {
         super.onStop();
-        // remove observer
-        handler.deleteObserver(this);
         // handle XMPP disconnect
         applicationDidEnterBackground();
+        // remove observer
+        handler.deleteObserver(this);
     }
 
     private void applicationDidEnterBackground() {
@@ -92,7 +93,6 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
             isAppWentToBg = true;
             Toast.makeText(getApplicationContext(), "Disconnecting",
                     Toast.LENGTH_SHORT).show();
-
             handler.disconnectConnection();
         }
     }
@@ -137,18 +137,26 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
         switch (item.getItemId()) {
 
             case R.id.menu_add_contact:
-                Log.d(TAG, "Contacts");
+                Log.d(TAG, "Start ContactsActivity");
                 if (!(this instanceof ContactsActivity)) {
                     Intent addContactActivity = new Intent(getApplicationContext(), ContactsActivity.class);
-                    addContactActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    getApplicationContext().startActivity(addContactActivity);
+                    startActivity(addContactActivity);
+                    break;
+                }
+                break;
+
+            case R.id.menu_profile:
+                Log.d(TAG, "Start ProfileActivity");
+                if (!(this instanceof ProfileActivity)) {
+                    Intent addProfileActivity = new Intent(getApplicationContext(), ProfileActivity.class);
+                    startActivity(addProfileActivity);
                     break;
                 }
                 break;
 
             case R.id.menu_settings:
                 // TODO - Show Settings Activity
-                Log.d(TAG, "Settings");
+                Log.d(TAG, "Start SettingsActivity");
                 break;
 
             case R.id.menu_logout:
@@ -166,7 +174,7 @@ public abstract class BaseActivity extends AppCompatActivity implements XMPPServ
 
                 Intent loginActivity = new Intent(getApplicationContext(), LoginActivity.class);
                 loginActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                getApplicationContext().startActivity(loginActivity);
+                startActivity(loginActivity);
                 break;
 
             default:

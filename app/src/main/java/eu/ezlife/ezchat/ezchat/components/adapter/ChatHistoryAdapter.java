@@ -1,6 +1,7 @@
 package eu.ezlife.ezchat.ezchat.components.adapter;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,7 @@ import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
  * This class holds the Chat history adapter. It handles reads chat History updates from the
  * database and updates the view
  */
-public class ChatHistoryAdapter extends ArrayAdapter<ChatHistoryEntry> implements XMPPService {
+public class ChatHistoryAdapter extends ArrayAdapter<ChatHistoryEntry> {
 
     private List<ChatHistoryEntry> chatHistory;
     private Activity context;
@@ -61,10 +62,11 @@ public class ChatHistoryAdapter extends ArrayAdapter<ChatHistoryEntry> implement
      */
     // TODO - clean this shit and remove observer from Class
     private boolean isMyMessage(ChatHistoryEntry msg){
-        if(msg.getTo().asBareJid().toString().equals(handler.connection.getUser().asEntityBareJid().toString())) {
+/*        if(msg.getTo().asBareJid().toString().equals(handler.connection.getUser().asEntityBareJid().toString())) {
             return true;
         } else {
             return false;
-        }
+        }*/
+        return false;
     }
 }

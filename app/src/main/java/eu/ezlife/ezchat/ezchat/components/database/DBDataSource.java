@@ -3,7 +3,9 @@ package eu.ezlife.ezchat.ezchat.components.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import org.jxmpp.jid.Jid;
@@ -97,6 +99,19 @@ public class DBDataSource implements XMPPService {
         return myContact;
     }
 
+    public boolean deleteContact(String username) {
+        ContactEntry contactEntry = getContact(username);
+        return database.delete(DBHandler.TABLE_CONTACTS, DBHandler.COLUMN_ID + "=" + contactEntry.getId(), null) > 0;
+    }
+
+    public boolean renameContact(String username, String contactName) {
+        ContactEntry contactEntry = getContact(username);
+        ContentValues values = new ContentValues();
+        values.put(DBHandler.COLUMN_CONTACT_NAME, contactName);
+
+        return database.update(DBHandler.TABLE_CONTACTS, values, DBHandler.COLUMN_ID + "=?", new String[] { Long.toString(contactEntry.getId()) } ) > 0;
+    }
+
     public ContactEntry getContact(String username) {
         ContactEntry myContact = null;
 
@@ -149,11 +164,6 @@ public class DBDataSource implements XMPPService {
 
         return myEntries;
     }*/
-
-    public boolean deleteContact(String username) {
-
-        return false;
-    }
 
     // -- Contact List Handling --
 

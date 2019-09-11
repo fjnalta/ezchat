@@ -6,6 +6,6 @@ package eu.ezlife.ezchat.ezchat.components.xmppServices;
 
 public interface XMPPService {
 
+    // XMPP Connection
     XMPPHandler handler = new XMPPHandler();
-
 }

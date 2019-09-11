@@ -36,7 +36,7 @@ public class ContactListAdapter extends ArrayAdapter<ContactListEntry> {
         View itemView = inflater.inflate(R.layout.contact_list_view, null);
 
         // Find the Contact
-        if(contactList.size() >= position) {
+        if(contactList.size() >= position && contactList.size() != 0) {
             ContactListEntry currentEntry = contactList.get(position);
 
             // TODO - insert custom image
@@ -45,7 +45,7 @@ public class ContactListAdapter extends ArrayAdapter<ContactListEntry> {
 //          imageView.setImageResource(currentEntry.getAvatar());
 
             TextView contactNameText = (TextView) itemView.findViewById(R.id.item_text_contactName);
-            contactNameText.setText(currentEntry.getJid());
+            contactNameText.setText(currentEntry.getNickName());
 
             TextView lastMessageText = (TextView) itemView.findViewById(R.id.item_text_lastMessage);
             if (currentEntry.isTyping()) {

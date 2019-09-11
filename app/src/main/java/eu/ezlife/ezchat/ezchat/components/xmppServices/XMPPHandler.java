@@ -1,28 +1,20 @@
 package eu.ezlife.ezchat.ezchat.components.xmppServices;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
-import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterListener;
@@ -30,20 +22,10 @@ import org.jivesoftware.smack.roster.RosterLoadedListener;
 import org.jivesoftware.smack.roster.SubscribeListener;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
-import org.jxmpp.jid.BareJid;
-import org.jxmpp.jid.DomainBareJid;
-import org.jxmpp.jid.DomainFullJid;
 import org.jxmpp.jid.EntityBareJid;
-import org.jxmpp.jid.EntityFullJid;
-import org.jxmpp.jid.EntityJid;
-import org.jxmpp.jid.FullJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.parts.Domainpart;
-import org.jxmpp.jid.parts.Localpart;
-import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
-import org.minidns.dnsserverlookup.android21.AndroidUsingLinkProperties;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,8 +36,8 @@ import java.util.Observable;
 
 import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.components.database.DBDataSource;
-import eu.ezlife.ezchat.ezchat.components.restServices.TokenRegistrationConnection;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
+import eu.ezlife.ezchat.ezchat.data.ContactEntry;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 import eu.ezlife.ezchat.ezchat.data.ObserverObject;
 
@@ -67,6 +49,9 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
 
     // Debug Tag
     private static final String TAG = "XMPPHandler";
+
+    // Application Context
+    Context context = null;
 
     // XMPP Connection Fields
     public static AbstractXMPPConnection connection = null;
@@ -80,7 +65,7 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
 
     // Contact List
     private Roster roster = null;
-    private List<ContactListEntry> contactList = new ArrayList<>();
+    public List<ContactListEntry> contactList = new ArrayList<>();
     private List<Jid> newSubs = new ArrayList<>();
 
     // Database
@@ -166,6 +151,7 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
      * @param ctx the Android Application Context
      */
     public void setAndroidContext(Context ctx) {
+        this.context = ctx;
         dbHandler = new DBDataSource(ctx);
     }
 
@@ -205,6 +191,46 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
         } catch (Exception e) {
             e.printStackTrace();
         }
+        setChanged();
+        notifyObservers();
+    }
+
+    public void removeContact(String jid) {
+        Collection<RosterEntry> rosterEntries = roster.getEntries();
+
+        dbHandler.open();
+        try {
+            Jid tmp = JidCreate.from(jid);
+            for (RosterEntry entry : rosterEntries) {
+                if(entry.getJid().asBareJid().equals(tmp.asBareJid())) {
+                    roster.removeEntry(entry);
+                    // Remove Entry from DB
+                    for(ContactListEntry currEntry : contactList) {
+                        if(currEntry.getJid().toString().equals(entry.getJid().toString())) {
+                            dbHandler.deleteContact(entry.getJid().toString());
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        dbHandler.close();
+
+        createContactList();
+
+        setChanged();
+        notifyObservers();
+    }
+
+    public void renameContact(String jid, String contactName) {
+        dbHandler.open();
+/*        ContactEntry contactEntry = dbHandler.getContact(jid);
+        contactEntry.setContactName(contactName);*/
+        dbHandler.renameContact(jid, contactName);
+        dbHandler.close();
+
+        createContactList();
         setChanged();
         notifyObservers();
     }
@@ -380,6 +406,7 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
     public void entriesAdded(Collection<Jid> addresses) {
         Log.d("ROSTER", "entries added");
         Log.d("ROSTER", addresses.toString());
+        createContactList();
         setChanged();
         notifyObservers();
     }
@@ -388,6 +415,7 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
     public void entriesUpdated(Collection<Jid> addresses) {
         Log.d("ROSTER", "entries updated");
         Log.d("ROSTER", addresses.toString());
+        createContactList();
         setChanged();
         notifyObservers();
     }
@@ -413,60 +441,43 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
 
     @Override
     public void onRosterLoaded(final Roster roster) {
-        Log.d("ROSTER", "load contact list");
-        Collection<RosterEntry> rosterEntries = roster.getEntries();
-        contactList.clear();
-        for (RosterEntry entry : rosterEntries) {
-            Presence presence = roster.getPresence(entry.getJid());
-            ContactListEntry contactEntry = new ContactListEntry(entry.getJid(),evaluateContactStatus(presence), presence.isAvailable(), false, true);
-//            contactEntry.setLastMessage(dbHandler.getLastMessage(contactEntry.getUsername()));
-            contactList.add(contactEntry);
-        }
+        Log.d("XMPP", "roster updated");
+        this.roster = roster;
+        // Create Contact List
+        createContactList();
+        // Notify Observers
         setChanged();
         notifyObservers();
-
-
-/*        AsyncTask<Void, Void, Boolean> rosterThread = new AsyncTask<Void, Void, Boolean>() {
-            @Override
-            protected Boolean doInBackground(Void... params) {
-                dbHandler.open();
-                for (RosterEntry entry : rosterEntries) {
-                    if (!dbHandler.contactExists(entry.getJid().toString())) {
-                        dbHandler.createContact(entry.getJid().toString(), R.mipmap.ic_launcher, entry.getName());
-                        Log.d("ROSTER", "contact created");
-                    }
-                }
-                dbHandler.close();
-                return true;
-            }
-
-            @Override
-            protected void onPostExecute(Boolean result) {
-                super.onPostExecute(result);
-
-                contactList.clear();
-                dbHandler.open();
-                for (RosterEntry entry : rosterEntries) {
-
-                    Presence presence = roster.getPresence(entry.getJid());
-                    ContactListEntry contactEntry = new ContactListEntry(dbHandler.getContact(entry.getJid().toString()),evaluateContactStatus(presence), presence.isAvailable(), false);
-                    contactEntry.setLastMessage(dbHandler.getLastMessage(contactEntry.getUsername()));
-                    contactList.add(contactEntry);
-                }
-
-                dbHandler.close();
-
-                setChanged();
-                notifyObservers();
-
-            }
-        };*/
-        //rosterThread.execute();
     }
 
     @Override
     public void onRosterLoadingFailed(Exception exception) {
         Log.d("ROSTER", "Loading Failed");
+    }
+
+    private void createContactList() {
+        Log.d("ROSTER", "load contact list");
+        Collection<RosterEntry> rosterEntries = roster.getEntries();
+        contactList.clear();
+        dbHandler.open();
+
+        for (RosterEntry entry : rosterEntries) {
+            Presence presence = roster.getPresence(entry.getJid());
+            ContactListEntry contactEntry = new ContactListEntry(entry.getJid(),evaluateContactStatus(presence), presence.isAvailable(), false, true);
+            // Check if contact is in DB
+            if (!dbHandler.contactExists(entry.getJid().toString())) {
+                // Create if not
+                dbHandler.createContact(entry.getJid().toString(), R.mipmap.ic_launcher, entry.getJid().toString());
+                Log.d("ROSTER", "contact " + entry.getJid().toString() + " created");
+            } else {
+                // Enrich data if entry exists
+                contactEntry.setNickName(dbHandler.getContact(contactEntry.getJid().toString()).getContactName());
+                Log.d("SETNICKNAME", dbHandler.getContact(contactEntry.getJid().toString()).getContactName());
+//              contactEntry.setLastMessage(dbHandler.getLastMessage(contactEntry.getUsername()));
+            }
+            contactList.add(contactEntry);
+        }
+        dbHandler.close();
     }
 
     // ------------------
