@@ -147,6 +147,7 @@ public class ChatActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         toolbar.setTitle("Chat with - " + this.contact.getNickName());
+        toolbar.setSubtitle(this.contact.getJid());
         setSupportActionBar(toolbar);
     }
 

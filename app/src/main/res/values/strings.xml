@@ -8,6 +8,7 @@
     <string name="action_sign_in">Sign in or register</string>
     <string name="btn_login">Sign in</string>
     <string name="btn_send">Send Message</string>
+    <string name="btn_add_contacts">Add Contact</string>
     <string name="link_signup">No Account yet? Create one</string>
     <string name="type_your_message">Type your Message..</string>
 

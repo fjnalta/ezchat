@@ -37,7 +37,6 @@ import java.util.Observable;
 import eu.ezlife.ezchat.ezchat.R;
 import eu.ezlife.ezchat.ezchat.components.database.DBDataSource;
 import eu.ezlife.ezchat.ezchat.data.ChatHistoryEntry;
-import eu.ezlife.ezchat.ezchat.data.ContactEntry;
 import eu.ezlife.ezchat.ezchat.data.ContactListEntry;
 import eu.ezlife.ezchat.ezchat.data.ObserverObject;
 
@@ -66,7 +65,6 @@ public class XMPPHandler extends Observable implements ConnectionListener, Incom
     // Contact List
     private Roster roster = null;
     public List<ContactListEntry> contactList = new ArrayList<>();
-    private List<Jid> newSubs = new ArrayList<>();
 
     // Database
     private DBDataSource dbHandler = null;
